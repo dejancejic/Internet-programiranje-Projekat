@@ -1,5 +1,5 @@
 <div class="header">
-    <p>{{count}} vehicles to show</p>
+    <p>{{count}} {{type}} to show</p>
     <div class="profile">
         <img src="https://w7.pngwing.com/pngs/384/706/png-transparent-computer-icons-user-login-gender-miscellaneous-desktop-wallpaper-account.png" alt="">
     </div>
@@ -9,24 +9,69 @@
 </div>
 <div class="buttons">
   <input class="search" type="text" (input)="search($event)" placeholder="Search..." />
-    <button  type="button" data-bs-toggle="modal" data-bs-target="#addVehicleCSVModal" mat-raised-button color="primary" class="button">Upload vehicle - CSV</button>
-    <button type="button" data-bs-toggle="modal" data-bs-target="#addVehicleModal" mat-raised-button color="primary" class="button">Add new vehicle</button>
+    <button  type="button" data-bs-toggle="modal" data-bs-target="#addVehicleCSVModal" mat-raised-button color="primary" class="button">Upload {{type.substring(0,type.length-1)}} - CSV</button>
+    <button type="button" data-bs-toggle="modal" data-bs-target="#addVehicleModal" mat-raised-button color="primary" class="button">Add new {{type.substring(0,type.length-1)}}</button>
 </div>
 
 
-  <div class="modal fade" id="addVehicleModal" tabindex="-1" aria-labelledby="addVehicleModalLabel" aria-hidden="true">
+  <div #addVehicleModal class="modal fade" id="addVehicleModal" tabindex="-1" aria-labelledby="addVehicleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="addVehicleModalLabel">Add Vehicle</h5>
+          <h5 class="modal-title" id="addVehicleModalLabel">Add new car</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <p>Modal body text goes here.</p>
+          <form class="d-flex flex-column gap-2" [formGroup]="selectedForm">
+            <div class="form-floating">
+              <input type="text" class="form-control form-control-sm w-100"  placeholder="Car ID" id="carIdInput" formControlName="carId">
+              <label for="carIdInput">Car ID</label>
+            </div>
+
+              <div class="form-floating">
+                <select  class="form-control form-control-sm w-100" id="manuInput" formControlName="manufacturerId">
+                  <option *ngFor="let manu of manufacturers" [value]="manu.id">{{manu.name}}</option>
+                </select>
+                <label for="manuInput">Manufacturer</label>
+              </div>
+
+            <div class="form-floating">
+              <input type="text" class="form-control form-control-sm w-100" id="modelInput" placeholder="Model" formControlName="model">
+              <label for="modelInput">Model</label>
+            </div>
+        
+            <div class="form-floating">
+              <input type="text" class="form-control form-control-sm w-100" id="priceInput" placeholder="Price" formControlName="price">
+              <label for="priceInput">Price</label>
+            </div>
+        
+            <div class="form-floating">
+              <textarea class="form-control w-100" id="description" placeholder="Description" formControlName="description" style="height: 150px;"></textarea>
+              <label for="description">Description</label>
+            </div>
+            
+          </form>
+          <div class="image">
+            <p class="nofile" *ngIf="selectedImageName.length == 0">No image selected</p>
+            <p *ngIf="selectedImageName.length > 0">Selected image: &nbsp; &nbsp;<img class="excel" src="./assets/image.png"> {{selectedImageName}}</p>
+            <button type="button" class="btn btn-primary imageBtn" (click)="uploadImage()">Upload image</button>
+          </div>
+          <input type="file" id="imageFile" (change)="onImageSelected($event)" accept=".png, .jpg, .jpeg" style="display: none" />
+
+          <div *ngIf="networkError" class="alert alert-danger alert-dismissible fade show fileError" role="alert">
+            Failed to add the car. Please try again! 
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" (click)="dismiss()"></button>
+          </div>
+
+          <div *ngIf="imageError" class="alert alert-danger alert-dismissible fade show fileError" role="alert">
+            Please select an image
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" (click)="dismiss()"></button>
+          </div>
+
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary" (click)="addVehicleToSystem()">Save changes</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="closeModal()">Close</button>
+          <button type="button" [disabled]="selectedForm.invalid" class="btn btn-primary" (click)="addVehicleToSystem()">Save changes</button>
         </div>
       </div>
     </div>
@@ -37,7 +82,7 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="addVehicleCSVModalLabel">Upload Vehicle - CSV</h5>
+          <h5 class="modal-title" id="addVehicleCSVModalLabel">Upload car - CSV</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="removeCSV()"></button>
         </div>
         <div class="modal-body">
@@ -58,6 +103,29 @@
       </div>
     </div>
   </div>
+
+
+  <div #successModal class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="successModalLabel">Added new {{type.substring(0,type.length-1)}}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Successfully added a new {{type.substring(0,type.length-1)}}!</p>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
   
   
   

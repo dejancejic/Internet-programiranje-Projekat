@@ -1,4 +1,4 @@
-package server.car;
+package server.vehicle.car;
 
 import java.time.LocalDate;
 

@@ -1,5 +1,5 @@
 <div class="wrapper">
-    <vehicles-header (queryChanged)="search($event)" [type]="'car'" [count]="cars.length"></vehicles-header>
+    <vehicles-header (addedVehicle)="addNewVehicle($event)" (queryChanged)="search($event)" [type]="'cars'"   [count]="cars.length"></vehicles-header>
 
 
     <p *ngIf="cars.length==0" class="noVehicles">No cars to show!</p>

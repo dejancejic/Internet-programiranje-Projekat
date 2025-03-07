@@ -84,4 +84,10 @@ export class VehiclesComponent implements OnInit,AfterViewInit{
     this.selectedVehicleIndex=-1;
   }
 
+  addNewVehicle(event:any)
+  {
+    console.log(event);
+    this.cars.push(event);
+  }
+
 }

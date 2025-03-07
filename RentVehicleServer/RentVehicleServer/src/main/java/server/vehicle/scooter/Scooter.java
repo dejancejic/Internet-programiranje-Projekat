@@ -1,4 +1,4 @@
-package server.scooter;
+package server.vehicle.scooter;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

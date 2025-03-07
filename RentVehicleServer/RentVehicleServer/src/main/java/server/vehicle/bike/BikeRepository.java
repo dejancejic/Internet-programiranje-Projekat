@@ -1,9 +1,9 @@
-package server.scooter;
+package server.vehicle.bike;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 
-public interface ScooterRepository extends JpaRepository<Scooter, Integer> {
+public interface BikeRepository extends JpaRepository<Bike, Integer>{
 
 }

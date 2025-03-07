@@ -18,7 +18,9 @@ export class CarTabComponent implements OnInit {
 
 
  ngOnInit(): void {
+  if(!this.base64Image.startsWith('data:')){
   this.base64Image='data:image/png;base64,'+this.base64Image;
+  }
  }
 
 
@@ -26,9 +28,16 @@ export class CarTabComponent implements OnInit {
     event.target.src = './assets/defaultCar.png';
   }
 
-  removeVehicle()
+  removeVehicle(event:Event)
   {
+    event.stopPropagation();
     this.remove.emit();
+  }
+
+  showDetails()
+  {
+
+
   }
 
 }

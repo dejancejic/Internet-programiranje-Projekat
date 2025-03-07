@@ -1,28 +1,95 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, inject, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { Manufacturer } from '../model/manufacturer';
+import { ManufacturerService } from '../services/manufacturers/manufacturer.service';
+import { CarsService } from '../services/cars/cars.service';
+import { Vehicle } from '../model/vehicle';
 
 declare var bootstrap: any;
 
 @Component({
   selector: 'vehicles-header',
-  imports: [CommonModule,MatButtonModule],
+  imports: [CommonModule,MatButtonModule,ReactiveFormsModule,CommonModule],
   templateUrl: './header.component.html',
-  styleUrl: './header.component.css'
+  styleUrl: './header.component.css',
+  providers:[ManufacturerService,CarsService]
 })
 export class HeaderComponent implements AfterViewInit,OnInit{
-  @Input() type: string = 'car';
+  @Input() type: string = 'cars';
   @Input() count: number = 0;
   accountName: string = '';
   @Output() queryChanged=new EventEmitter<string>();
+  @Output() addedVehicle=new EventEmitter<any>();
   
   query:string='';
 
   @ViewChild('addVehicleCSVModal') addVehicleCSVModal: any; 
+  @ViewChild('addVehicleModal') addVehicleModal: any; 
+  @ViewChild('successModal') successModal: any; 
 
   selectedFileName: string = '';
+  selectedImageName: string = '';
+
+  selectedImageContent:string='';
+  selectedCSVContent:string='';
+
+
+
   fileError: boolean = false;
-  modalInstance: any;
+  networkError: boolean = false;
+  imageError=false;
+  modalInstanceCSV: any;
+  modalInstanceAdd: any;
+  modalInstanceSuccess:any;
+
+
+
+  manufacturers:Manufacturer[]=[];
+  manufacturerService=inject(ManufacturerService);
+  carsService=inject(CarsService);
+
+  private getManufacturers()
+  {
+    this.manufacturerService.getManufacturers().subscribe((data:any)=>{
+    
+      if(this.type==='cars')
+      {
+        this.manufacturers = [...this.manufacturers,...data['Car']];
+      }
+      else if(this.type==='bikes')
+      {
+        this.manufacturers = [...this.manufacturers,...data['E-Bike']];
+      }
+      else
+      {
+        this.manufacturers = [...this.manufacturers,...data['E-Scooter']];
+      }
+ 
+     
+  },(error)=>{
+    
+    });
+  }
+
+
+  formBuilder=inject(FormBuilder);
+  
+    selectedForm:FormGroup=this.formBuilder.group({
+      carId:[null,Validators.required],
+      manufacturerId:[null,Validators.required],
+      model:[null,Validators.required],
+      price:[null,[
+        Validators.required,
+        Validators.min(2.99),
+        Validators.max(1999.99),
+        Validators.pattern('^[0-9]+(\\.[0-9]{1,2})?$') // Allows numbers with optional decimal places (max 2)
+      ]],
+      description:[null],
+    });
+
+
   
   ngOnInit(): void {
     
@@ -30,22 +97,62 @@ export class HeaderComponent implements AfterViewInit,OnInit{
       {
         this.accountName=sessionStorage.getItem("account")!;
       }
+      this.getManufacturers();
   }
 
   ngAfterViewInit() {
   
-    const modalElement = this.addVehicleCSVModal.nativeElement;
-    this.modalInstance = new bootstrap.Modal(modalElement);
+    const modalElementAdd = this.addVehicleModal.nativeElement;
+    this.modalInstanceAdd = new bootstrap.Modal(modalElementAdd);
+
+    const modalElementCSV = this.addVehicleCSVModal.nativeElement;
+    this.modalInstanceCSV = new bootstrap.Modal(modalElementCSV);
+
+
+    const modalElementSuccess = this.successModal.nativeElement;
+    this.modalInstanceSuccess = new bootstrap.Modal(modalElementSuccess);
   }
 
   dismiss() {
     this.fileError = false;
+    this.networkError = false;
+    this.imageError=false;
   }
 
   addVehicleToSystem()
   {
+
+    let car=this.selectedForm.value;
+    if(this.selectedImageContent===''){
+      this.imageError=true;
+      return;
+    }else{
+    car.image=this.selectedImageContent;
+    }
+    console.log(car);
+    this.carsService.addCar(car).subscribe((data:any)=>{
+
+      this.addedVehicle.emit(data);
+
+    this.modalInstanceAdd.hide();
+
+    this.modalInstanceSuccess.show();
+
+    this.selectedForm.reset();
+
+
+    },(error:any)=>{
+
+      this.networkError=true;
+    });
+
     
 
+  }
+
+  closeModal()
+  {
+    this.selectedForm.reset();
   }
 
   addVehicle() {
@@ -53,8 +160,8 @@ export class HeaderComponent implements AfterViewInit,OnInit{
       this.fileError = true;
     } else {
       
-      if (this.modalInstance) {
-        this.modalInstance.hide(); 
+      if (this.modalInstanceAdd) {
+        this.modalInstanceAdd.hide(); 
       }
 
       this.removeCSV();
@@ -81,6 +188,25 @@ export class HeaderComponent implements AfterViewInit,OnInit{
     const file = event.target.files[0];
     if (file) {
       this.selectedFileName = file.name; 
+
+      const reader = new FileReader();
+    reader.onload = (e: any) => {
+      this.selectedCSVContent = e.target.result; 
+    };
+    reader.readAsDataURL(file);
+    }
+  }
+
+  onImageSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedImageName = file.name; 
+
+      const reader = new FileReader();
+    reader.onload = (e: any) => {
+      this.selectedImageContent = e.target.result; 
+    };
+    reader.readAsDataURL(file);
     }
   }
 
@@ -90,6 +216,19 @@ export class HeaderComponent implements AfterViewInit,OnInit{
     this.query=query;
     this.queryChanged.emit(query);
   }
+
+
+  uploadImage()
+  {
+    const fileInput = document.getElementById('imageFile') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.click(); 
+    }
+  }
+
+
+
+
 
 
 }

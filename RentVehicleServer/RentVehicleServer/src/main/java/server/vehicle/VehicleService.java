@@ -6,12 +6,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import server.bike.BikeRepository;
-import server.car.Car;
-import server.car.CarRepository;
 import server.exceptions.VehicleNotFoundException;
 import server.manufacturer.ManufacturerRepository;
-import server.scooter.ScooterRepository;
+import server.vehicle.bike.BikeRepository;
+import server.vehicle.car.Car;
+import server.vehicle.car.CarRepository;
+import server.vehicle.scooter.ScooterRepository;
 
 @Service
 public class VehicleService {
@@ -65,11 +65,14 @@ public class VehicleService {
 		Vehicle veh=car;
 		
 		veh.setId(null);
+		veh.setStatus("free");
+		
 		
 		
 		veh=rpVehicle.save(veh);
 		
 		car.setId(veh.getId());
+		car.setRentDate(null);
 		
 		return rpCar.save(car);
 	}

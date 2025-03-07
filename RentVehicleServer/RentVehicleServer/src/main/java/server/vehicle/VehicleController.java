@@ -1,6 +1,7 @@
 package server.vehicle;
 
 import java.util.List;
+import java.util.Base64;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,10 +13,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
-import server.car.Car;
 import server.manufacturer.Manufacturer;
+import server.vehicle.car.Car;
 
 @RestController
 @RequestMapping("/vehicle")
@@ -35,11 +38,16 @@ public class VehicleController {
 		return new ResponseEntity<List<Car>>(service.getCars(),HttpStatus.OK);
 	}
 	
-	@PostMapping("/car/add")
-	public ResponseEntity<Car> addCar(@RequestBody Car car)
-	{
-		return new ResponseEntity<Car>(service.addCar(car),HttpStatus.OK);
-	}
+	@PostMapping("/add")
+    public ResponseEntity<Car> addCar(@RequestBody Car car) {
+        try {
+            byte[] decodedImage = Base64.getDecoder().decode(car.getImage());
+            car.setImage(decodedImage);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+        return new ResponseEntity<>(service.addCar(car), HttpStatus.OK);
+    }
 	
 	@DeleteMapping("/delete")
 	public ResponseEntity<Car> deleteCar(@RequestParam Integer id)
