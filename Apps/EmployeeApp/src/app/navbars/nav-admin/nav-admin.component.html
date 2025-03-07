@@ -1,0 +1,94 @@
+<div class="side">
+    <div class="logo">
+      <img src="./assets/logo.png" alt="logo">
+    </div>
+  
+    <div class="items">
+      <div
+        class="item"
+        (click)="selectTab('cars')"
+        [class.selected]="selectedTab === 'cars'"
+      >
+        <div [class.border-select]="selectedTab === 'cars'"></div>
+        <mat-icon
+          class="icon"
+          [class.active-icon]="selectedTab === 'cars'"
+          aria-hidden="false"
+          aria-label="Vehicle icon"
+          color="primary"
+          fontIcon="drive_eta"
+        ></mat-icon>
+      </div>
+      <div
+        class="item"
+        (click)="selectTab('bikes')"
+        [class.selected]="selectedTab === 'bikes'"
+      >
+        <div [class.border-select]="selectedTab === 'bikes'"></div>
+        <mat-icon
+          class="icon"
+          [class.active-icon]="selectedTab === 'bikes'"
+          aria-hidden="false"
+          aria-label="Vehicle icon"
+          color="primary"
+          fontIcon="pedal_bike"
+        ></mat-icon>
+      </div>
+      <div
+        class="item"
+        (click)="selectTab('scooters')"
+        [class.selected]="selectedTab === 'scooters'"
+      >
+        <div [class.border-select]="selectedTab === 'scooters'"></div>
+        <mat-icon
+          class="icon"
+          [class.active-icon]="selectedTab === 'scooters'"
+          aria-hidden="false"
+          aria-label="Vehicle icon"
+          color="primary"
+          fontIcon="electric_scooter"
+        ></mat-icon>
+      </div>
+      <div
+        class="item space"
+        (click)="selectTab('manufacturer-add')"
+        [class.selected]="selectedTab === 'manufacturer-add'"
+      >
+        <div [class.border-select]="selectedTab === 'manufacturer-add'"></div>
+        <mat-icon
+          class="icon"
+          [class.active-icon]="selectedTab === 'manufacturer-add'"
+          aria-hidden="false"
+          aria-label="Vehicle icon"
+          color="primary"
+          fontIcon="add_business"
+        ></mat-icon>
+      </div>
+      <div
+        class="item"
+        (click)="selectTab('accounts')"
+        [class.selected]="selectedTab === 'accounts'"
+      >
+        <div [class.border-select]="selectedTab === 'accounts'"></div>
+        <mat-icon
+          class="icon"
+          [class.active-icon]="selectedTab === 'accounts'"
+          aria-hidden="false"
+          aria-label="Vehicle icon"
+          color="primary"
+          fontIcon="manage_accounts"
+        ></mat-icon>
+      </div>
+      <div class="spacer"></div>
+      <div class="item logout" (click)="logout()">
+        <mat-icon
+          class="icon"
+          aria-hidden="false"
+          aria-label="Vehicle icon"
+          color="primary"
+          fontIcon="logout"
+        ></mat-icon>
+      </div>
+    </div>
+  </div>
+  

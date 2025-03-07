@@ -1,0 +1,69 @@
+<div class="header">
+    <p>{{count}} vehicles to show</p>
+    <div class="profile">
+        <img src="https://w7.pngwing.com/pngs/384/706/png-transparent-computer-icons-user-login-gender-miscellaneous-desktop-wallpaper-account.png" alt="">
+    </div>
+    <div class="info">
+        <p>{{accountName}}</p>
+    </div>
+</div>
+<div class="buttons">
+  <input class="search" type="text" (input)="search($event)" placeholder="Search..." />
+    <button  type="button" data-bs-toggle="modal" data-bs-target="#addVehicleCSVModal" mat-raised-button color="primary" class="button">Upload vehicle - CSV</button>
+    <button type="button" data-bs-toggle="modal" data-bs-target="#addVehicleModal" mat-raised-button color="primary" class="button">Add new vehicle</button>
+</div>
+
+
+  <div class="modal fade" id="addVehicleModal" tabindex="-1" aria-labelledby="addVehicleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addVehicleModalLabel">Add Vehicle</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Modal body text goes here.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" (click)="addVehicleToSystem()">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal fade" id="addVehicleCSVModal" #addVehicleCSVModal tabindex="-1" aria-labelledby="addVehicleCSVModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addVehicleCSVModalLabel">Upload Vehicle - CSV</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="removeCSV()"></button>
+        </div>
+        <div class="modal-body">
+          <p class="nofile" *ngIf="selectedFileName.length == 0">No file selected</p>
+          <p *ngIf="selectedFileName.length > 0">Selected file: &nbsp; &nbsp;<img class="excel" src="./assets/excel.png"> {{selectedFileName}}</p>
+          <br/>
+          <button mat-raised-button color="primary" class="button" (click)="uploadCSV()">Upload CSV</button>
+          <input type="file" id="csvFile" (change)="onFileSelected($event)" accept=".csv" style="display: none" />
+          <div *ngIf="fileError" class="alert alert-danger alert-dismissible fade show fileError" role="alert">
+            Please select a file first
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" (click)="dismiss()"></button>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="removeCSV()">Close</button>
+          <button type="button" class="btn btn-primary" (click)="addVehicle()">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  
+  
+
+  
+  
+
+
+  

@@ -1,0 +1,39 @@
+.wrapper
+{
+    background-color:rgba(0, 0,0, .05);
+    min-height: 100vh;
+    padding-left: 15px;
+}
+
+.noManufacturers
+{
+    align-self: center;
+    justify-self: center;
+    margin-top: 20%;
+    font-weight: bold;
+    font-size: 25px;
+}
+
+.tabs
+{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-top: 10px;
+    margin-left: 25px;
+    overflow-y: auto;
+    max-height: 520px;
+}
+
+.spinner
+{
+    color:#000;
+    align-items: center;
+    justify-content: center;
+}
+.sp{
+    width: 2rem;
+    height: 2rem;
+}
+
+

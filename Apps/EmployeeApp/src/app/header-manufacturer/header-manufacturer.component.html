@@ -1,0 +1,91 @@
+<div class="header">
+    <p>{{count}} manufacturers to show</p>
+    <div class="profile">
+        <img src="https://w7.pngwing.com/pngs/384/706/png-transparent-computer-icons-user-login-gender-miscellaneous-desktop-wallpaper-account.png" alt="">
+    </div>
+    <div class="info">
+        <p>{{accountName}}</p>
+    </div>
+</div>
+<div class="buttons">
+  <input class="search" type="text" (input)="search($event)" placeholder="Search..." />
+    <button type="button" data-bs-toggle="modal" data-bs-target="#addManufacturerModal" mat-raised-button color="primary" class="button">Add new manufacturer</button>
+</div>
+
+<div class="select">
+  <p>Select vehicle type:</p>
+  <select class="form-select" (change)="select($event)">
+    <option>Car</option>
+    <option>E-Bike</option>
+    <option>E-Scooter</option>
+  </select>
+</div>
+
+
+  <div #addManufacturerModal class="modal fade" id="addManufacturerModal" tabindex="-1" aria-labelledby="addManufacturerModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addManufacturerModalLabel">Add {{type}} Manufacturer</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form class="d-flex flex-column gap-2" [formGroup]="selectedForm">
+            <div class="form-floating">
+              <input type="text" class="form-control form-control-sm w-100" id="nameInput" placeholder="Name" formControlName="name">
+              <label for="nameInput">Name</label>
+            </div>
+        
+            <div class="form-floating">
+              <input type="text" class="form-control form-control-sm w-100" id="countryInput" placeholder="Country" formControlName="country">
+              <label for="countryInput">Country</label>
+            </div>
+        
+            <div class="form-floating">
+              <input type="text" class="form-control form-control-sm w-100" id="addressInput" placeholder="Address" formControlName="address">
+              <label for="addressInput">Address</label>
+            </div>
+        
+            <div class="form-floating">
+              <input type="text" class="form-control form-control-sm w-100" id="phoneInput" placeholder="Phone" formControlName="phone">
+              <label for="phoneInput">Phone</label>
+            </div>
+        
+            <div class="form-floating">
+              <input type="text" class="form-control form-control-sm w-100" id="faxInput" placeholder="Fax" formControlName="fax">
+              <label for="faxInput">Fax</label>
+            </div>
+        
+            <div class="form-floating">
+              <input type="text" class="form-control form-control-sm w-100" id="emailInput" placeholder="Email" formControlName="email">
+              <label for="emailInput">Email</label>
+            </div>
+          </form>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="resetForm()">Close</button>
+          <button [disabled]="selectedForm.invalid" type="button" class="btn btn-primary" (click)="addManufacturer()">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div #successModal class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="successModalLabel">Added manufacturer</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Successfully added a manufacturer!</p>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>

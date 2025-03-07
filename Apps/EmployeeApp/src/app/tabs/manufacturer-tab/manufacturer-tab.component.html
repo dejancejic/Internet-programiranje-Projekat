@@ -1,0 +1,95 @@
+
+<div class="wrapper" (click)="showUpdateModal()">
+
+    <p class="name">{{manufacturer!.name}}</p>
+    <svg (click)="removeManufacturer($event)" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="red" class="bi bi-trash3-fill bin" viewBox="0 0 16 16">
+        <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5"/>
+      </svg>
+
+      <div class="field">
+        <p class="title">Address:</p>
+        <p>{{manufacturer!.address}}, {{manufacturer?.country}}</p>
+      </div>
+      <div class="field">
+        <p class="title">Phone:</p>
+        <p>{{manufacturer!.phone}}</p>
+      </div>
+      <div class="field">
+        <p class="title">Fax:</p>
+        <p>{{manufacturer!.fax!==null?manufacturer!.fax:"-"}}</p>
+      </div>
+      <div class="field">
+        <p class="title">Email:</p>
+        <p>{{manufacturer!.email}}</p>
+      </div>
+
+</div>
+
+<div #addManufacturerModal class="modal fade updateModal" id="addManufacturerModal" tabindex="-1" aria-labelledby="addManufacturerModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addManufacturerModalLabel">Update Manufacturer</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form class="d-flex flex-column gap-2" [formGroup]="selectedForm">
+          <div class="form-floating">
+            <input type="text" class="form-control form-control-sm w-100" id="nameInput" placeholder="Name" formControlName="name">
+            <label for="nameInput">Name</label>
+          </div>
+      
+          <div class="form-floating">
+            <input type="text" class="form-control form-control-sm w-100" id="countryInput" placeholder="Country" formControlName="country">
+            <label for="countryInput">Country</label>
+          </div>
+      
+          <div class="form-floating">
+            <input type="text" class="form-control form-control-sm w-100" id="addressInput" placeholder="Address" formControlName="address">
+            <label for="addressInput">Address</label>
+          </div>
+      
+          <div class="form-floating">
+            <input type="text" class="form-control form-control-sm w-100" id="phoneInput" placeholder="Phone" formControlName="phone">
+            <label for="phoneInput">Phone</label>
+          </div>
+      
+          <div class="form-floating">
+            <input type="text" class="form-control form-control-sm w-100" id="faxInput" placeholder="Fax" formControlName="fax">
+            <label for="faxInput">Fax</label>
+          </div>
+      
+          <div class="form-floating">
+            <input type="text" class="form-control form-control-sm w-100" id="emailInput" placeholder="Email" formControlName="email">
+            <label for="emailInput">Email</label>
+          </div>
+        </form>
+      </div>
+      
+      
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button [disabled]="selectedForm.invalid" type="button" class="btn btn-primary" (click)="updateManufacturer()">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div #successModal class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="successModalLabel">Updated manufacturer</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Successfully updated a manufacturer!</p>
+      </div>
+      
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
