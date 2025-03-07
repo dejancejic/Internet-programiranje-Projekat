@@ -1,8 +1,3 @@
-Elektrotehnički fakultet
-Banja Luka
-Internet programiranje
-Projektni zadatak
-decembar 2024
 Napraviti jednostavan sistem koji koristi izmišljena kompanija ETFBL_IP koja se bavi
 iznajmljivanjem električnih automobila, bicikala i trotineta. Sistem se sastoji od nekoliko dijelova
 koji su opisani u nastavku:
@@ -87,11 +82,8 @@ se mogu pregledati sve kreirane promocije i objave, a mogu se pretražiti po sad
 kreiranje nove objave (naslov, sadržaj) i promocije (naslov, opis, datum trajanja).
 Aplikaciju implementirati upotrebom JSP-a.
 Napomene:
-● Projektni zadatak se radi pojedinačno.
-● Prilikom predaje projektnog zadatka potrebno je predati kompletan izvorni kod i model
-podataka. Potrebno je definisati testne podatke.
-● Pri realizaciji projektnog zadatka zabranjeno je korištenje generatora koda, osim onih
-koji su korišteni na laboratorijskim vježbama ili predavanjima.
+
+
 ● Interfejs prema korisniku treba da bude organizovan na jednoobrazan način tj., sve
 stranice treba da imaju sličan izgled i intuitivne kontrole i prikaz.
 ● Svaki vid serverske validacije potrebno je da bude što efikasnije realizovan. Obavezno
@@ -99,4 +91,4 @@ napraviti klijentsku validaciju.
 ● Nije dozvoljeno koristiti stored procedure, funkcije i okidače (triggere). Dakle, baza
 podataka ne smije imati bilo kakvu logiku osim definisanih tabela i ograničenja koja važe
 među njima.
-● Ovaj projektni zadatak vrijedi do objave novog projektnog zadataka.
+
