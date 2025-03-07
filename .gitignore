@@ -1,1 +1,3 @@
-
+Apps/client.crt
+Apps/client.key
+RentVehicleServer/RentVehicleServer/src/main/resources/server.jks
