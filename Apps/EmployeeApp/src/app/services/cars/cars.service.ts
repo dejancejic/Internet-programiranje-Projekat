@@ -3,23 +3,16 @@ import { Injectable } from '@angular/core';
 import { ConstantsService } from '../utils/constants.service';
 import { catchError, throwError } from 'rxjs';
 import { Car } from '../../model/car';
+import { BaseService } from '../utils/base.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class CarsService {
+export class CarsService extends BaseService {
 
-  constructor(private http:HttpClient,private constantsService:ConstantsService) { }
-
-private getStandardOptions():any
-    {
-      return {
-        headers:
-        new HttpHeaders({
-          'Content-Type':'application/json',
-        })
-      };
-    }
+  constructor(private http:HttpClient,private constantsService:ConstantsService) {
+    super();
+   }
 
 
      getCars()
@@ -44,28 +37,21 @@ private getStandardOptions():any
                   options.withCredentials=true;
                   options.params=new HttpParams({
                     fromObject:{
-                      format:'json'
+                      format:'json',
+                
                     },
                   });
+                  
                   options.withCredentials=true;
           
                   let body=JSON.stringify(car);
           
-                  return this.http.post(this.constantsService.SERVER_URL+'vehicles/car/add',body,options).
+                  return this.http.post(this.constantsService.SERVER_URL+'vehicle/cars/add',body,options).
                   pipe(catchError(this.handleError));
                 }
 
 
-    private handleError(error:HttpErrorResponse)
-        {
-          if(error.status === 0)
-          {
-            console.error("There is an issue with client or network:",error.error);
-          }
-          else{
-            console.error("Server error: "+error.error);
-          }
-          return throwError(()=>new Error("Cannot get or add cars!"+error.error));
-        }
+                
+
 
 }

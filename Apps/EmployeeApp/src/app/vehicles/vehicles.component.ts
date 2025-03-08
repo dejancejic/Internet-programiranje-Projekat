@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { Car } from '../model/car';
 import { CarsService } from '../services/cars/cars.service';
 import { HttpClientModule } from '@angular/common/http';
+import { VehicleService } from '../services/vehicles/vehicle.service';
 
 declare var bootstrap: any;
 
@@ -14,7 +15,7 @@ declare var bootstrap: any;
   imports: [CarTabComponent, MatButtonModule, HeaderComponent,CommonModule,HttpClientModule],
   templateUrl: './vehicles.component.html',
   styleUrl: './vehicles.component.css',
-  providers:[CarsService]
+  providers:[CarsService,VehicleService]
 })
 export class VehiclesComponent implements OnInit,AfterViewInit{
 
@@ -25,10 +26,13 @@ export class VehiclesComponent implements OnInit,AfterViewInit{
   loading:boolean=true;
 
   modalInstance: any;
+  modalInstanceSuccess: any;
 
   carsService=inject(CarsService);
+  vehicleService=inject(VehicleService);
 
   @ViewChild('removeVehicleModal') removeVehicleModal: any; 
+  @ViewChild('successModal') successModal: any; 
 
   ngOnInit(): void {
     
@@ -54,6 +58,10 @@ export class VehiclesComponent implements OnInit,AfterViewInit{
   
     const modalElement = this.removeVehicleModal.nativeElement;
     this.modalInstance = new bootstrap.Modal(modalElement);
+
+    const modalElementSuccess = this.successModal.nativeElement;
+    this.modalInstanceSuccess = new bootstrap.Modal(modalElementSuccess);
+
   }
 
   search(query:string)
@@ -76,17 +84,29 @@ export class VehiclesComponent implements OnInit,AfterViewInit{
   {
     if(this.selectedVehicleIndex!==-1)
     {
-      this.cars.splice(this.selectedVehicleIndex,1);
-      //TODO REMOVE VEHICLE SERVICE METHOD
-      this.modalInstance.hide();
-   
+      let car=this.cars[this.selectedVehicleIndex];
+
+      this.vehicleService.deleteVehicle(car.id).subscribe((data)=>{
+        this.loading=false;
+        this.modalInstance.hide();
+        this.modalInstanceSuccess.show();
+        this.cars.splice(this.selectedVehicleIndex,1);
+        this.selectedVehicleIndex=-1;
+      },
+    (error)=>{
+      this.loading=false;
+      alert(error);
+      this.selectedVehicleIndex=-1;
+    })
+
+    
     }
-    this.selectedVehicleIndex=-1;
+    
   }
 
   addNewVehicle(event:any)
   {
-    console.log(event);
+    
     this.cars.push(event);
   }
 

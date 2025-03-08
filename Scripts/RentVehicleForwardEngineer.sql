@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS `rentvehicle`.`vehicle` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `status` VARCHAR(255) NOT NULL DEFAULT 'free',
   `image` MEDIUMBLOB NULL,
+  `deleted` TINYINT(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
@@ -37,6 +38,7 @@ CREATE TABLE IF NOT EXISTS `rentvehicle`.`manufacturer` (
   `phone` VARCHAR(255) NOT NULL,
   `fax` VARCHAR(255) NULL,
   `email` VARCHAR(255) NOT NULL,
+  `deleted` TINYINT(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
@@ -70,6 +72,7 @@ CREATE TABLE IF NOT EXISTS `rentvehicle`.`car` (
   PRIMARY KEY (`id`),
   INDEX `fk_car_vehicle1_idx` (`id` ASC) VISIBLE,
   INDEX `fk_car_car_manufacturer1_idx` (`manufacturer_id` ASC) VISIBLE,
+  UNIQUE INDEX `car_id_UNIQUE` (`car_id` ASC) VISIBLE,
   CONSTRAINT `fk_car_vehicle1`
     FOREIGN KEY (`id`)
     REFERENCES `rentvehicle`.`vehicle` (`id`)
@@ -111,6 +114,7 @@ CREATE TABLE IF NOT EXISTS `rentvehicle`.`bike` (
   PRIMARY KEY (`id`),
   INDEX `fk_bike_vehicle1_idx` (`id` ASC) VISIBLE,
   INDEX `fk_bike_bike_manufacturer1_idx` (`manufacturer_id` ASC) VISIBLE,
+  UNIQUE INDEX `bike_id_UNIQUE` (`bike_id` ASC) VISIBLE,
   CONSTRAINT `fk_bike_vehicle1`
     FOREIGN KEY (`id`)
     REFERENCES `rentvehicle`.`vehicle` (`id`)
@@ -152,6 +156,7 @@ CREATE TABLE IF NOT EXISTS `rentvehicle`.`scooter` (
   PRIMARY KEY (`id`),
   INDEX `fk_scooter_vehicle1_idx` (`id` ASC) VISIBLE,
   INDEX `fk_scooter_scooter_manufacturer1_idx` (`manufacturer_id` ASC) VISIBLE,
+  UNIQUE INDEX `scooter_id_UNIQUE` (`scooter_id` ASC) VISIBLE,
   CONSTRAINT `fk_scooter_vehicle1`
     FOREIGN KEY (`id`)
     REFERENCES `rentvehicle`.`vehicle` (`id`)

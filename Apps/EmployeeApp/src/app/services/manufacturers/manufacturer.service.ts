@@ -3,24 +3,16 @@ import { Injectable } from '@angular/core';
 import { ConstantsService } from '../utils/constants.service';
 import { catchError, throwError } from 'rxjs';
 import { Manufacturer } from '../../model/manufacturer';
+import { BaseService } from '../utils/base.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ManufacturerService {
+export class ManufacturerService extends BaseService{
 
-  constructor(private http:HttpClient,private constantsService:ConstantsService) { }
-
-
-  private getStandardOptions():any
-    {
-      return {
-        headers:
-        new HttpHeaders({
-          'Content-Type':'application/json',
-        })
-      };
-    }
+  constructor(private http:HttpClient,private constantsService:ConstantsService) { 
+    super();
+  }
 
     addManufacturer(manufacturer:Manufacturer,type1:string)
       { 
@@ -97,15 +89,5 @@ export class ManufacturerService {
 
 
 
-  private handleError(error:HttpErrorResponse)
-    {
-      if(error.status === 0)
-      {
-        console.error("There is an issue with client or network:",error.error);
-      }
-      else{
-        console.error("Server error: "+error.error);
-      }
-      return throwError(()=>new Error("Cannot get or add manufacturers!"+error.error));
-    }
+  
 }

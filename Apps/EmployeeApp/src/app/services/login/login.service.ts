@@ -2,23 +2,18 @@ import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular
 import { Injectable } from '@angular/core';
 import { catchError, throwError } from 'rxjs';
 import { ConstantsService } from '../utils/constants.service';
+import { BaseService } from '../utils/base.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class LoginService {
+export class LoginService extends BaseService{
 
-  constructor(private http:HttpClient,private constantsService:ConstantsService) { }
+  constructor(private http:HttpClient,private constantsService:ConstantsService) {
+    super();
+   }
 
-  private getStandardOptions():any
-  {
-    return {
-      headers:
-      new HttpHeaders({
-        'Content-Type':'application/json',
-      })
-    };
-  }
+  
 
   login(username:string,password:string)
   { 
@@ -54,7 +49,7 @@ export class LoginService {
 
 
 
-  private handleError(error:HttpErrorResponse)
+  protected override handleError(error:HttpErrorResponse)
   {
     if(error.status === 0)
     {

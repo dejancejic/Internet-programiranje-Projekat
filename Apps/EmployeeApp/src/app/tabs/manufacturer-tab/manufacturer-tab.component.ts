@@ -44,7 +44,8 @@ export class ManufacturerTabComponent implements AfterViewInit{
       address:[null,Validators.required],
       phone:[null,Validators.required],
       fax:[null],
-      email:[null,Validators.required]
+      email:[null,Validators.required],
+      deleted:[null]
     });
 
   removeManufacturer(event:Event)

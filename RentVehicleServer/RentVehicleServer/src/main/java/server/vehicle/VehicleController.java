@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import server.manufacturer.Manufacturer;
 import server.vehicle.car.Car;
+import server.vehicle.car.CarModel;
 
 @RestController
 @RequestMapping("/vehicle")
@@ -38,21 +39,31 @@ public class VehicleController {
 		return new ResponseEntity<List<Car>>(service.getCars(),HttpStatus.OK);
 	}
 	
-	@PostMapping("/add")
-    public ResponseEntity<Car> addCar(@RequestBody Car car) {
-        try {
-            byte[] decodedImage = Base64.getDecoder().decode(car.getImage());
-            car.setImage(decodedImage);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
-        return new ResponseEntity<>(service.addCar(car), HttpStatus.OK);
+	@PostMapping("/cars/add")
+    public ResponseEntity<Car> addCar(@RequestBody CarModel car) {
+		int indexOf=car.getImage().indexOf("base64,");
+		
+		String image=car.getImage().substring(indexOf+7);
+		
+		Car c=new Car();
+		
+		c.setImage(Base64.getDecoder().decode(image));
+		
+		c.setId(null);
+		c.setCarId(car.getCarId());
+		c.setDescription(car.getDescription());
+		c.setManufacturerId(car.getManufacturerId());
+		c.setModel(car.getModel());
+		c.setPrice(car.getPrice());
+		
+		
+        return new ResponseEntity<>(service.addCar(c), HttpStatus.OK);
     }
 	
 	@DeleteMapping("/delete")
-	public ResponseEntity<Car> deleteCar(@RequestParam Integer id)
+	public ResponseEntity<Vehicle> deleteVehicle(@RequestParam Integer id)
 	{
-		return new ResponseEntity<Car>(service.deleteCar(id),HttpStatus.OK);
+		return new ResponseEntity<Vehicle>(service.deleteVehicle(id),HttpStatus.OK);
 	}
 	
 	

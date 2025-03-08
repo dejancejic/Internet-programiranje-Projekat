@@ -35,6 +35,11 @@ public class Manufacturer {
 	
 	@Column(name="email")
 	private String email;
+	
+	@Column(name="deleted")
+	private Boolean deleted;
+	
+	
 
 	
 	public Manufacturer() {
@@ -109,6 +114,16 @@ public class Manufacturer {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+
+	public Boolean getDeleted() {
+		return deleted;
+	}
+
+
+	public void setDeleted(Boolean deleted) {
+		this.deleted = deleted;
 	}
 	
 	

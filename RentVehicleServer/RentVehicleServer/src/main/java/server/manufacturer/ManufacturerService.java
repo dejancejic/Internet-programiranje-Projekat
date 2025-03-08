@@ -29,6 +29,7 @@ public class ManufacturerService {
 	public Manufacturer addManufacturer(Manufacturer m,String type)
 	{
 		m.setId(null);
+		m.setDeleted(false);
 		m=rp.save(m);
 		
 		if(type.equals("Car"))
@@ -64,23 +65,8 @@ public class ManufacturerService {
 	public Manufacturer deleteManufacturer(Integer id)
 	{
 		Manufacturer m=rp.findById(id).get();
-		
-		
-		//TODO FIX DELETING TO DELETE ALL INFO
-		
-		if(rpCar.findById(id).isPresent()) {
-			rpCar.deleteById(id);
-		}
-		else if(rpBike.findById(id).isPresent())
-		{
-			rpBike.deleteById(id);
-		}
-		else
-		{
-			rpScooter.deleteById(id);
-		}
-		
-		rp.deleteById(id);
+	
+		m.setDeleted(true);
 		
 		return m;
 	}
@@ -125,10 +111,11 @@ public class ManufacturerService {
 	private void addToMap(HashMap<String,ArrayList<Manufacturer>> map,Integer id,String type)
 	{
 		Manufacturer m=rp.findById(id).get();
-		
+		if(m.getDeleted()==false) {
 		ArrayList<Manufacturer> list=map.get(type);
 		list.add(m);
 		map.put(type, list);
+		}
 	}
 	
 	

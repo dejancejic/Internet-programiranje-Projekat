@@ -28,6 +28,10 @@ public class Vehicle {
 	@Column(name="image",columnDefinition = "MEDIUMBLOB")
 	private byte[] image;
 	
+	@Column(name="deleted")
+	private Boolean deleted=false;
+	
+	
 	
 	@Transient
 	private String manufacturer;
@@ -58,6 +62,12 @@ public class Vehicle {
 
 	public void setManufacturer(String manufacturer) {
 		this.manufacturer = manufacturer;
+	}
+	public Boolean getDeleted() {
+		return deleted;
+	}
+	public void setDeleted(Boolean deleted) {
+		this.deleted = deleted;
 	}
 	
 	

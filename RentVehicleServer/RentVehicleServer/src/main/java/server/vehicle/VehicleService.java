@@ -37,27 +37,29 @@ public class VehicleService {
 	public List<Car> getCars()
 	{
 		List<Car> cars=rpCar.findAll();
+		List<Car> toReturn=new ArrayList<Car>();
+		
 		for(Car c:cars)
 		{
+			if(c.getDeleted()==false) {
 			c.setManufacturer(rpManufacturer.findById(c.getManufacturerId()).get().getName());
+			toReturn.add(c);
+			}
 		}
-		return cars;
+		return toReturn;
 	}
 	
-	public Car deleteCar(Integer id)
+	public Vehicle deleteVehicle(Integer id)
 	{
-		Car c=rpCar.findById(id).orElseThrow(()->new VehicleNotFoundException("Car with this ID doesn't exist!"));
+		Vehicle v=rpVehicle.findById(id).orElseThrow(()->new VehicleNotFoundException("Vehicle with this ID doesn't exist!"));
 		
-		rpCar.deleteById(id);
+		v.setDeleted(true);
 		
-		rpVehicle.deleteById(id);
-		
-		
-		//TODO HANDLE DELETING OF OTHER CLASSES DEPENDING ON CAR!
+		v.setImage(null);
+		rpVehicle.save(v);
 		
 		
-		
-		return c;
+		return v;
 	}
 	
 	public Car addCar(Car car)
@@ -73,6 +75,7 @@ public class VehicleService {
 		
 		car.setId(veh.getId());
 		car.setRentDate(null);
+		car.setManufacturer(rpManufacturer.findById(car.getManufacturerId()).get().getName());
 		
 		return rpCar.save(car);
 	}
