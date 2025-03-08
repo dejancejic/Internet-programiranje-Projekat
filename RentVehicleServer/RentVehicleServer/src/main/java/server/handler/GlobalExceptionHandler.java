@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import server.exceptions.AccessDeniedException;
+import server.exceptions.UniqueIdException;
 import server.exceptions.UserNotFoundException;
 import server.exceptions.VehicleNotFoundException;
 
@@ -32,6 +33,13 @@ public class GlobalExceptionHandler {
 	
         return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     }
+	
+	@ExceptionHandler(UniqueIdException.class)
+    public ResponseEntity<String> handleUniqueIdException(UniqueIdException e) {
+		
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_ACCEPTABLE);
+    }
+	
 
 }
 

@@ -68,6 +68,11 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" (click)="dismiss()"></button>
           </div>
 
+          <div *ngIf="sameIdError" class="alert alert-danger alert-dismissible fade show fileError" role="alert">
+            Car with same car id already exists!
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" (click)="dismiss()"></button>
+          </div>
+
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="closeModal()">Close</button>

@@ -58,4 +58,14 @@ h6{
 {
     align-self: flex-end;
     color: red;
+    margin-top: -5px;
+   
+}
+
+.bdg
+{
+    width: 120px;
+    height: 25px;
+    margin-top: -20px;
+    margin-bottom: 7px;
 }

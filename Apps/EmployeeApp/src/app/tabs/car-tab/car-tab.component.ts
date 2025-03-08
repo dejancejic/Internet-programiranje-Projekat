@@ -1,8 +1,9 @@
+import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
   selector: 'car-tab',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './car-tab.component.html',
   styleUrl: './car-tab.component.css'
 })
@@ -13,6 +14,7 @@ export class CarTabComponent implements OnInit {
   @Input() manufacturer:string='';
   @Input() model:string='';
   @Input() price:number=0.01;
+  @Input() status:string='free';
 
   @Output() remove=new EventEmitter<string>();
 

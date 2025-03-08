@@ -40,6 +40,7 @@ export class HeaderComponent implements AfterViewInit,OnInit{
   fileError: boolean = false;
   networkError: boolean = false;
   imageError=false;
+  sameIdError=false;
   modalInstanceCSV: any;
   modalInstanceAdd: any;
   modalInstanceSuccess:any;
@@ -117,6 +118,7 @@ export class HeaderComponent implements AfterViewInit,OnInit{
     this.fileError = false;
     this.networkError = false;
     this.imageError=false;
+    this.sameIdError=false;
   }
 
   addVehicleToSystem()
@@ -142,8 +144,13 @@ export class HeaderComponent implements AfterViewInit,OnInit{
 
 
     },(error:any)=>{
-
+      if(error.toString().includes('same car'))
+      {
+        this.sameIdError=true;
+      }
+      else{
       this.networkError=true;
+      }
     });
 
     
