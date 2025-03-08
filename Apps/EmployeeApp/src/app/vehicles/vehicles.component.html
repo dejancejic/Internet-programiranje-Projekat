@@ -4,19 +4,26 @@
 
     <p *ngIf="cars.length==0" class="noVehicles">No cars to show!</p>
 
-    <div class="tabs">
-        @for(car of cars;track $index){
-          <car-tab 
-          (remove)="showDeleteVehicleModal($index)" 
-          [id]="car.id" 
-          [base64Image]="car.image" 
-          [manufacturer]="car.manufacturer" 
-          [model]="car.model" 
-          [price]="car.price"
-          [status]="car.status">
+    <cdk-virtual-scroll-viewport 
+  itemSize="120" 
+  class="virtual-scroll-container">
+  
+  <div class="tabs" *cdkVirtualFor="let row of visibleRows; let i = index">
+    <ng-container *ngFor="let car of row">
+      <car-tab 
+        (remove)="showDeleteVehicleModal(car.id)" 
+        [id]="car.id" 
+        [base64Image]="car.image" 
+        [manufacturer]="car.manufacturer" 
+        [model]="car.model" 
+        [price]="car.price"
+        [status]="car.status">
       </car-tab>
-        }
-    </div>
+    </ng-container>
+  </div>
+
+</cdk-virtual-scroll-viewport>
+
 
 
     <div #removeVehicleModal class="modal fade" id="removeVehicleModal" tabindex="-1" aria-labelledby="removeVehicleModalLabel" aria-hidden="true">

@@ -1,17 +1,22 @@
 .side {
     display: flex;
     flex-direction: column;
-    width: 82px;
+    width: 193px;
     margin: 0;
     padding-right: 5px;
     border-right: 2px solid #ccc;
     height: 100vh; 
   }
+
+  .logo{
+    align-self: center;
+    justify-self: center;
+  }
   
   .logo img {
     width: 60px;
     margin: 7px;
-    margin-left: 13px;
+    
   }
   
   .items {
@@ -20,11 +25,12 @@
     flex-direction: column;
     justify-content: space-between; 
     height: 100%; 
-    align-items: center;
+    margin-left: 5px;
   }
   
   .item {
     display: flex;
+    cursor: pointer;
     align-items: center;
     position: relative;
     padding: 13px;
@@ -45,7 +51,7 @@
     width: 38px;
     height: 38px;
     color: rgb(155, 155, 239);
-    margin-left: 8px;
+    margin-left: -5px;
   }
   
   
@@ -54,9 +60,18 @@
     .icon{
         color: rgb(59, 59, 227);
     }
+    .text{
+    font-weight: bold;
+   color:rgb(59, 59, 227);
+    }
   }
   .active-icon {
     color: rgb(59, 59, 227);
+  }
+
+  .active-text
+  {
+    color:rgb(59, 59, 227) !important;
   }
 
   .space
@@ -72,4 +87,13 @@
     margin-bottom: 5px;
     text-align: center;
   }
+  
+  .text
+  {
+    font-size: 17px;
+    font-weight: bold;
+    margin-left: 10px;
+    color: rgb(155, 155, 239);
+  }
+
   

@@ -18,6 +18,7 @@
           color="primary"
           fontIcon="drive_eta"
         ></mat-icon>
+        <p [class.active-text]="selectedTab === 'cars'" class="text">Cars</p>
       </div>
       <div
         class="item"
@@ -33,6 +34,7 @@
           color="primary"
           fontIcon="pedal_bike"
         ></mat-icon>
+        <p [class.active-text]="selectedTab === 'bikes'" class="text">E-Bikes</p>
       </div>
       <div
         class="item"
@@ -48,6 +50,7 @@
           color="primary"
           fontIcon="electric_scooter"
         ></mat-icon>
+        <p [class.active-text]="selectedTab === 'scooters'"  class="text">E-Scooters</p>
       </div>
       <div
         class="item space"
@@ -63,6 +66,7 @@
           color="primary"
           fontIcon="add_business"
         ></mat-icon>
+        <p [class.active-text]="selectedTab === 'manufacturer-add'" class="text">Manufacturers</p>
       </div>
       <div
         class="item"
@@ -78,6 +82,7 @@
           color="primary"
           fontIcon="manage_accounts"
         ></mat-icon>
+        <p [class.active-text]="selectedTab === 'accounts'" class="text">Accounts</p>
       </div>
       <div class="spacer"></div>
       <div class="item logout" (click)="logout()">
@@ -88,6 +93,7 @@
           color="primary"
           fontIcon="logout"
         ></mat-icon>
+        <p class="text">Logout</p>
       </div>
     </div>
   </div>

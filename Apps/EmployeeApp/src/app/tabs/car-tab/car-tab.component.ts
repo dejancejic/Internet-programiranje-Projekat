@@ -1,5 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
+import { Car } from '../../model/car';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'car-tab',
@@ -18,6 +20,7 @@ export class CarTabComponent implements OnInit {
 
   @Output() remove=new EventEmitter<string>();
 
+  router=inject(Router);
 
  ngOnInit(): void {
   if(!this.base64Image.startsWith('data:')){
@@ -38,7 +41,8 @@ export class CarTabComponent implements OnInit {
 
   showDetails()
   {
-
+    
+    this.router.navigate(['details'], { queryParams: { id: this.id } });
 
   }
 

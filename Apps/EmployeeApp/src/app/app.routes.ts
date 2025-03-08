@@ -6,6 +6,8 @@ import { BikesComponent } from './bikes/bikes.component';
 import { ScootersComponent } from './scooters/scooters.component';
 import { AddManufacturerComponent } from './add-manufacturer/add-manufacturer.component';
 import { AccountsComponent } from './accounts/accounts.component';
+import { VehicleDetailsComponent } from './vehicle-details/vehicle-details.component';
+import { ErrorPageComponent } from './error-page/error-page.component';
 
 export const routes: Routes = [
     {path:"",component:LoginComponent},
@@ -16,5 +18,6 @@ export const routes: Routes = [
     { path: 'manufacturer-add', component: AddManufacturerComponent},
     { path: 'accounts', component: AccountsComponent},
     ]},
-    {path:"**",component:LoginComponent},
+    {path: 'details', component: VehicleDetailsComponent},
+    {path:"**",component:ErrorPageComponent},
 ];

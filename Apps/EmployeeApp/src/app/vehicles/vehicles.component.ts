@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, inject, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, HostListener, inject, Input, OnInit, ViewChild,ChangeDetectorRef } from '@angular/core';
 import { CarTabComponent } from "../tabs/car-tab/car-tab.component";
 import { MatButtonModule } from '@angular/material/button';
 import { HeaderComponent } from "../header/header.component";
@@ -7,21 +7,52 @@ import { Car } from '../model/car';
 import { CarsService } from '../services/cars/cars.service';
 import { HttpClientModule } from '@angular/common/http';
 import { VehicleService } from '../services/vehicles/vehicle.service';
+import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling';
 
 declare var bootstrap: any;
 
 @Component({
   selector: 'vehicles',
-  imports: [CarTabComponent, MatButtonModule, HeaderComponent,CommonModule,HttpClientModule],
+  imports: [CarTabComponent, MatButtonModule, HeaderComponent,CommonModule,HttpClientModule,CdkVirtualScrollViewport,ScrollingModule],
   templateUrl: './vehicles.component.html',
   styleUrl: './vehicles.component.css',
   providers:[CarsService,VehicleService]
 })
 export class VehiclesComponent implements OnInit,AfterViewInit{
 
+  visibleRows: any[] = [];
+  constructor(private cdr: ChangeDetectorRef){}
+  itemsPerRow = 1;
+  rowHeight = 150;
+
+  @HostListener('window:resize')
+  onResize() {
+    this.calculateItemsPerRow();
+    this.formatCarsIntoRows();
+  }
+
+  private calculateItemsPerRow() {
+    const containerWidth = window.innerWidth - 50; 
+    const itemWidth = 200; 
+    this.itemsPerRow = Math.floor(containerWidth / itemWidth) || 1;
+
+    this.rowHeight=350;
+  }
+
+  private formatCarsIntoRows() {
+    this.visibleRows = [];
+    for (let i = 0; i < this.cars.length; i += this.itemsPerRow) {
+      this.visibleRows.push(this.cars.slice(i, i + this.itemsPerRow));
+    }
+  }
+
+
   cars:Car[]=[];
+
+  allCars:Car[]=[];
+
   query:string='';
-  selectedVehicleIndex=-1;
+  selectedId=-1;
 
   loading:boolean=true;
 
@@ -37,6 +68,7 @@ export class VehiclesComponent implements OnInit,AfterViewInit{
   ngOnInit(): void {
     
    this.getCars(); 
+   
 
   }
 
@@ -44,8 +76,11 @@ export class VehiclesComponent implements OnInit,AfterViewInit{
   {
     this.carsService.getCars().subscribe((data:any)=>{
       this.cars=data;
+      this.allCars=data;
 
-  
+      this.calculateItemsPerRow();
+      this.formatCarsIntoRows();
+      this.cdr.detectChanges();
    
      this.loading=false;
   },(error)=>{
@@ -62,19 +97,33 @@ export class VehiclesComponent implements OnInit,AfterViewInit{
     const modalElementSuccess = this.successModal.nativeElement;
     this.modalInstanceSuccess = new bootstrap.Modal(modalElementSuccess);
 
+    
+
   }
 
-  search(query:string)
-  {
-    this.query=query;
-  }
+  search(query: any) {
+    this.query = query;
+  
+    if (!query.trim()) {
+      this.cars = [...new Set(this.allCars)];
+    } else {
+      this.cars = this.allCars.filter(c =>
+        c.manufacturer.toLowerCase().includes(query.toLowerCase()) ||
+        c.carId.toLowerCase().includes(query.toLowerCase()) ||
+        c.model.toLowerCase().includes(query.toLowerCase())
+      );
+    }
 
+    this.calculateItemsPerRow();
+    this.formatCarsIntoRows();
+    this.cdr.detectChanges();
+  }
   
 
-  showDeleteVehicleModal(index:number)
+  showDeleteVehicleModal(id:number)
   {
     if (this.modalInstance) {
-      this.selectedVehicleIndex=index;
+      this.selectedId=id;
       this.modalInstance.show();
     }
   }
@@ -82,22 +131,33 @@ export class VehiclesComponent implements OnInit,AfterViewInit{
 
   removeVehicle()
   {
-    if(this.selectedVehicleIndex!==-1)
+    if(this.selectedId!==-1)
     {
-      let car=this.cars[this.selectedVehicleIndex];
+      let car=null;
+      let index=0;
+      for(let c of this.cars){
+        if(c.id===this.selectedId){
+      car=c;
+      break;
+      }
+      index++;
+    }
 
-      this.vehicleService.deleteVehicle(car.id).subscribe((data)=>{
+      this.vehicleService.deleteVehicle(car!.id).subscribe((data)=>{
         this.loading=false;
         this.modalInstance.hide();
         this.modalInstanceSuccess.show();
-        this.cars.splice(this.selectedVehicleIndex,1);
-        this.selectedVehicleIndex=-1;
+        this.cars.splice(index,1);
+        this.calculateItemsPerRow();
+    this.formatCarsIntoRows();
+    this.cdr.detectChanges();
+        this.selectedId=-1;
       },
     (error)=>{
       this.loading=false;
       alert(error);
-      this.selectedVehicleIndex=-1;
-    })
+      this.selectedId=-1;
+    });
 
     
     }

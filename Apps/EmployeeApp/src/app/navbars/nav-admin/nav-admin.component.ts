@@ -15,6 +15,18 @@ export class NavAdminComponent implements OnInit {
 
 ngOnInit(): void {
   
+  if(window.location.href.includes('manufacturer-add')){
+    this.selectedTab='manufacturer-add';
+  }
+  else if(window.location.href.includes('bikes')){
+    this.selectedTab='bikes';
+  }
+  else if(window.location.href.includes('scooters')){
+    this.selectedTab='scooters';
+  }
+  else if(window.location.href.includes('account')){
+    this.selectedTab='accounts';
+  }
 }
 
 
