@@ -5,7 +5,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { Manufacturer } from '../model/manufacturer';
 import { ManufacturerService } from '../services/manufacturers/manufacturer.service';
 import { CarsService } from '../services/cars/cars.service';
-import { Vehicle } from '../model/vehicle';
+import { CSVserviceService } from '../services/utils/csvservice.service';
+
 
 declare var bootstrap: any;
 
@@ -14,7 +15,7 @@ declare var bootstrap: any;
   imports: [CommonModule,MatButtonModule,ReactiveFormsModule,CommonModule],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
-  providers:[ManufacturerService,CarsService]
+  providers:[ManufacturerService,CarsService,CSVserviceService]
 })
 export class HeaderComponent implements AfterViewInit,OnInit{
   @Input() type: string = 'cars';
@@ -34,6 +35,7 @@ export class HeaderComponent implements AfterViewInit,OnInit{
 
   selectedImageContent:string='';
   selectedCSVContent:string='';
+  selectedCSVFile:any=null;
 
 
 
@@ -41,6 +43,7 @@ export class HeaderComponent implements AfterViewInit,OnInit{
   networkError: boolean = false;
   imageError=false;
   sameIdError=false;
+  csvError=false;
   modalInstanceCSV: any;
   modalInstanceAdd: any;
   modalInstanceSuccess:any;
@@ -50,6 +53,7 @@ export class HeaderComponent implements AfterViewInit,OnInit{
   manufacturers:Manufacturer[]=[];
   manufacturerService=inject(ManufacturerService);
   carsService=inject(CarsService);
+  csvService=inject(CSVserviceService);
 
   private getManufacturers()
   {
@@ -119,6 +123,7 @@ export class HeaderComponent implements AfterViewInit,OnInit{
     this.networkError = false;
     this.imageError=false;
     this.sameIdError=false;
+    this.csvError=false;
   }
 
   addVehicleToSystem()
@@ -162,22 +167,32 @@ export class HeaderComponent implements AfterViewInit,OnInit{
     this.selectedForm.reset();
   }
 
-  addVehicle() {
+  addVehicleCSV() {
     if (this.selectedFileName.length == 0) {
       this.fileError = true;
     } else {
       
-      if (this.modalInstanceAdd) {
-        this.modalInstanceAdd.hide(); 
-      }
+      //TODO ADDING
 
+      if(this.csvService.verifyCSV(this.selectedCSVFile)!==null){
+
+      if (this.modalInstanceCSV) {
+        this.modalInstanceCSV.hide(); 
+      }
       this.removeCSV();
       this.fileError = false;
+      this.networkError=false;
+      this.csvError=false;
+    }
+    else{
+      this.csvError=true;
+    }
     }
   }
 
   removeCSV() {
     this.selectedFileName = '';
+    this.selectedCSVFile=null;
     const fileInput = document.getElementById('csvFile') as HTMLInputElement;
     if (fileInput) {
       fileInput.value = ''; 
@@ -216,6 +231,8 @@ export class HeaderComponent implements AfterViewInit,OnInit{
     reader.readAsDataURL(file);
     }
   }
+
+
 
   search(event:any)
   {

@@ -100,10 +100,18 @@
             Please select a file first
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" (click)="dismiss()"></button>
           </div>
+          <div *ngIf="networkError" class="alert alert-danger alert-dismissible fade show fileError" role="alert">
+            Failed to add the car. Please try again! 
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" (click)="dismiss()"></button>
+          </div>
+          <div *ngIf="csvError" class="alert alert-danger alert-dismissible fade show fileError" role="alert">
+            Incorrect CSV format. Add a valid CSV file! 
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" (click)="dismiss()"></button>
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="removeCSV()">Close</button>
-          <button type="button" class="btn btn-primary" (click)="addVehicle()">Save changes</button>
+          <button type="button" class="btn btn-primary" (click)="addVehicleCSV()">Save changes</button>
         </div>
       </div>
     </div>

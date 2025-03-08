@@ -7,18 +7,18 @@
       <div
         class="item"
         (click)="selectTab('cars')"
-        [class.selected]="selectedTab === 'cars'"
+        [class.selected]="selectedTab === 'cars'  && showInfoTab===false"
       >
-        <div [class.border-select]="selectedTab === 'cars'"></div>
+        <div [class.border-select]="selectedTab === 'cars' && showInfoTab===false"></div>
         <mat-icon
           class="icon"
-          [class.active-icon]="selectedTab === 'cars'"
+          [class.active-icon]="selectedTab === 'cars' && showInfoTab===false"
           aria-hidden="false"
           aria-label="Vehicle icon"
           color="primary"
           fontIcon="drive_eta"
         ></mat-icon>
-        <p [class.active-text]="selectedTab === 'cars'" class="text">Cars</p>
+        <p [class.active-text]="selectedTab === 'cars' && showInfoTab===false" class="text">Cars</p>
       </div>
       <div
         class="item"
@@ -83,6 +83,22 @@
           fontIcon="manage_accounts"
         ></mat-icon>
         <p [class.active-text]="selectedTab === 'accounts'" class="text">Accounts</p>
+      </div>
+      <div *ngIf="showInfoTab==true"
+        class="item"
+        (click)="selectTab('details')"
+        [class.selected]="showInfoTab==true"
+      >
+        <div [class.border-select]="showInfoTab==true"></div>
+        <mat-icon
+          class="icon"
+          [class.active-icon]="showInfoTab==true"
+          aria-hidden="false"
+          aria-label="Info icon"
+          color="primary"
+          fontIcon="info"
+        ></mat-icon>
+        <p [class.active-text]="showInfoTab==true" class="text">Details</p>
       </div>
       <div class="spacer"></div>
       <div class="item logout" (click)="logout()">

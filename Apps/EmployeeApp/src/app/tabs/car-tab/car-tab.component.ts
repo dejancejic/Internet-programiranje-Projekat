@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import { Car } from '../../model/car';
 import { Router } from '@angular/router';
+import { NavAdminComponent } from '../../navbars/nav-admin/nav-admin.component';
 
 @Component({
   selector: 'car-tab',
@@ -41,8 +42,8 @@ export class CarTabComponent implements OnInit {
 
   showDetails()
   {
-    
-    this.router.navigate(['details'], { queryParams: { id: this.id } });
+    NavAdminComponent.showInfoTab=true;
+    this.router.navigate(['transport','details'], { queryParams: { id: this.id } });
 
   }
 

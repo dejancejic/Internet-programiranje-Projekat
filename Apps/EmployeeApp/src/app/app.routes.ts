@@ -17,7 +17,7 @@ export const routes: Routes = [
     { path: 'scooters', component: ScootersComponent},
     { path: 'manufacturer-add', component: AddManufacturerComponent},
     { path: 'accounts', component: AccountsComponent},
-    ]},
     {path: 'details', component: VehicleDetailsComponent},
+    ]},
     {path:"**",component:ErrorPageComponent},
 ];
