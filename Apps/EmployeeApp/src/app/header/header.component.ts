@@ -32,8 +32,10 @@ export class HeaderComponent implements AfterViewInit,OnInit{
 
   selectedFileName: string = '';
   selectedImageName: string = '';
+  selectedImageCSVName: string = '';
 
   selectedImageContent:string='';
+  selectedImageCSVContent:string='';
   selectedCSVContent:string='';
   selectedCSVFile:any=null;
 
@@ -136,7 +138,7 @@ export class HeaderComponent implements AfterViewInit,OnInit{
     }else{
     car.image=this.selectedImageContent;
     }
-    console.log(car);
+    
     this.carsService.addCar(car).subscribe((data:any)=>{
 
       this.addedVehicle.emit(data);
@@ -167,22 +169,48 @@ export class HeaderComponent implements AfterViewInit,OnInit{
     this.selectedForm.reset();
   }
 
-  addVehicleCSV() {
+  async addVehicleCSV() {
     if (this.selectedFileName.length == 0) {
       this.fileError = true;
     } else {
+      const fileInput = document.getElementById('csvFile') as HTMLInputElement;
+      let createdCar= await this.csvService.verifyCSV(this.selectedCSVFile,fileInput);
+
       
-      //TODO ADDING
 
-      if(this.csvService.verifyCSV(this.selectedCSVFile)!==null){
+      if(createdCar!==null){
+        if(this.selectedImageCSVContent===''){
+          this.imageError=true;
+          return;
+        }else{
+        createdCar.image=this.selectedImageCSVContent;
+        }
+        
 
-      if (this.modalInstanceCSV) {
-        this.modalInstanceCSV.hide(); 
-      }
-      this.removeCSV();
-      this.fileError = false;
-      this.networkError=false;
-      this.csvError=false;
+        this.carsService.addCar(createdCar).subscribe((data:any)=>{
+
+          this.addedVehicle.emit(data);
+
+          if (this.modalInstanceCSV) {
+            this.modalInstanceCSV.hide(); 
+          }
+          this.removeCSV();
+          this.fileError = false;
+          this.networkError=false;
+          this.csvError=false;
+    
+        this.modalInstanceSuccess.show();
+    
+    
+        },(error:any)=>{
+          if(error.toString().includes('same car'))
+          {
+            this.sameIdError=true;
+          }
+          else{
+          this.networkError=true;
+          }
+        });
     }
     else{
       this.csvError=true;
@@ -199,6 +227,8 @@ export class HeaderComponent implements AfterViewInit,OnInit{
     }
   }
 
+
+
   uploadCSV(): void {
     const fileInput = document.getElementById('csvFile') as HTMLInputElement;
     if (fileInput) {
@@ -208,6 +238,8 @@ export class HeaderComponent implements AfterViewInit,OnInit{
 
   onFileSelected(event: any): void {
     const file = event.target.files[0];
+
+    this.selectedCSVFile=file;
     if (file) {
       this.selectedFileName = file.name; 
 
@@ -229,6 +261,29 @@ export class HeaderComponent implements AfterViewInit,OnInit{
       this.selectedImageContent = e.target.result; 
     };
     reader.readAsDataURL(file);
+    }
+  }
+
+
+  onCSVImageSelected(event:any)
+  {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedImageCSVName = file.name; 
+
+      const reader = new FileReader();
+    reader.onload = (e: any) => {
+      this.selectedImageCSVContent = e.target.result; 
+    };
+    reader.readAsDataURL(file);
+    }
+  }
+
+  uploadCSVImage()
+  {
+    const fileInput = document.getElementById('imageFileCSV') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.click(); 
     }
   }
 

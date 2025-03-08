@@ -1,6 +1,6 @@
 .virtual-scroll-container {
     margin-top: 20px;
-    height: 550px; /* Adjust as needed */
+    height: 85vh; 
     width: 100%;
     overflow-y: auto;
   }

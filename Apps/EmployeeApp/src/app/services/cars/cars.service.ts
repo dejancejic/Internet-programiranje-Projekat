@@ -45,6 +45,7 @@ export class CarsService extends BaseService {
                   options.withCredentials=true;
           
                   let body=JSON.stringify(car);
+                 
           
                   return this.http.post(this.constantsService.SERVER_URL+'vehicle/cars/add',body,options).
                   pipe(catchError(this.handleError));

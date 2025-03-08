@@ -99,8 +99,8 @@
 
 .nofile
 {
-    justify-self: center;
-    align-self: center;
+    justify-self: flex-start;
+    align-self: flex-start;
 }
 
 .fileError
@@ -123,6 +123,13 @@
 .image
 {
     margin-top: 10px;
+}
+
+.rw
+{
+    display: flex;
+    flex-direction: row;
+    column-gap:20px ;
 }
 
 

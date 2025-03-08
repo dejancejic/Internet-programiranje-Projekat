@@ -41,9 +41,11 @@ public class VehicleController {
 	
 	@PostMapping("/cars/add")
     public ResponseEntity<Car> addCar(@RequestBody CarModel car) {
+		System.out.println(car.getCarId());
 		int indexOf=car.getImage().indexOf("base64,");
-		
-		String image=car.getImage().substring(indexOf+7);
+		String image=car.getImage();
+		if(indexOf!=-1)
+		image=car.getImage().substring(indexOf+7);
 		
 		Car c=new Car();
 		

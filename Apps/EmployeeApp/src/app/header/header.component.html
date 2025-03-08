@@ -94,8 +94,21 @@
           <p class="nofile" *ngIf="selectedFileName.length == 0">No file selected</p>
           <p *ngIf="selectedFileName.length > 0">Selected file: &nbsp; &nbsp;<img class="excel" src="./assets/excel.png"> {{selectedFileName}}</p>
           <br/>
-          <button mat-raised-button color="primary" class="button" (click)="uploadCSV()">Upload CSV</button>
+          <p class="nofile" *ngIf="selectedImageCSVName.length == 0">No image selected</p>
+          <p *ngIf="selectedImageCSVName.length > 0">Selected file: &nbsp; &nbsp;<img class="excel" src="./assets/image.png"> {{selectedImageCSVName}}</p>
+          <div class="rw">
+            <button mat-raised-button color="primary" class="button" (click)="uploadCSV()">Upload CSV</button>
+          <button mat-raised-button color="primary" class="button" (click)="uploadCSVImage()">Upload Image</button>
+          </div>
+          
           <input type="file" id="csvFile" (change)="onFileSelected($event)" accept=".csv" style="display: none" />
+
+          <input type="file" id="imageFileCSV" (change)="onCSVImageSelected($event)" accept=".png, .jpg, .jpeg" style="display: none" />
+
+          <div *ngIf="imageError" class="alert alert-danger alert-dismissible fade show fileError" role="alert">
+            Please select an image
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" (click)="dismiss()"></button>
+          </div>
           <div *ngIf="fileError" class="alert alert-danger alert-dismissible fade show fileError" role="alert">
             Please select a file first
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" (click)="dismiss()"></button>
@@ -106,6 +119,10 @@
           </div>
           <div *ngIf="csvError" class="alert alert-danger alert-dismissible fade show fileError" role="alert">
             Incorrect CSV format. Add a valid CSV file! 
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" (click)="dismiss()"></button>
+          </div>
+          <div *ngIf="sameIdError" class="alert alert-danger alert-dismissible fade show fileError" role="alert">
+            Car with same car id already exists!
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" (click)="dismiss()"></button>
           </div>
         </div>
