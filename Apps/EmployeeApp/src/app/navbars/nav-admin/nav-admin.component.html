@@ -52,38 +52,6 @@
         ></mat-icon>
         <p [class.active-text]="selectedTab === 'scooters'"  class="text">E-Scooters</p>
       </div>
-      <div
-        class="item space"
-        (click)="selectTab('manufacturer-add')"
-        [class.selected]="selectedTab === 'manufacturer-add'"
-      >
-        <div [class.border-select]="selectedTab === 'manufacturer-add'"></div>
-        <mat-icon
-          class="icon"
-          [class.active-icon]="selectedTab === 'manufacturer-add'"
-          aria-hidden="false"
-          aria-label="Vehicle icon"
-          color="primary"
-          fontIcon="add_business"
-        ></mat-icon>
-        <p [class.active-text]="selectedTab === 'manufacturer-add'" class="text">Manufacturers</p>
-      </div>
-      <div
-        class="item"
-        (click)="selectTab('accounts')"
-        [class.selected]="selectedTab === 'accounts'"
-      >
-        <div [class.border-select]="selectedTab === 'accounts'"></div>
-        <mat-icon
-          class="icon"
-          [class.active-icon]="selectedTab === 'accounts'"
-          aria-hidden="false"
-          aria-label="Vehicle icon"
-          color="primary"
-          fontIcon="manage_accounts"
-        ></mat-icon>
-        <p [class.active-text]="selectedTab === 'accounts'" class="text">Accounts</p>
-      </div>
       <div *ngIf="showInfoTab==true"
         class="item"
         (click)="selectTab('details')"
@@ -100,6 +68,40 @@
         ></mat-icon>
         <p [class.active-text]="showInfoTab==true" class="text">Details</p>
       </div>
+      <div
+        class="item space"
+        (click)="selectTab('manufacturer-add')"
+        [class.selected]="selectedTab === 'manufacturer-add'"
+      >
+        <div [class.border-select]="selectedTab === 'manufacturer-add'"></div>
+        <mat-icon
+          class="icon"
+          [class.active-icon]="selectedTab === 'manufacturer-add'"
+          aria-hidden="false"
+          aria-label="Vehicle icon"
+          color="primary"
+          fontIcon="add_business"
+        ></mat-icon>
+        <p [class.active-text]="selectedTab === 'manufacturer-add'" class="text">Manufacturers</p>
+      </div>
+      
+      <div
+        class="item"
+        (click)="selectTab('accounts')"
+        [class.selected]="selectedTab === 'accounts'"
+      >
+        <div [class.border-select]="selectedTab === 'accounts'"></div>
+        <mat-icon
+          class="icon"
+          [class.active-icon]="selectedTab === 'accounts'"
+          aria-hidden="false"
+          aria-label="Vehicle icon"
+          color="primary"
+          fontIcon="manage_accounts"
+        ></mat-icon>
+        <p [class.active-text]="selectedTab === 'accounts'" class="text">Accounts</p>
+      </div>
+      
       <div class="spacer"></div>
       <div class="item logout" (click)="logout()">
         <mat-icon
