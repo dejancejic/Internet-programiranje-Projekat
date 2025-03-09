@@ -64,9 +64,11 @@ formBuilder=inject(FormBuilder);
 
   select(event: any) {
     const target = event.target as HTMLSelectElement;
-  const value = target.value; 
+  let value = target.value; 
+  if(value==='E-Car')
+    value='Car';
+  
   this.type=value;
-
   this.typesChanged.emit(this.type);
 
   }

@@ -25,13 +25,13 @@
 }
 
 .button{
-    border-radius: 20px;
+    border-radius: 10px;
     display: flex;
     color:#fff !important;
     background-color: rgba(59, 59, 227,.9) !important;
     font-size: 16px;
     justify-self: center;
-    height: 35px;
+    height: 40px;
     text-transform: none
 }
 
@@ -133,4 +133,69 @@
 }
 
 
+
+.top {
+    display: flex;
+    margin-left: 20px;
+    margin-top: 20px;
+    justify-content: space-between;
+    margin-right: 20px;
+}
+
+.switcher {
+    display: flex;
+    flex-direction: row;
+    column-gap: 15px;
+}
+
+.active-tab {
+    color: rgb(59, 59, 227);
+    border-bottom: 2px solid rgb(59, 59, 227);
+}
+
+.search-bar
+{
+    margin-left: 10px;
+
+    width: 40%;
+    box-sizing: border-box;
+    	border: 2px solid #ccc;
+    	border-radius: 10px;
+    	font-size: 15px;
+    	background-color: white;
+        background-size: 40px 30px;
+    	background-image: url("https://static.vecteezy.com/system/resources/thumbnails/009/652/218/small_2x/magnifying-glass-icon-isolated-on-white-background-search-illustration-vector.jpg");
+    	background-position: 10px 5px; 
+    	background-repeat: no-repeat;
+    	padding: 10px 10px 10px 55px;
+        height: 40px;
+}
+
+.search{
+    box-sizing: border-box;
+    background-color: #ffffff;
+    border-radius: 8px;
+    margin: 10px;
+    border: 1px solid #ccc;;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    
+}
+.p{
+    font-size: 18px;
+    font-weight: bold;
+    margin-left: 12px;
+    margin-bottom: 0;
+}
+
+h3 {
+    font-weight: bold;
+    padding-bottom: 5px;
+}
+
+button:hover{
+    background-color:rgba(59, 59, 227,.8) !important;
+
+}
 

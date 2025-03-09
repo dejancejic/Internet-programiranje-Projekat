@@ -1,17 +1,24 @@
-<div class="header">
-    <p>{{count}} {{type}} to show</p>
-    <div class="profile">
-        <img src="https://w7.pngwing.com/pngs/384/706/png-transparent-computer-icons-user-login-gender-miscellaneous-desktop-wallpaper-account.png" alt="">
-    </div>
-    <div class="info">
-        <p>{{accountName}}</p>
-    </div>
+
+<div class="top col">
+  <div class="col switcher">
+    <h3 id="clients-tab" class="active-tab">E - {{ type.charAt(0).toUpperCase() + type.slice(1) }}</h3>
+  </div>
 </div>
-<div class="buttons">
-  <input class="search" type="text" (input)="search($event)" placeholder="Search..." />
-    <button  type="button" data-bs-toggle="modal"  mat-raised-button color="primary" class="button" (click)="openCSVDialog()">Upload {{type.substring(0,type.length-1)}} - CSV</button>
-    <button type="button" data-bs-toggle="modal"  mat-raised-button color="primary" class="button" (click)="openAddDialog()">Add new {{type.substring(0,type.length-1)}}</button>
+
+<div class="search col">
+  <input type="text" class="search-bar" (input)="search($event)"
+   placeholder="Search by id, manufacturer or model..." />
+
+   <div class="buttons">
+      <button  type="button" data-bs-toggle="modal"  mat-raised-button color="primary" class="button" (click)="openCSVDialog()">Upload {{type.substring(0,type.length-1)}} - CSV &nbsp;&nbsp;<span class="badge text-bg-success bdge">.csv</span></button>
+      <button type="button" data-bs-toggle="modal"  mat-raised-button color="primary" class="button" (click)="openAddDialog()">Add new {{type.substring(0,type.length-1)}}&nbsp; <span class="badge text-bg-warning bdge">+</span></button>
+
+  </div>
+  
 </div>
+<p class="p">{{count}} {{type}} to show</p>
+
+
 
 
   <div #addVehicleModal class="modal fade" id="addVehicleModal" tabindex="-1" aria-labelledby="addVehicleModalLabel" aria-hidden="true">

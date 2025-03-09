@@ -13,10 +13,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name="account")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Account implements UserDetails {
 	
 	@Id
@@ -29,6 +32,12 @@ public class Account implements UserDetails {
 	
 	@Column(name="password")
 	private String password;
+	
+	@Column(name="name")
+	private String name;
+	
+	@Column(name="surname")
+	private String surname;
 
 	
 	public Integer getId() {
@@ -55,6 +64,24 @@ public class Account implements UserDetails {
 		this.password = password;
 	}
 
+	
+	
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getSurname() {
+		return surname;
+	}
+
+	public void setSurname(String surname) {
+		this.surname = surname;
+	}
 
 	@Override
 	public int hashCode() {

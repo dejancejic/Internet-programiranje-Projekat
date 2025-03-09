@@ -1,1 +1,110 @@
-<p>accounts works!</p>
+<div class="wrapper">
+
+<div class="top col">
+    <div class="col switcher">
+        <h3 id="clients-tab" class="tab" (click)="switchTab('clients')">Clients</h3>
+        <h3 id="employees-tab" class="tab" (click)="switchTab('employees')">Admins</h3>
+    </div>
+
+    <button type="button" *ngIf="adminsSelected" data-bs-toggle="modal" data-bs-target="#addEmployeeModal" mat-raised-button class="button btn btn-primary">
+        Add employee <span class="badge text-bg-warning bdge">+</span>
+      </button>
+</div>
+
+<div class="search col">
+    <input type="text" class="search-bar" [(ngModel)]="query"
+     (keydown)="search()"
+     placeholder="Search username, email..." />
+     <div class="form-floating slct" *ngIf="adminsSelected">
+    <select class="form-select w-300" id="manuInput" (change)="onSelectionChange($event)">
+        <option name="Admins">Admins</option>
+        <option name="Operators">Operators</option>
+        <option name="Managers">Managers</option>
+    </select>
+    <label for="manuInput">Select type</label>
+    </div>
+    
+</div>
+
+
+<div *ngIf="!adminsSelected" class="table col">
+    <div class="table col">
+        <table id="clients-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Username</th>
+              <th>Phone</th>
+              <th>Email</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+            
+          </tbody>
+        </table>
+    <div id="pages" class="pagination">
+      
+    </div>
+  </div>
+
+
+<div *ngIf="loading" class="d-flex justify-content-center spinner">
+    <div class="spinner-border sp" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+</div>
+
+
+<div *ngIf="adminsSelected" class="table col">
+    <div class="table col">
+        <table id="clients-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Username</th>
+              <th>Role</th>
+              <th>Actions</th>
+         
+            </tr>
+          </thead>
+          <tbody>
+            
+            
+          </tbody>
+        </table>
+    <div id="pages" class="pagination">
+      
+    </div>
+  </div>
+
+
+<div *ngIf="loading" class="d-flex justify-content-center spinner">
+    <div class="spinner-border sp" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+</div>
+
+
+
+
+<div #addEmployeeModal class="modal fade" id="addEmployeeModal" tabindex="-1" aria-labelledby="addEmployeeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addEmployeeModalLabel">Add new employee</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="closeModal()"></button>
+        </div>
+        <div class="modal-body">
+          
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="closeModal()">Close</button>
+          <button type="button"  class="btn btn-primary" (click)="addEmployee()">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>

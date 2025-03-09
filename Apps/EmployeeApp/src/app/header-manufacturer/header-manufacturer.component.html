@@ -1,25 +1,31 @@
-<div class="header">
-    <p>{{count}} manufacturers to show</p>
-    <div class="profile">
-        <img src="https://w7.pngwing.com/pngs/384/706/png-transparent-computer-icons-user-login-gender-miscellaneous-desktop-wallpaper-account.png" alt="">
-    </div>
-    <div class="info">
-        <p>{{accountName}}</p>
-    </div>
-</div>
-<div class="buttons">
-  <input class="search" type="text" (input)="search($event)" placeholder="Search..." />
-    <button type="button" data-bs-toggle="modal" data-bs-target="#addManufacturerModal" mat-raised-button color="primary" class="button">Add new manufacturer</button>
+<div class="top col">
+  <div class="col switcher">
+    <h3 id="clients-tab" class="active-tab">{{type!=='Car'?type:'E-Car'}} manufacturers</h3>
+  </div>
 </div>
 
-<div class="select">
-  <p>Select vehicle type:</p>
-  <select class="form-select" (change)="select($event)">
-    <option>Car</option>
-    <option>E-Bike</option>
-    <option>E-Scooter</option>
-  </select>
+<div class="search col">
+  <input type="text" class="search-bar" (input)="search($event)"
+   placeholder="Search by name..." />
+   <div class="form-floating slct">
+    <select class="form-select w-300" id="manuInput" (change)="select($event)">
+      <option>E-Car</option>
+      <option>E-Bike</option>
+      <option>E-Scooter</option>
+    </select>
+    <label for="manuInput">Select type</label>
+  </div>
+  
+   <div class="buttons">    
+  
+  <button type="button" data-bs-toggle="modal" data-bs-target="#addManufacturerModal" mat-raised-button class="btn btn-primary">
+      Add manufacturer <span class="badge text-bg-warning bdge">+</span>
+    </button>
+
 </div>
+</div>
+
+<p class="p">{{count}} manufacturers to show</p>
 
 
   <div #addManufacturerModal class="modal fade" id="addManufacturerModal" tabindex="-1" aria-labelledby="addManufacturerModalLabel" aria-hidden="true">

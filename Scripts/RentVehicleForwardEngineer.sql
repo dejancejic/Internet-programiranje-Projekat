@@ -108,7 +108,7 @@ CREATE TABLE IF NOT EXISTS `rentvehicle`.`bike` (
   `id` INT NOT NULL,
   `bike_id` VARCHAR(255) NOT NULL,
   `price` DECIMAL(6,2) NOT NULL,
-  `range` VARCHAR(255) NOT NULL,
+  `bike_range` VARCHAR(255) NOT NULL,
   `model` VARCHAR(255) NOT NULL,
   `manufacturer_id` INT NOT NULL,
   PRIMARY KEY (`id`),
@@ -264,6 +264,8 @@ CREATE TABLE IF NOT EXISTS `rentvehicle`.`account` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `username` VARCHAR(255) NOT NULL,
   `password` VARCHAR(255) NOT NULL,
+  `name` VARCHAR(255) NOT NULL,
+  `surname` VARCHAR(255) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `username_UNIQUE` (`username` ASC) VISIBLE)
 ENGINE = InnoDB;
@@ -274,8 +276,6 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `rentvehicle`.`client` (
   `id` INT NOT NULL,
-  `name` VARCHAR(255) NOT NULL,
-  `surname` VARCHAR(255) NOT NULL,
   `email` VARCHAR(255) NOT NULL,
   `phone` VARCHAR(255) NOT NULL,
   `image` MEDIUMBLOB NULL,
@@ -302,8 +302,6 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `rentvehicle`.`employee` (
   `id` INT NOT NULL,
-  `name` VARCHAR(255) NOT NULL,
-  `surname` VARCHAR(255) NOT NULL,
   `role` VARCHAR(255) NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_employee_table11`
