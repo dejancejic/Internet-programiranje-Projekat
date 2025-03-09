@@ -1,34 +1,39 @@
 package server.vehicle.scooter;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.PrimaryKeyJoinColumn;
-import jakarta.persistence.Table;
-import server.vehicle.Vehicle;
+public class ScooterModel {
 
-@Entity
-@Table(name="scooter")
-@PrimaryKeyJoinColumn(name = "id")
-public class Scooter extends Vehicle {
 
+	private Integer id;
 	
-
-	@Column(name="scooter_id")
+	private String status;
 	private String scooterId;
 	
-	@Column(name="price")
 	private Double price;
 	
-	@Column(name="speed")
 	private Integer speed;
 	
-	@Column(name="model")
 	private String model;
 	
-	@Column(name="manufacturer_id")
-	private Integer manufacturerId;
-
 	
+	private Integer manufacturerId;
+	
+	private String image;
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
 
 	public String getScooterId() {
 		return scooterId;
@@ -69,8 +74,14 @@ public class Scooter extends Vehicle {
 	public void setManufacturerId(Integer manufacturerId) {
 		this.manufacturerId = manufacturerId;
 	}
-	
-	
+
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
+	}
 	
 	
 

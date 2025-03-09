@@ -1,33 +1,40 @@
 package server.vehicle.bike;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.PrimaryKeyJoinColumn;
-import jakarta.persistence.Table;
-import server.vehicle.Vehicle;
 
-@Entity
-@Table(name="bike")
-@PrimaryKeyJoinColumn(name = "id")
-public class Bike extends Vehicle {
+public class BikeModel {
+
+
+	private Integer id;
 	
-	@Column(name="bike_id")
+	private String status;
 	private String bikeId;
 	
-	@Column(name="price")
 	private Double price;
 	
-	@Column(name="bike_range")
 	private String range;
 	
-	@Column(name="model")
 	private String model;
 	
-	@Column(name="manufacturer_id")
-	private Integer manufacturerId;
-
 	
+	private Integer manufacturerId;
+	
+	private String image;
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
 
 	public String getBikeId() {
 		return bikeId;
@@ -68,9 +75,16 @@ public class Bike extends Vehicle {
 	public void setManufacturerId(Integer manufacturerId) {
 		this.manufacturerId = manufacturerId;
 	}
+
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
+	}
 	
 	
-	
-	
+
 
 }

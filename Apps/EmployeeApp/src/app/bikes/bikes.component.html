@@ -1,1 +1,67 @@
-<p>bikes works!</p>
+<div class="wrapper">
+<vehicles-header (addedVehicle)="addNewVehicle($event)" (queryChanged)="search($event)" [type]="'bikes'"  [count]="bikes.length"></vehicles-header>
+<p *ngIf="bikes.length==0" class="noVehicles">No bikes to show!</p>
+
+<cdk-virtual-scroll-viewport 
+  itemSize="120" 
+  class="virtual-scroll-container">
+  
+  <div class="tabs" *cdkVirtualFor="let row of visibleRows; let i = index">
+    <ng-container *ngFor="let bike of row">
+      <bike-tab
+        [bike]="bike"
+        (remove)="showDeleteVehicleModal(bike.id)" 
+      ></bike-tab>
+        
+    </ng-container>
+  </div>
+
+</cdk-virtual-scroll-viewport>
+
+
+
+    <div #removeVehicleModal class="modal fade" id="removeVehicleModal" tabindex="-1" aria-labelledby="removeVehicleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="removeVehicleModalLabel">Remove Vehicle</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p>Are you sure you want to delete this vehicle?</p>
+              <div *ngIf="error" class="alert alert-danger alert-dismissible fade show fileError" role="alert">
+                Failed to add the bike. Please try again! 
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" (click)="dismiss()"></button>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+              <button type="button" class="btn btn-primary" (click)="removeVehicle()">Yes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div #successModal class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="successModalLabel">Removed vehicle</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p>Successfully removed vehicle!</p>
+            </div>
+            
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+
+</div>

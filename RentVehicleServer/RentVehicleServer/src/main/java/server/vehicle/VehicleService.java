@@ -1,6 +1,7 @@
 package server.vehicle;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -12,10 +13,13 @@ import server.exceptions.UniqueIdException;
 import server.exceptions.VehicleNotFoundException;
 import server.manufacturer.ManufacturerRepository;
 import server.vehicle.bike.Bike;
+import server.vehicle.bike.BikeModel;
 import server.vehicle.bike.BikeRepository;
 import server.vehicle.car.Car;
+import server.vehicle.car.CarModel;
 import server.vehicle.car.CarRepository;
 import server.vehicle.scooter.Scooter;
+import server.vehicle.scooter.ScooterModel;
 import server.vehicle.scooter.ScooterRepository;
 
 @Service
@@ -53,6 +57,38 @@ public class VehicleService {
 		}
 		return toReturn;
 	}
+	
+	public List<Bike> getBikes()
+	{
+		List<Bike> bikes=rpBike.findAll();
+		List<Bike> toReturn=new ArrayList<Bike>();
+		
+		for(Bike b:bikes)
+		{
+			if(b.getDeleted()==false) {
+			b.setManufacturer(rpManufacturer.findById(b.getManufacturerId()).get().getName());
+			toReturn.add(b);
+			}
+		}
+		return toReturn;
+	}
+	
+	public List<Scooter> getScooters()
+	{
+		List<Scooter> scooters=rpScooter.findAll();
+		List<Scooter> toReturn=new ArrayList<Scooter>();
+		
+		for(Scooter s:scooters)
+		{
+			if(s.getDeleted()==false) {
+			s.setManufacturer(rpManufacturer.findById(s.getManufacturerId()).get().getName());
+			toReturn.add(s);
+			}
+		}
+		return toReturn;
+	}
+	
+	
 	
 	public Vehicle deleteVehicle(Integer id)
 	{
@@ -92,11 +128,29 @@ public class VehicleService {
 		return v;
 	}
 	
-	public Car addCar(Car car)
+	public Car addCar(CarModel car)
 	{
-		Vehicle veh=car;
+		int indexOf=car.getImage().indexOf("base64,");
+		String image=car.getImage();
+		if(indexOf!=-1)
+		image=car.getImage().substring(indexOf+7);
 		
-		if(rpCar.findBycarId(car.getCarId()).isPresent())
+		Car c=new Car();
+		
+		c.setImage(Base64.getDecoder().decode(image));
+		
+		c.setId(null);
+		c.setCarId(car.getCarId());
+		c.setDescription(car.getDescription());
+		c.setManufacturerId(car.getManufacturerId());
+		c.setModel(car.getModel());
+		c.setPrice(car.getPrice());
+		
+		
+		
+		Vehicle veh=c;
+		
+		if(rpCar.findBycarId(c.getCarId()).isPresent())
 		{
 			throw new UniqueIdException("Car with same car id already exists!");
 		}
@@ -108,12 +162,101 @@ public class VehicleService {
 		
 		veh=rpVehicle.save(veh);
 		
-		car.setId(veh.getId());
-		car.setRentDate(null);
-		car.setManufacturer(rpManufacturer.findById(car.getManufacturerId()).get().getName());
+		c.setId(veh.getId());
+		c.setRentDate(null);
+		c.setManufacturer(rpManufacturer.findById(car.getManufacturerId()).get().getName());
 		
-		return rpCar.save(car);
+		return rpCar.save(c);
 	}
+	
+	public Bike addBike(BikeModel bike)
+	{
+		int indexOf=bike.getImage().indexOf("base64,");
+		String image=bike.getImage();
+		if(indexOf!=-1)
+		image=bike.getImage().substring(indexOf+7);
+		
+		
+		Bike b=new Bike();
+		
+		b.setImage(Base64.getDecoder().decode(image));
+		
+		b.setId(null);
+		b.setBikeId(bike.getBikeId());
+		
+		b.setManufacturerId(bike.getManufacturerId());
+		b.setModel(bike.getModel());
+		b.setPrice(bike.getPrice());
+		b.setRange(bike.getRange());
+		
+		
+		
+		Vehicle veh=(Vehicle)b;
+		
+		if(rpBike.findBybikeId(b.getBikeId()).isPresent())
+		{
+			throw new UniqueIdException("Bike with same bike id already exists!");
+		}
+		
+		veh.setId(null);
+		veh.setStatus("free");
+		
+		
+		
+		veh=rpVehicle.save(veh);
+		
+		b.setId(veh.getId());
+		
+		b.setManufacturer(rpManufacturer.findById(b.getManufacturerId()).get().getName());
+		
+		return rpBike.save(b);
+	}
+	
+	
+	public Scooter addScooter(ScooterModel scooter)
+	{
+		int indexOf=scooter.getImage().indexOf("base64,");
+		String image=scooter.getImage();
+		if(indexOf!=-1)
+		image=scooter.getImage().substring(indexOf+7);
+		
+		
+		Scooter s=new Scooter();
+		
+		s.setImage(Base64.getDecoder().decode(image));
+		
+		s.setId(null);
+		s.setScooterId(scooter.getScooterId());
+		
+		s.setManufacturerId(scooter.getManufacturerId());
+		s.setModel(scooter.getModel());
+		s.setPrice(scooter.getPrice());
+		s.setSpeed(scooter.getSpeed());
+		
+		
+		
+		Vehicle veh=(Vehicle)s;
+		
+		if(rpBike.findBybikeId(s.getScooterId()).isPresent())
+		{
+			throw new UniqueIdException("Scooter with same scooter id already exists!");
+		}
+		
+		veh.setId(null);
+		veh.setStatus("free");
+		
+		
+		
+		veh=rpVehicle.save(veh);
+		
+		s.setId(veh.getId());
+		
+		s.setManufacturer(rpManufacturer.findById(s.getManufacturerId()).get().getName());
+		
+		return rpScooter.save(s);
+	}
+	
+	
 	
 	
 

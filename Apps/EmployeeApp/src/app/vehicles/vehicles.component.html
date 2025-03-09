@@ -35,6 +35,10 @@
             </div>
             <div class="modal-body">
               <p>Are you sure you want to delete this vehicle?</p>
+              <div *ngIf="error" class="alert alert-danger alert-dismissible fade show fileError" role="alert">
+                Failed to add the car. Please try again! 
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" (click)="dismiss()"></button>
+              </div>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>

@@ -1,9 +1,11 @@
 package server.vehicle.scooter;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 
 public interface ScooterRepository extends JpaRepository<Scooter, Integer> {
 
+	Optional<Scooter> findByscooterId(String scooterId);
 }

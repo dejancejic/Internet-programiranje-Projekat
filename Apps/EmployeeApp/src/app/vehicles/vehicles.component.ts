@@ -55,6 +55,7 @@ export class VehiclesComponent implements OnInit,AfterViewInit{
   selectedId=-1;
 
   loading:boolean=true;
+  error:boolean=false;
 
   modalInstance: any;
   modalInstanceSuccess: any;
@@ -166,8 +167,12 @@ export class VehiclesComponent implements OnInit,AfterViewInit{
 
   addNewVehicle(event:any)
   {
-    
     this.cars.push(event);
+  }
+
+  dismiss()
+  {
+    this.error=false;
   }
 
 }

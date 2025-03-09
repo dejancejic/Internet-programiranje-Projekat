@@ -2,8 +2,6 @@ package server.vehicle.car;
 
 import java.time.LocalDate;
 
-import jakarta.persistence.Column;
-
 public class CarModel {
 
 	private Integer id;

@@ -6,6 +6,9 @@ import { Manufacturer } from '../model/manufacturer';
 import { ManufacturerService } from '../services/manufacturers/manufacturer.service';
 import { CarsService } from '../services/cars/cars.service';
 import { CSVserviceService } from '../services/utils/csvservice.service';
+import { BikeService } from '../services/bike/bike.service';
+import { ScootersService } from '../services/scooters/scooters.service';
+import { ScootersComponent } from '../scooters/scooters.component';
 
 
 declare var bootstrap: any;
@@ -15,7 +18,7 @@ declare var bootstrap: any;
   imports: [CommonModule,MatButtonModule,ReactiveFormsModule,CommonModule],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
-  providers:[ManufacturerService,CarsService,CSVserviceService]
+  providers:[ManufacturerService,CarsService,CSVserviceService,BikeService,ScootersService]
 })
 export class HeaderComponent implements AfterViewInit,OnInit{
   @Input() type: string = 'cars';
@@ -28,6 +31,11 @@ export class HeaderComponent implements AfterViewInit,OnInit{
 
   @ViewChild('addVehicleCSVModal') addVehicleCSVModal: any; 
   @ViewChild('addVehicleModal') addVehicleModal: any; 
+
+  
+  @ViewChild('addBikeModal') addBikeModal: any; 
+  @ViewChild('addScooterModal') addScooterModal: any; 
+
   @ViewChild('successModal') successModal: any; 
 
   selectedFileName: string = '';
@@ -48,13 +56,21 @@ export class HeaderComponent implements AfterViewInit,OnInit{
   csvError=false;
   modalInstanceCSV: any;
   modalInstanceAdd: any;
+
+  modalInstanceBikeAdd: any;
+  modalInstanceScooterAdd: any;
+
   modalInstanceSuccess:any;
+
+
 
 
 
   manufacturers:Manufacturer[]=[];
   manufacturerService=inject(ManufacturerService);
   carsService=inject(CarsService);
+  bikeService=inject(BikeService);
+  scooterService=inject(ScootersService);
   csvService=inject(CSVserviceService);
 
   private getManufacturers()
@@ -97,6 +113,35 @@ export class HeaderComponent implements AfterViewInit,OnInit{
     });
 
 
+    selectedFormBike:FormGroup=this.formBuilder.group({
+      bikeId:[null,Validators.required],
+      manufacturerId:[null,Validators.required],
+      model:[null,Validators.required],
+      price:[null,[
+        Validators.required,
+        Validators.min(0.1),
+        Validators.max(299.99),
+        Validators.pattern('^[0-9]+(\\.[0-9]{1,2})?$')
+      ]],
+      range:[null,Validators.required]
+    });
+
+    selectedFormScooter:FormGroup=this.formBuilder.group({
+      scooterId:[null,Validators.required],
+      manufacturerId:[null,Validators.required],
+      model:[null,Validators.required],
+      price:[null,[
+        Validators.required,
+        Validators.min(0.1),
+        Validators.max(599.99),
+        Validators.pattern('^[0-9]+(\\.[0-9]{1,2})?$')
+      ]],
+      speed:[null,Validators.required,
+        Validators.min(0),
+        Validators.max(60),Validators.pattern('^[0-9]+')]
+    });
+
+
   
   ngOnInit(): void {
     
@@ -107,6 +152,30 @@ export class HeaderComponent implements AfterViewInit,OnInit{
       this.getManufacturers();
   }
 
+  openAddDialog()
+  {
+    if(this.type==='cars')
+    {
+      this.modalInstanceAdd.show();
+    }
+    else if(this.type==='bikes')
+    {
+      this.modalInstanceBikeAdd.show();
+    }
+    else if(this.type==='scooters')
+    {
+      this.modalInstanceScooterAdd.show();
+    }
+  }
+
+  openCSVDialog()
+  {
+      this.modalInstanceCSV.show();
+  }
+
+
+
+
   ngAfterViewInit() {
   
     const modalElementAdd = this.addVehicleModal.nativeElement;
@@ -114,6 +183,13 @@ export class HeaderComponent implements AfterViewInit,OnInit{
 
     const modalElementCSV = this.addVehicleCSVModal.nativeElement;
     this.modalInstanceCSV = new bootstrap.Modal(modalElementCSV);
+
+
+    const modalElementAddBike = this.addBikeModal.nativeElement;
+    this.modalInstanceBikeAdd = new bootstrap.Modal(modalElementAddBike);
+
+    const modalElementAddScooter = this.addScooterModal.nativeElement;
+    this.modalInstanceScooterAdd = new bootstrap.Modal(modalElementAddScooter);
 
 
     const modalElementSuccess = this.successModal.nativeElement;
@@ -130,7 +206,7 @@ export class HeaderComponent implements AfterViewInit,OnInit{
 
   addVehicleToSystem()
   {
-
+    if(this.type==='cars'){
     let car=this.selectedForm.value;
     if(this.selectedImageContent===''){
       this.imageError=true;
@@ -160,13 +236,79 @@ export class HeaderComponent implements AfterViewInit,OnInit{
       }
     });
 
-    
+  }
+  else if(this.type==='bikes')
+  {
+    let bike=this.selectedFormBike.value;
+    if(this.selectedImageContent===''){
+      this.imageError=true;
+      return;
+    }else{
+    bike.image=this.selectedImageContent;
+    }
 
+    this.bikeService.addBike(bike).subscribe((data:any)=>{
+
+      this.addedVehicle.emit(data);
+
+    this.modalInstanceBikeAdd.hide();
+
+    this.modalInstanceSuccess.show();
+
+    this.selectedFormBike.reset();
+
+
+    },(error:any)=>{
+      if(error.toString().includes('same bike'))
+      {
+        this.sameIdError=true;
+      }
+      else{
+      this.networkError=true;
+      }
+    });
+
+
+
+  }
+  else if(this.type==='scooters')
+  {
+    let scooter=this.selectedFormScooter.value;
+    if(this.selectedImageContent===''){
+      this.imageError=true;
+      return;
+    }else{
+    scooter.image=this.selectedImageContent;
+    }
+
+    this.scooterService.addScooter(scooter).subscribe((data:any)=>{
+
+      this.addedVehicle.emit(data);
+
+    this.modalInstanceScooterAdd.hide();
+
+    this.modalInstanceSuccess.show();
+
+    this.selectedFormScooter.reset();
+
+
+    },(error:any)=>{
+      if(error.toString().includes('same scooter'))
+      {
+        this.sameIdError=true;
+      }
+      else{
+      this.networkError=true;
+      }
+    });
+  }
   }
 
   closeModal()
   {
     this.selectedForm.reset();
+    this.selectedFormBike.reset();
+    this.selectedFormScooter.reset();
   }
 
   async addVehicleCSV() {
@@ -174,9 +316,12 @@ export class HeaderComponent implements AfterViewInit,OnInit{
       this.fileError = true;
     } else {
       const fileInput = document.getElementById('csvFile') as HTMLInputElement;
+
+      if(this.type==='cars'){
+        
+      
       let createdCar= await this.csvService.verifyCSV(this.selectedCSVFile,fileInput);
 
-      
 
       if(createdCar!==null){
         if(this.selectedImageCSVContent===''){
@@ -215,6 +360,93 @@ export class HeaderComponent implements AfterViewInit,OnInit{
     else{
       this.csvError=true;
     }
+    }
+    else if(this.type==='bikes')
+      {
+        let createdBike= await this.csvService.verifyCSVBike(this.selectedCSVFile,fileInput);
+
+
+        if(createdBike!==null){
+          if(this.selectedImageCSVContent===''){
+            this.imageError=true;
+            return;
+          }else{
+          createdBike.image=this.selectedImageCSVContent;
+          }
+        this.bikeService.addBike(createdBike!).subscribe((data:any)=>{
+
+          this.addedVehicle.emit(data);
+
+          if (this.modalInstanceCSV) {
+            this.modalInstanceCSV.hide(); 
+          }
+          this.removeCSV();
+          this.fileError = false;
+          this.networkError=false;
+          this.csvError=false;
+    
+        this.modalInstanceSuccess.show();
+    
+    
+        },(error:any)=>{
+          if(error.toString().includes('same bike'))
+          {
+            this.sameIdError=true;
+          }
+          else{
+          this.networkError=true;
+          }
+        });
+      }
+      else
+      {
+        this.csvError=true;
+      }
+
+
+      }
+      else if(this.type==='scooters')
+      {
+        let createdScooter= await this.csvService.verifyCSVScooter(this.selectedCSVFile,fileInput);
+
+
+        if(createdScooter!==null){
+          if(this.selectedImageCSVContent===''){
+            this.imageError=true;
+            return;
+          }else{
+            createdScooter.image=this.selectedImageCSVContent;
+          }
+        this.scooterService.addScooter(createdScooter!).subscribe((data:any)=>{
+
+          this.addedVehicle.emit(data);
+
+          if (this.modalInstanceCSV) {
+            this.modalInstanceCSV.hide(); 
+          }
+          this.removeCSV();
+          this.fileError = false;
+          this.networkError=false;
+          this.csvError=false;
+    
+        this.modalInstanceSuccess.show();
+    
+    
+        },(error:any)=>{
+          if(error.toString().includes('same scooter'))
+          {
+            this.sameIdError=true;
+          }
+          else{
+          this.networkError=true;
+          }
+        });
+      }
+      else
+      {
+        this.csvError=true;
+      }
+      }
     }
   }
 

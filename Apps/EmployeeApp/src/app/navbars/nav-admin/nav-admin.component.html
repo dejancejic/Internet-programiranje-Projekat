@@ -23,34 +23,34 @@
       <div
         class="item"
         (click)="selectTab('bikes')"
-        [class.selected]="selectedTab === 'bikes'"
+        [class.selected]="selectedTab === 'bikes' && showInfoTab===false"
       >
-        <div [class.border-select]="selectedTab === 'bikes'"></div>
+        <div [class.border-select]="selectedTab === 'bikes' && showInfoTab===false"></div>
         <mat-icon
           class="icon"
-          [class.active-icon]="selectedTab === 'bikes'"
+          [class.active-icon]="selectedTab === 'bikes' && showInfoTab===false"
           aria-hidden="false"
           aria-label="Vehicle icon"
           color="primary"
           fontIcon="pedal_bike"
         ></mat-icon>
-        <p [class.active-text]="selectedTab === 'bikes'" class="text">E-Bikes</p>
+        <p [class.active-text]="selectedTab === 'bikes' && showInfoTab===false" class="text">E-Bikes</p>
       </div>
       <div
         class="item"
         (click)="selectTab('scooters')"
-        [class.selected]="selectedTab === 'scooters'"
+        [class.selected]="selectedTab === 'scooters' && showInfoTab===false"
       >
-        <div [class.border-select]="selectedTab === 'scooters'"></div>
+        <div [class.border-select]="selectedTab === 'scooters' && showInfoTab===false"></div>
         <mat-icon
           class="icon"
-          [class.active-icon]="selectedTab === 'scooters'"
+          [class.active-icon]="selectedTab === 'scooters' && showInfoTab===false"
           aria-hidden="false"
           aria-label="Vehicle icon"
           color="primary"
           fontIcon="electric_scooter"
         ></mat-icon>
-        <p [class.active-text]="selectedTab === 'scooters'"  class="text">E-Scooters</p>
+        <p [class.active-text]="selectedTab === 'scooters' && showInfoTab===false"  class="text">E-Scooters</p>
       </div>
       <div *ngIf="showInfoTab==true"
         class="item"

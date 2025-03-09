@@ -18,8 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import server.manufacturer.Manufacturer;
+import server.vehicle.bike.Bike;
+import server.vehicle.bike.BikeModel;
 import server.vehicle.car.Car;
 import server.vehicle.car.CarModel;
+import server.vehicle.scooter.Scooter;
+import server.vehicle.scooter.ScooterModel;
 
 @RestController
 @RequestMapping("/vehicle")
@@ -38,29 +42,36 @@ public class VehicleController {
 	public ResponseEntity<List<Car>> getCars(){
 		return new ResponseEntity<List<Car>>(service.getCars(),HttpStatus.OK);
 	}
+	@GetMapping("/bikes")
+	public ResponseEntity<List<Bike>> getBikes(){
+		return new ResponseEntity<List<Bike>>(service.getBikes(),HttpStatus.OK);
+	}
+	@GetMapping("/scooters")
+	public ResponseEntity<List<Scooter>> getScooters(){
+		return new ResponseEntity<List<Scooter>>(service.getScooters(),HttpStatus.OK);
+	}
 	
 	@PostMapping("/cars/add")
     public ResponseEntity<Car> addCar(@RequestBody CarModel car) {
-		System.out.println(car.getCarId());
-		int indexOf=car.getImage().indexOf("base64,");
-		String image=car.getImage();
-		if(indexOf!=-1)
-		image=car.getImage().substring(indexOf+7);
-		
-		Car c=new Car();
-		
-		c.setImage(Base64.getDecoder().decode(image));
-		
-		c.setId(null);
-		c.setCarId(car.getCarId());
-		c.setDescription(car.getDescription());
-		c.setManufacturerId(car.getManufacturerId());
-		c.setModel(car.getModel());
-		c.setPrice(car.getPrice());
-		
-		
-        return new ResponseEntity<>(service.addCar(c), HttpStatus.OK);
+
+        return new ResponseEntity<>(service.addCar(car), HttpStatus.OK);
     }
+	
+	@PostMapping("/bikes/add")
+    public ResponseEntity<Bike> addBike(@RequestBody BikeModel bike) {
+		
+        return new ResponseEntity<>(service.addBike(bike), HttpStatus.OK);
+    }
+	@PostMapping("/scooters/add")
+    public ResponseEntity<Scooter> addScooter(@RequestBody ScooterModel scooter) {
+		
+        return new ResponseEntity<>(service.addScooter(scooter), HttpStatus.OK);
+    }
+	
+	
+	
+	
+	
 	
 	@DeleteMapping("/delete")
 	public ResponseEntity<Vehicle> deleteVehicle(@RequestParam Integer id)
