@@ -7,7 +7,7 @@ export class Car extends Vehicle {
         image: string,
         manufacturer: string,
         public carId: string,
-        public rentDate: Date,
+        public buyDate: Date,
         public price: number,
         public description: string,
         public model: string,

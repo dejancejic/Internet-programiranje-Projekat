@@ -1,5 +1,6 @@
 package server.vehicle;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -163,7 +164,8 @@ public class VehicleService {
 		veh=rpVehicle.save(veh);
 		
 		c.setId(veh.getId());
-		c.setRentDate(null);
+		if(c.getBuyDate()==null)
+		c.setBuyDate(LocalDate.now());
 		c.setManufacturer(rpManufacturer.findById(car.getManufacturerId()).get().getName());
 		
 		return rpCar.save(c);

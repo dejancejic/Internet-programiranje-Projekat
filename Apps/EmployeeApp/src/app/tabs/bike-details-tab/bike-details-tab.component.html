@@ -1,0 +1,26 @@
+<div class="wrapper">
+      <span *ngIf="bike.status==='free'" class="badge text-bg-success bdg">Available now</span>
+      <span *ngIf="bike.status==='rented'" class="badge text-bg-secondary bdg">Rented</span>
+      <span *ngIf="bike.status==='broken'" class="badge text-bg-danger bdg">Broken</span>
+      <div class="rw">
+        <svg xmlns="http://www.w3.org/2000/svg" width="23" height="26" fill="currentColor" class="bi bi-credit-card-2-front ic" viewBox="0 0 16 16">
+            <path d="M14 3a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/>
+            <path d="M2 5.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5zm0 3a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5m3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5m3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5m3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5"/>
+        </svg>
+        <p>{{bike.bikeId}}</p>
+      </div>
+      <img [src]="bike.image"  (error)="onImageError($event)">
+      <p class="manufacturer">{{bike.manufacturer}}</p>
+      <div class="row1">
+        <p class="model">{{bike.model}}</p>
+        <h6 class="amount">€{{bike.price}} <p class="day">/ minute</p> </h6>
+    </div>
+    <div class="date">
+        <span class="badge text-bg-primary bgs"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-arrows" viewBox="0 0 16 16">
+            <path d="M1.146 8.354a.5.5 0 0 1 0-.708l2-2a.5.5 0 1 1 .708.708L2.707 7.5h10.586l-1.147-1.146a.5.5 0 0 1 .708-.708l2 2a.5.5 0 0 1 0 .708l-2 2a.5.5 0 0 1-.708-.708L13.293 8.5H2.707l1.147 1.146a.5.5 0 0 1-.708.708z"/>
+          </svg>
+        </span>
+          <p>Range:</p>
+    </div>
+    <span class="badge text-bg-warning bdg bdg1">{{bike.range}}</span> 
+</div>

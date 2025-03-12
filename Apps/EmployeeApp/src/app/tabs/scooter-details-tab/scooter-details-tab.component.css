@@ -1,0 +1,125 @@
+.wrapper {
+    background: rgba(255, 255, 255, 0.95); 
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    margin: 20px;
+    margin-left: 30px;
+    width: 85%;
+    display: flex;
+    flex-direction: column;
+}
+
+img {
+    height: 180px;
+    margin-left: 10%;
+    margin-right: 10%;
+}
+
+.row1 {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap; 
+    align-items: flex-start; 
+}
+
+.day {
+    opacity: 0.5;
+    margin-left: 3px;
+}
+
+.manufacturer {
+    text-transform: uppercase;
+    margin-top: 10px;
+    font-weight: bold;
+    opacity: 0.35;
+}
+
+.amount {
+    font-weight: bold;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap; 
+    justify-content: flex-end; 
+    margin-left: 10px; 
+}
+
+.model {
+    font-weight: bold;
+    flex-grow: 1; 
+    word-wrap: break-word; 
+    margin-right: 10px;
+}
+h6{
+    margin-top: 2px;
+    font-size: 16px;
+    line-height: 10px;
+   justify-items: center;
+}
+.bin
+{
+    align-self: flex-end;
+    color: red;
+    margin-top: -5px;
+   
+}
+
+.bdg
+{
+    width: 120px;
+    height: 25px;
+    margin-bottom: 10px;
+}
+
+.svgImage{
+    margin-right: -10px;
+}
+.date
+{
+    display: flex;
+    flex-direction: row;
+    column-gap: 10px;
+    margin-top: 10px;
+}
+
+.bgs
+{
+    height: 35px;
+    width: 35px;
+    margin-bottom: 18px;
+}
+
+.bgs svg
+{
+    margin-left: -8px;
+}
+
+.bdg1
+{
+    margin-top: 5px;
+}
+
+.rw
+{
+    display: flex;
+    flex-direction: row;
+    margin-top: 5px;
+}
+
+.ic
+{
+    color:red;
+ 
+    margin-right: 10px;
+}
+
+.bdg2
+{
+    width: 80px !important;
+}
+
+.speed
+{
+    margin-top: 3px;
+}

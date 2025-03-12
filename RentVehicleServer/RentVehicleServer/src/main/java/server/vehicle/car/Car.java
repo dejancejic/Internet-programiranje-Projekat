@@ -22,8 +22,8 @@ public class Car extends Vehicle {
 	@Column(name="car_id")
 	private String carId;
 	
-	@Column(name="rent_date")
-	private LocalDate rentDate;
+	@Column(name="buy_date")
+	private LocalDate buyDate;
 	
 	@Column(name="price")
 	private Double price;
@@ -47,12 +47,14 @@ public class Car extends Vehicle {
 		this.carId = carId;
 	}
 
-	public LocalDate getRentDate() {
-		return rentDate;
+	
+
+	public LocalDate getBuyDate() {
+		return buyDate;
 	}
 
-	public void setRentDate(LocalDate rentDate) {
-		this.rentDate = rentDate;
+	public void setBuyDate(LocalDate buyDate) {
+		this.buyDate = buyDate;
 	}
 
 	public Double getPrice() {

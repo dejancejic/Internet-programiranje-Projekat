@@ -34,6 +34,10 @@ ngOnInit(): void {
   else if(window.location.href.includes('account')){
     this.selectedTab='accounts';
   }
+  else if(window.location.href.includes('details')){
+    this.selectedTab='details';
+    NavAdminComponent.showInfoTab=true;
+  }
   else{
     this.selectedTab='cars';
     this.router.navigate(['transport/cars']);

@@ -273,7 +273,7 @@
   overflow: hidden; 
 }
 
-.bgManager
+.bgAdmin
 {
   background-color: var(--bs-info-bg-subtle) !important;
   color: var(--bs-info-text-emphasis) !important;
