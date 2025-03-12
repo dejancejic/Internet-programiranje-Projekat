@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import server.exceptions.UniqueIdException;
 import server.exceptions.VehicleNotFoundException;
+import server.manufacturer.Manufacturer;
 import server.manufacturer.ManufacturerRepository;
 import server.vehicle.bike.Bike;
 import server.vehicle.bike.BikeModel;
@@ -52,8 +53,11 @@ public class VehicleService {
 		for(Car c:cars)
 		{
 			if(c.getDeleted()==false) {
-			c.setManufacturer(rpManufacturer.findById(c.getManufacturerId()).get().getName());
-			toReturn.add(c);
+				Manufacturer manu=rpManufacturer.findById(c.getManufacturerId()).get();
+				if(manu.getDeleted()==false) {
+					c.setManufacturer(manu.getName());
+					toReturn.add(c);
+				}
 			}
 		}
 		return toReturn;
@@ -67,8 +71,11 @@ public class VehicleService {
 		for(Bike b:bikes)
 		{
 			if(b.getDeleted()==false) {
-			b.setManufacturer(rpManufacturer.findById(b.getManufacturerId()).get().getName());
+				Manufacturer manu=rpManufacturer.findById(b.getManufacturerId()).get();
+				if(manu.getDeleted()==false) {
+			b.setManufacturer(manu.getName());
 			toReturn.add(b);
+				}
 			}
 		}
 		return toReturn;
@@ -82,8 +89,11 @@ public class VehicleService {
 		for(Scooter s:scooters)
 		{
 			if(s.getDeleted()==false) {
-			s.setManufacturer(rpManufacturer.findById(s.getManufacturerId()).get().getName());
-			toReturn.add(s);
+			Manufacturer manu=rpManufacturer.findById(s.getManufacturerId()).get();
+				if(manu.getDeleted()==false) {
+					s.setManufacturer(manu.getName());
+					toReturn.add(s);
+				}
 			}
 		}
 		return toReturn;

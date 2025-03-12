@@ -17,8 +17,6 @@ import server.vehicle.Vehicle;
 public class Car extends Vehicle {
 
 	
-	
-	
 	@Column(name="car_id")
 	private String carId;
 	

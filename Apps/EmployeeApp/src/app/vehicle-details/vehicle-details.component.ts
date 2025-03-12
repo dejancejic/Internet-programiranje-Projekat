@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { AfterViewInit, Component, inject, OnInit } from '@angular/core';
+import { AfterViewInit, Component, inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { VehicleService } from '../services/vehicles/vehicle.service';
 import { Vehicle } from '../model/vehicle';
@@ -12,6 +12,10 @@ import { CarDetailsTabComponent } from "../tabs/car-details-tab/car-details-tab.
 import { BikeDetailsTabComponent } from "../tabs/bike-details-tab/bike-details-tab.component";
 import { ScooterDetailsTabComponent } from "../tabs/scooter-details-tab/scooter-details-tab.component";
 import { DurationService } from '../services/utils/duration.service';
+import { Malfunction } from '../model/malfunction';
+import { futureDateValidator } from '../services/validators/dateValidator';
+
+declare var bootstrap:any;
 
 @Component({
   selector: 'app-vehicle-details',
@@ -31,13 +35,14 @@ export class VehicleDetailsComponent implements OnInit,AfterViewInit{
   vehicleType='';
   vehicle:any=null!;
   error:boolean=false;
+  add:boolean=false;
   networkError:boolean=false;
 
   loading:boolean=false;
 
-  malfunctions:any[]=[];
+  malfunctions:Malfunction[]=[];
   rentals:any[]=[];
-  malfunctionsAll:any[]=[];
+  malfunctionsAll:Malfunction[]=[];
   rentalsAll:any[]=[];
 
   paginatedMalfunctions: any[] = [];
@@ -53,12 +58,23 @@ export class VehicleDetailsComponent implements OnInit,AfterViewInit{
   totalPagesRentals = 0;
   pagesRentals: number[] = [];
 
+  selectedMalfunction:Malfunction|null=null;
+
+
+  modalInstance: any;
+  @ViewChild('addMalfunctionModal') addMalfunctionModal: any; 
+  modalInstanceRemove: any;
+  @ViewChild('removeMalfunctionModal') removeMalfunctionModal: any; 
+  modalInstanceSuccess: any;
+  @ViewChild('successModal') successModal: any; 
+
 
   formBuilder=inject(FormBuilder);
   selectedForm:FormGroup=this.formBuilder.group({
     id:[null],
     description:[null,Validators.required],
-    dateTime:[null,Validators.required]
+    dateTime:[null,[Validators.required, futureDateValidator()]],
+    vehicleId:[null]
   });
 
 
@@ -96,7 +112,14 @@ export class VehicleDetailsComponent implements OnInit,AfterViewInit{
   }
 
   ngAfterViewInit(): void {
-    
+    const modalElement = this.addMalfunctionModal.nativeElement;
+    this.modalInstance = new bootstrap.Modal(modalElement);
+
+    const modalElementRemove = this.removeMalfunctionModal.nativeElement;
+    this.modalInstanceRemove = new bootstrap.Modal(modalElementRemove);
+
+    const modalElementSuccess = this.successModal.nativeElement;
+    this.modalInstanceSuccess = new bootstrap.Modal(modalElementSuccess);
   }
 
 
@@ -116,25 +139,36 @@ export class VehicleDetailsComponent implements OnInit,AfterViewInit{
     }
     );
 
-    this.rentals.push({
-      id:0,
-      dateTime:'2025-01-01',
-      duration:'2025-02-01 11:15',
-      clientName:'Dejan Cejic'
+    this.loading=true;
 
-    });
-    this.rentalsAll.push(this.rentals[0]);
+    this.vehicleService.getVehicleMalfunctions(this.vehicleId).subscribe((data:any)=>{
+      this.malfunctionsAll = JSON.parse(JSON.stringify(data));
+  this.malfunctions = JSON.parse(JSON.stringify(data));
+      
+      this.updatePaginationMalfunctions();
+      this.loading=false;
+    },(error)=>{
+      this.loading=false;
+      this.error=true;
+    }
+    );
 
-    this.malfunctions.push({
-      id:0,
-      dateTime:'2025-01-01 11:00',
-      description:'Description sdasdj l;adjlasj ldads jldsjla djklasdl jdsjakldsj'
 
-    });
-    this.malfunctionsAll.push(this.malfunctions[0])
+    this.loading=true;
 
-    this.updatePaginationMalfunctions();
-    this.updatePaginationRentals();
+    this.vehicleService.getVehicleRents(this.vehicleId).subscribe((data:any)=>{
+      this.rentalsAll = JSON.parse(JSON.stringify(data));
+  this.rentals = JSON.parse(JSON.stringify(data));
+      
+      this.updatePaginationRentals();
+      this.loading=false;
+    },(error)=>{
+      this.loading=false;
+      this.error=true;
+    }
+    );
+
+
   }
 
   updatePaginationMalfunctions()
@@ -172,9 +206,11 @@ export class VehicleDetailsComponent implements OnInit,AfterViewInit{
   }
 
 
-  deleteMalfunction(malfunction:any)
+  deleteMalfunction(malfunction:Malfunction)
   {
-
+      this.selectedMalfunction=malfunction;
+    this.add=false;
+    this.modalInstanceRemove.show();
   }
 
 
@@ -204,7 +240,7 @@ export class VehicleDetailsComponent implements OnInit,AfterViewInit{
 
     if(!query.trim() || query==='')
     {
-      this.rentals=this.rentalsAll;
+      this.rentals=JSON.parse(JSON.stringify(this.rentalsAll));
       this.updatePaginationRentals();
       return;
     }
@@ -219,7 +255,7 @@ export class VehicleDetailsComponent implements OnInit,AfterViewInit{
 
     if(!query.trim() || query==='')
     {
-      this.malfunctions=this.malfunctionsAll;
+      this.malfunctions = JSON.parse(JSON.stringify(this.malfunctionsAll));
       this.updatePaginationMalfunctions();
       return;
     }
@@ -229,15 +265,67 @@ export class VehicleDetailsComponent implements OnInit,AfterViewInit{
 
   addMalfunctionToSystem()
   {
+    let mal=this.selectedForm.value as Malfunction;
+    mal.vehicleId=this.vehicle.id;
+     this.vehicleService.addMalfunction(mal).subscribe((data:any)=>{
 
+      this.malfunctionsAll.push(data);
+      this.malfunctions.push(data);
+      this.vehicle.status='broken';
+      this.closeModal();
+    this.modalInstance.hide();
+    this.modalInstanceSuccess.show();
+      this.updatePaginationMalfunctions();
+     },
+    (error)=>{
+      
+      this.networkError=true;
+    });
   }
+
+
+  removeMalfunctionToSystem()
+  {
+    if(this.selectedMalfunction!==null)
+    {
+        this.vehicleService.deleteMalfunction(this.selectedMalfunction!.id).subscribe((data)=>{
+
+          let index=this.malfunctionsAll.indexOf(this.selectedMalfunction!);
+          this.malfunctionsAll.splice(index,1);
+          index=this.malfunctionsAll.indexOf(this.selectedMalfunction!);
+          this.malfunctions.splice(index,1);
+          this.modalInstanceRemove.hide();
+          this.modalInstanceSuccess.show();
+          if(this.malfunctionsAll.length==0)
+          {
+            this.vehicle.status='free';
+          }
+          this.updatePaginationMalfunctions();
+        },(error)=>{
+          this.networkError=true;
+        });
+    }
+  }
+
+  closeModalRemove()
+  {
+    this.closeModal();
+    this.modalInstanceRemove.hide();
+  }
+
   dismiss() {
     this.networkError = false;
+  }
+
+  selectAdd()
+  {
+    this.add=true;
   }
 
   closeModal()
   {
     this.selectedForm.reset();
+    this.networkError=false;
   }
 
 }
