@@ -256,7 +256,33 @@ public class VehicleService {
 		return rpScooter.save(s);
 	}
 	
-	
+	public Vehicle getVehicleById(Integer id)
+	{
+		Vehicle veh=null;
+		
+		Optional<Car> car=rpCar.findById(id);
+		Optional<Bike> bike=rpBike.findById(id);
+		Optional<Scooter> scooter=rpScooter.findById(id);
+		
+		if(car.isPresent())
+		{
+			veh=car.get();
+			veh.setManufacturer(rpManufacturer.findById(car.get().getManufacturerId()).get().getName());
+		}
+		else if(bike.isPresent())
+		{
+			veh=bike.get();
+			veh.setManufacturer(rpManufacturer.findById(bike.get().getManufacturerId()).get().getName());
+		}
+		else if(scooter.isPresent())
+		{
+			veh=scooter.get();
+			veh.setManufacturer(rpManufacturer.findById(scooter.get().getManufacturerId()).get().getName());
+		}
+		
+		
+		return veh;
+	}
 	
 	
 

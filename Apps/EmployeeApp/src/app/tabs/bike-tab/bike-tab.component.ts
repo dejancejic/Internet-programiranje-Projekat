@@ -37,7 +37,7 @@ export class BikeTabComponent implements OnInit{
   showDetails()
     {
       NavAdminComponent.showInfoTab=true;
-      this.router.navigate(['transport','details'], { queryParams: { id: this.bike.id } });
+      this.router.navigate(['transport','details'], { queryParams: { id: this.bike.id,type:'bike'} });
   
     }
 

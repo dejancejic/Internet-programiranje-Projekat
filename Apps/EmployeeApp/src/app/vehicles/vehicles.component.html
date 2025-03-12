@@ -12,12 +12,8 @@
     <ng-container *ngFor="let car of row">
       <car-tab 
         (remove)="showDeleteVehicleModal(car.id)" 
-        [id]="car.id" 
-        [base64Image]="car.image" 
-        [manufacturer]="car.manufacturer" 
-        [model]="car.model" 
-        [price]="car.price"
-        [status]="car.status">
+        [car]="car"
+        >
       </car-tab>
     </ng-container>
   </div>

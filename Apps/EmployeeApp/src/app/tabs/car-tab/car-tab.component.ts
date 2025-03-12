@@ -12,20 +12,15 @@ import { NavAdminComponent } from '../../navbars/nav-admin/nav-admin.component';
 })
 export class CarTabComponent implements OnInit {
 
-  @Input() id:number=0;
-  @Input() base64Image:string='';
-  @Input() manufacturer:string='';
-  @Input() model:string='';
-  @Input() price:number=0.01;
-  @Input() status:string='free';
+  @Input() car:Car=null!;
 
   @Output() remove=new EventEmitter<string>();
 
   router=inject(Router);
 
  ngOnInit(): void {
-  if(!this.base64Image.startsWith('data:')){
-  this.base64Image='data:image/png;base64,'+this.base64Image;
+  if(!this.car.image.startsWith('data:')){
+  this.car.image='data:image/png;base64,'+this.car.image;
   }
  }
 
@@ -43,7 +38,8 @@ export class CarTabComponent implements OnInit {
   showDetails()
   {
     NavAdminComponent.showInfoTab=true;
-    this.router.navigate(['transport','details'], { queryParams: { id: this.id } });
+    
+    this.router.navigate(['transport','details'], { queryParams: { id: this.car.id,type:'car'} });
 
   }
 

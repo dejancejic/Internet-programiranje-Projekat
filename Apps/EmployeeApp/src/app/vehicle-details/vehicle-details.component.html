@@ -1,1 +1,39 @@
-<p>vehicle-details works!</p>
+<div class="noContent" *ngIf="error" >
+    <h1>Could not get data...</h1>
+</div>
+
+<div class="wrapper">
+
+    <div class="rw1">
+        <div class="car" *ngIf="vehicleType==='car'">
+            <img [src]="vehicle.image"  (error)="onImageError($event)">
+            <div class="rwmanu">
+                <p>{{vehicle.manufacturer}}</p>
+                <p>{{vehicle.model}}</p>
+            </div>
+        </div>
+    
+
+<div class="bike" *ngIf="vehicleType==='bike'">
+    <img [src]="vehicle.image"  (error)="onImageError($event)">
+    <div class="rwmanu">
+        <p>{{vehicle.manufacturer}}</p>
+        <p>{{vehicle.model}}</p>
+    </div>
+</div>
+
+<div class="scooter" *ngIf="vehicleType==='scooter'">
+    <img [src]="vehicle.image"  (error)="onImageError($event)">
+    <div class="rwmanu">
+        <p>{{vehicle.manufacturer}}</p>
+        <p>{{vehicle.model}}</p>
+    </div>
+</div>
+
+</div>
+<!-- malfunctions and  rentals -->
+<div class="rw2">
+
+
+</div>
+</div>

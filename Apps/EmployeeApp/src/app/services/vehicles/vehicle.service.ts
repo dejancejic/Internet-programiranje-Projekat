@@ -29,4 +29,21 @@ export class VehicleService extends BaseService{
                   return this.http.delete(this.constantsService.SERVER_URL+'vehicle/delete',options).
                   pipe(catchError(this.handleError));
                 }
+
+
+    getVehicleById(id:number)
+    {
+      let options=this.getStandardOptions();
+                  options.withCredentials=true;
+                  options.params=new HttpParams({
+                    fromObject:{
+                      format:'json',
+                      id:id
+                    },
+                  });
+                  options.withCredentials=true;
+
+      return this.http.get(this.constantsService.SERVER_URL+'vehicle/id',options).
+      pipe(catchError(this.handleError));
+    }
 }

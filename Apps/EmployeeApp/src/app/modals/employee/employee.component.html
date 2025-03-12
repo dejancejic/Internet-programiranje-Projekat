@@ -1,0 +1,86 @@
+<div #addEmployeeModal class="modal fade" id="addEmployeeModal"  tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addEmployeeModalLabel">{{update?"Update employee":"Add new employee"}}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="closeModal()"></button>
+        </div>
+        <div class="modal-body">
+            <form class="d-flex flex-column gap-2" [formGroup]="employeeForm">
+                <div class="form-floating">
+                    <select  class="form-control form-control-sm w-100" id="manuInput" formControlName="role">
+                      <option [value]="'admin'">Admin</option>
+                      <option [value]="'operator'">Operator</option>
+                      <option [value]="'manager'">Manager</option>
+                    </select>
+                    <label for="manuInput">Account type</label>
+                  </div>
+
+                <div class="form-floating">
+                  <input type="text" class="form-control form-control-sm w-100" id="usernameInput" placeholder="Username" formControlName="username">
+                  <label for="usernameInput">Username</label>
+                </div>
+
+                <div class="form-floating">
+                    <input type="text" class="form-control form-control-sm w-100" id="nameInput" placeholder="Name" formControlName="name">
+                    <label for="nameInput">Name</label>
+                </div>
+
+                <div class="form-floating">
+                    <input type="text" class="form-control form-control-sm w-100" id="surnameInput" placeholder="Surname" formControlName="surname">
+                    <label for="surnameInput">Surname</label>
+                </div>
+                <div class="form-floating" [hidden]="update">
+                    <input
+                      type="password"
+                      class="form-control form-control-sm w-100"
+                      id="passwordInput"
+                      placeholder="Password"
+                      formControlName="password"
+                    />
+                    <label for="passwordInput">Password</label>
+                    <div
+                      *ngIf="employeeForm.get('password')?.errors && employeeForm.get('password')?.touched"
+                      class="text-danger"
+                    >
+                      <small *ngIf="employeeForm.get('password')?.errors!['required']">
+                        Password is required.
+                      </small>
+                      <small
+                        *ngIf="
+                          employeeForm.get('password')?.errors!['minlength'] ||
+                          employeeForm.get('password')?.errors!['maxlength']
+                        "
+                      >
+                        Password must be 5-80 characters long.
+                      </small>
+                    </div>
+                  </div>
+                  
+                  <div class="form-floating" [hidden]="update">
+                    <input
+                      type="password"
+                      class="form-control form-control-sm w-100"
+                      id="repeatPasswordInput"
+                      placeholder="Repeat password"
+                      formControlName="repeatPassword"
+                    />
+                    <label for="repeatPasswordInput">Repeat password</label>
+                    <div
+                      *ngIf="employeeForm.hasError('passwordMismatch') && employeeForm.get('repeatPassword')?.touched"
+                      class="text-danger"
+                    >
+                      <small>Passwords do not match.</small>
+                    </div>
+                  </div>
+                  
+                
+            </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="closeModal()">Close</button>
+          <button type="button"  class="btn btn-primary" [disabled]="employeeForm.invalid" (click)="addEmployee()">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>

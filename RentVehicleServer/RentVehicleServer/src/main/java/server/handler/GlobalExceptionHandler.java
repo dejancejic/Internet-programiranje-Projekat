@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import server.exceptions.AccessDeniedException;
 import server.exceptions.UniqueIdException;
+import server.exceptions.UserAlreadyExistsException;
 import server.exceptions.UserNotFoundException;
 import server.exceptions.VehicleNotFoundException;
 
@@ -36,6 +37,12 @@ public class GlobalExceptionHandler {
 	
 	@ExceptionHandler(UniqueIdException.class)
     public ResponseEntity<String> handleUniqueIdException(UniqueIdException e) {
+		
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_ACCEPTABLE);
+    }
+	
+	@ExceptionHandler(UserAlreadyExistsException.class)
+    public ResponseEntity<String> handleUserAlreadyExistsException(UserAlreadyExistsException e) {
 		
         return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_ACCEPTABLE);
     }

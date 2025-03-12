@@ -6,17 +6,19 @@
         <h3 id="employees-tab" class="tab" (click)="switchTab('employees')">Admins</h3>
     </div>
 
-    <button type="button" *ngIf="adminsSelected" data-bs-toggle="modal" data-bs-target="#addEmployeeModal" mat-raised-button class="button btn btn-primary">
-        Add employee <span class="badge text-bg-warning bdge">+</span>
-      </button>
+    <button type="button" *ngIf="adminsSelected" mat-raised-button class="button btn btn-primary bdgbtn"
+    (click)="openAddModal()">
+    Add employee <span class="badge text-bg-warning ">+</span>
+</button>
 </div>
 
 <div class="search col">
-    <input type="text" class="search-bar" [(ngModel)]="query"
-     (keydown)="search()"
+    <input type="text" class="search-bar"
+     (input)="search($event)"
      placeholder="Search username, email..." />
      <div class="form-floating slct" *ngIf="adminsSelected">
     <select class="form-select w-300" id="manuInput" (change)="onSelectionChange($event)">
+        <option name="All">All types</option>
         <option name="Admins">Admins</option>
         <option name="Operators">Operators</option>
         <option name="Managers">Managers</option>
@@ -27,27 +29,108 @@
 </div>
 
 
-<div *ngIf="!adminsSelected" class="table col">
-    <div class="table col">
-        <table id="clients-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Username</th>
-              <th>Phone</th>
-              <th>Email</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            
-            
-          </tbody>
-        </table>
-    <div id="pages" class="pagination">
-      
-    </div>
-  </div>
+<div class="table col">
+  <table id="users-table" class="table">
+    <thead>
+      <tr *ngIf="adminsSelected">
+        <th>Name</th>
+        <th>Username</th>
+        <th>Role</th>
+        <th class="text-end">Actions</th>
+      </tr>
+      <tr *ngIf="!adminsSelected">
+        <th>Name</th>
+        <th>Username</th>
+        <th>Phone</th>
+        <th>Email</th>
+        <th >Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of paginatedUsers">
+        <td class="rw" *ngIf="adminsSelected"> 
+          <div class="user-badge" [ngClass]="{
+            'bgAdmin': user.role === 'admin',
+            'bgOperator': user.role === 'operator',
+            'bgManager': user.role === 'manager'
+          }">
+            {{ user.name.charAt(0) | uppercase }}
+          </div>
+          {{ user.name + ' ' + user.surname }}
+        </td>
+        <td class="rw" *ngIf="!adminsSelected"> 
+          <div class="user-badge">
+            <img *ngIf="user.image" [src]="user.image"  />
+            <span *ngIf="!user.image">{{ user.name.charAt(0) | uppercase }}</span>
+          </div>
+          {{ user.name + ' ' + user.surname }}
+        </td>
+        
+        <td>{{ user.username }}</td>
+        <td *ngIf="adminsSelected">
+          <span *ngIf="user.role==='admin'" class="badge text-bg-info bdge">Admin</span>
+          <span *ngIf="user.role==='operator'" class="badge text-bg-primary bdge">Operator</span>
+          <span *ngIf="user.role==='manager'" class="badge text-bg-warning bdge">Manager</span>
+        </td>
+        <td *ngIf="!adminsSelected">{{ user.phone }}</td>
+        <td *ngIf="!adminsSelected">{{ user.email }}</td>
+        <td >
+          <button *ngIf="!adminsSelected"
+            class="btn" 
+            [ngClass]="user.blocked ? 'btn-danger' : 'btn-success'"
+            (click)="setStatus(user)"
+          >
+            {{ user.blocked ? 'Blocked' : 'Active' }}
+          </button>
+          <div class="actions" *ngIf="adminsSelected">
+            <button
+            class="btn" 
+            [ngClass]="'btn-success'"
+            (click)="updateEmployee(user)"
+          >
+             Update
+          </button>
+
+          <button
+            class="btn" 
+            [ngClass]="'btn-danger'"
+            (click)="deleteEmployee(user)"
+          >
+             Delete
+          </button>
+
+          </div>
+        </td>
+      </tr>
+      <tr *ngIf="paginatedUsers.length === 0">
+        <td [attr.colspan]="adminsSelected ? 4 : 5" class="text-center nodata">
+          No data to display!
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <nav aria-label="Page navigation" *ngIf="totalPages > 1">
+    <ul class="pagination">
+      <li class="page-item" [class.disabled]="currentPage === 1">
+        <a class="page-link" (click)="changePage(currentPage - 1)">Previous</a>
+      </li>
+
+      <li 
+        *ngFor="let page of pages" 
+        class="page-item" 
+        [class.active]="page === currentPage"
+      >
+        <a class="page-link" (click)="changePage(page)">{{ page }}</a>
+      </li>
+
+      <li class="page-item" [class.disabled]="currentPage === totalPages">
+        <a class="page-link" (click)="changePage(currentPage + 1)">Next</a>
+      </li>
+    </ul>
+  </nav>
+</div>
+
 
 
 <div *ngIf="loading" class="d-flex justify-content-center spinner">
@@ -57,53 +140,85 @@
 </div>
 </div>
 
+<employee-modal #addEmployeeModal [doShow]="showAddAdminForm" (addEmployeeFn)="addEmployeeToSystem($event)"></employee-modal>
 
-<div *ngIf="adminsSelected" class="table col">
-    <div class="table col">
-        <table id="clients-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Username</th>
-              <th>Role</th>
-              <th>Actions</th>
-         
-            </tr>
-          </thead>
-          <tbody>
-            
-            
-          </tbody>
-        </table>
-    <div id="pages" class="pagination">
-      
-    </div>
-  </div>
-
-
-<div *ngIf="loading" class="d-flex justify-content-center spinner">
-    <div class="spinner-border sp" role="status">
-        <span class="visually-hidden">Loading...</span>
-    </div>
-</div>
-</div>
+<employee-modal #updateEmployeeModal [doShow]="showUpdateForm" [update]="true" [employee]="selectedEmployee" (updateEmployeeFn)="updateEmployeeToSystem($event)"></employee-modal>
 
 
 
 
-<div #addEmployeeModal class="modal fade" id="addEmployeeModal" tabindex="-1" aria-labelledby="addEmployeeModalLabel" aria-hidden="true">
+  <div #successStatusModal class="modal fade" id="successStatusModal" tabindex="-1" aria-labelledby="successStatusModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="addEmployeeModalLabel">Add new employee</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="closeModal()"></button>
+          <h5 class="modal-title" id="successModalLabel">{{statusFailed?'Update status failed':'Update successful'}}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          
+          <p>{{statusFailed?'Failed to update client status. Try again!':'Successfully updated client status!'}}</p>
         </div>
+        
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="closeModal()">Close</button>
-          <button type="button"  class="btn btn-primary" (click)="addEmployee()">Save changes</button>
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="closeError()">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div #deleteSuccessModal class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteModalLabel">{{!deleteError ?"Deleted employee":"Delete failed"}}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>{{!deleteError ?"Successfully deleted employee!":"Failed to delete employee"}}</p>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="closeError()">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div #sureToDeleteModal class="modal fade" id="sureToDeleteModal" tabindex="-1" aria-labelledby="sureToDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="sureToDeleteModalLabel">Confirmation</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure you want to delete this employee?</p>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="closeError()">No</button>
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal" (click)="deleteEmployeeToSystem()">Yes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div #successEmployeeModal class="modal fade" id="successEmployeeModal" tabindex="-1" aria-labelledby="successEmployeeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="successEmployeeLabel">{{employeeFailed ? 
+          (!update ? "Adding failed" : "Update failed") : (!update ? "Added" : "Updated") + " employee!"}}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p *ngIf="!sameEmployeeError">{{employeeFailed ? "Failed to " + 
+          (!update ? "add" : "update") + " employee. Try again!" : "Successfully " + (!update ? "added" : "updated") + " employee!"}}</p>
+          <p *ngIf="sameEmployeeError">Employee with same username already exists!</p>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
         </div>
       </div>
     </div>

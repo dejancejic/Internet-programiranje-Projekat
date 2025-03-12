@@ -36,7 +36,7 @@ export class ScooterTabComponent {
     showDetails()
       {
         NavAdminComponent.showInfoTab=true;
-        this.router.navigate(['transport','details'], { queryParams: { id: this.scooter.id } });
+        this.router.navigate(['transport','details'], { queryParams: { id: this.scooter.id,type:'scooter'} });
     
       }
 

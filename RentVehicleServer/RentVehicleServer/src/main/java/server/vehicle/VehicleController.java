@@ -37,6 +37,11 @@ public class VehicleController {
 	public VehicleController(VehicleService service) {
 		this.service=service;
 	}
+	
+	@GetMapping("/id")
+	public ResponseEntity<Vehicle> getVehicleById(@RequestParam Integer id){
+		return new ResponseEntity<Vehicle>(service.getVehicleById(id),HttpStatus.OK);
+	}
 
 	@GetMapping("/cars")
 	public ResponseEntity<List<Car>> getCars(){
