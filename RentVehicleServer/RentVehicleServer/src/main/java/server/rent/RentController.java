@@ -1,5 +1,6 @@
 package server.rent;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,11 @@ public class RentController {
 	@GetMapping("/id")
 	public ResponseEntity<List<Rent>> getVehicleRents(@RequestParam Integer id){
 		return new ResponseEntity<List<Rent>>(service.getVehicleRents(id),HttpStatus.OK);
+	}
+	
+	@GetMapping("/all")
+	public ResponseEntity<HashMap<String,List<Rent>>> getAllRents(){
+		return new ResponseEntity<HashMap<String,List<Rent>>>(service.getAllRents(),HttpStatus.OK);
 	}
 
 }

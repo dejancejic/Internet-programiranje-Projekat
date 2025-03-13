@@ -56,7 +56,7 @@ export class LoginComponent implements OnInit{
     }
     else if(accType === 'operator')
     {
-      this.router.navigate(['rentals'], {
+      this.router.navigate(['operator','rentals'], {
         state: { accType }
       });
       this.loading=false;
@@ -89,7 +89,7 @@ export class LoginComponent implements OnInit{
     }
     else if(accType === 'operator')
     {
-      this.router.navigate(['rentals'], {
+      this.router.navigate(['operator','rentals'], {
         state: { accType }
       });
       this.loading=false;

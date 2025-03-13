@@ -1,0 +1,20 @@
+<div class="top col">
+    <div class="col switcher">
+      <h3 id="clients-tab" class="active-tab">{{type}} {{title}} </h3>
+    </div>
+  </div>
+  
+  <div class="search col">
+    <input type="text" class="search-bar" (input)="search($event)"
+     placeholder={{searchBy}} />
+     <div *ngIf="showSelect"  class="form-floating slct">
+      <select class="form-select w-300" id="manuInput" (change)="select($event)">
+        <option>E-Car</option>
+        <option>E-Bike</option>
+        <option>E-Scooter</option>
+      </select>
+      <label for="manuInput">Select type</label>
+    </div>
+  </div>
+  
+  <p class="p">{{count+ "&nbsp;"+toShow}} to show </p>

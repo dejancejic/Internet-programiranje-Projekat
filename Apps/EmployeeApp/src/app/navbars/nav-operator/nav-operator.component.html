@@ -1,0 +1,86 @@
+<div class="side">
+    <div class="logo">
+      <img src="./assets/logo.png" alt="logo">
+    </div>
+  
+    <div class="items">
+      <div
+        class="item"
+        (click)="selectTab('rentals')"
+        [class.selected]="selectedTab === 'rentals'"
+      >
+        <div [class.border-select]="selectedTab === 'rentals'"></div>
+        <mat-icon
+          class="icon"
+          [class.active-icon]="selectedTab === 'rentals'"
+          aria-hidden="false"
+          aria-label="Vehicle icon"
+          color="primary"
+          fontIcon="car_rental"
+        ></mat-icon>
+        <p [class.active-text]="selectedTab === 'rentals'" class="text">Rentals</p>
+      </div>
+      <div
+        class="item"
+        (click)="selectTab('map')"
+        [class.selected]="selectedTab === 'map'"
+      >
+        <div [class.border-select]="selectedTab === 'map'"></div>
+        <mat-icon
+          class="icon"
+          [class.active-icon]="selectedTab === 'map'"
+          aria-hidden="false"
+          aria-label="Vehicle icon"
+          color="primary"
+          fontIcon="map"
+        ></mat-icon>
+        <p [class.active-text]="selectedTab === 'map'" class="text">Map</p>
+      </div>
+      <div
+        class="item"
+        (click)="selectTab('clients')"
+        [class.selected]="selectedTab === 'clients'"
+      >
+        <div [class.border-select]="selectedTab === 'clients'"></div>
+        <mat-icon
+          class="icon"
+          [class.active-icon]="selectedTab === 'clients'"
+          aria-hidden="false"
+          aria-label="Vehicle icon"
+          color="primary"
+          fontIcon="group"
+        ></mat-icon>
+        <p [class.active-text]="selectedTab === 'clients'"  class="text">Clients</p>
+      </div>
+      <div
+        class="item"
+        (click)="selectTab('malfunctions')"
+        [class.selected]="selectedTab === 'malfunctions'"
+      >
+        <div [class.border-select]="selectedTab === 'malfunctions'"></div>
+        <mat-icon
+          class="icon"
+          [class.active-icon]="selectedTab === 'malfunctions'"
+          aria-hidden="false"
+          aria-label="Vehicle icon"
+          color="primary"
+          fontIcon="build_circle"
+        ></mat-icon>
+        <p [class.active-text]="selectedTab === 'malfunctions'" class="text">Malfunctions</p>
+      </div>
+
+      
+      <div class="spacer"></div>
+      <div class="item logout" (click)="logout()">
+        <mat-icon
+          class="icon"
+          aria-hidden="false"
+          aria-label="Vehicle icon"
+          color="primary"
+          fontIcon="logout"
+        ></mat-icon>
+        <p class="text">Logout</p>
+      </div>
+    </div>
+  </div>
+  

@@ -1,0 +1,221 @@
+.wrapper
+{
+    min-height: 100vh;
+    padding-left: 15px;
+}
+
+.noRentals
+{
+    align-self: center;
+    justify-self: center;
+    margin-top: 20%;
+    font-weight: bold;
+    font-size: 25px;
+}
+
+.rw
+{
+    display: flex;
+    flex-direction: row;
+    column-gap: 10px;
+}
+
+.cl
+{
+    display: flex;
+    flex-direction: column;
+}
+
+.r1
+{
+    flex-basis: 65%;
+    min-width: 600px;
+}
+
+.r2
+{
+    flex-basis: 35%;
+}
+
+.top {
+    display: flex;
+    margin-left: 10px;
+    margin-top: 15px;
+    margin-bottom: -5px;
+    justify-content: space-between;
+    margin-right: 20px;
+}
+
+.active-tab {
+    color: rgb(59, 59, 227);
+    border-bottom: 2px solid rgb(59, 59, 227);
+}
+h3 {
+    font-weight: bold;
+   
+}
+
+.rentals
+{
+    margin-left: -15px !important;
+}
+
+.rentals2
+{
+    margin-left: -17px !important;
+}
+
+.user-badge {
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-weight: bold;
+    background-color: var(--bs-info-bg-subtle);
+    color: var(--bs-info-text-emphasis);
+    overflow: hidden; 
+  }
+  .user-badge img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+  .small-map {
+    height: 300px;
+    width: 98%;
+    border:2px solid blue;
+    border-radius: 8px;
+    margin-top: 20px;
+    margin-left: -17px;
+}
+
+
+
+  
+  .bgAdmin
+  {
+    background-color: var(--bs-info-bg-subtle) !important;
+    color: var(--bs-info-text-emphasis) !important;
+  }
+
+  .nodata
+  {
+    font-size:20px;
+    font-weight: bold;
+    height: 50px;
+    line-height: 50px;
+  }
+
+
+  table td, table th {
+    border-bottom: none !important;
+  }
+  .page-item
+{
+  cursor: pointer;
+}
+
+
+.pagination {
+    display: flex;
+    gap: 5px;
+    margin-left: 10px;
+    justify-content: flex-start;
+    align-items: center;
+  }
+  
+  .pagination button {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 3px;
+    font-size: 14px;
+  }
+  
+  .pagination button:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .pagination span {
+    padding: 5px 10px;
+    font-size: 14px;
+  }
+
+
+  table {
+    width: 100%;
+ 
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+
+  .table {
+    width: 98%;
+    margin: 20px auto;
+    margin-top: 10px !important; 
+    margin-left: 25px;
+    font-family: Arial, sans-serif;
+  }
+  
+  table {
+    width: 100%;
+   
+    margin-right: 20px;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+  
+  th, td {
+    text-align: left;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+  }
+  
+  
+  tbody tr:nth-child(even) {
+    background-color: #f4f4f4;
+  }
+  .selectedRow{
+    background-color: gray !important;
+  }
+
+
+  table tbody tr {
+    cursor: pointer;
+  }
+  .hov:hover{
+    background-color: gray !important;
+  }
+
+
+  table tbody tr:hover {
+    background-color: gray;
+    border-bottom: 2px solid black !important;
+  }
+
+  .selectedRow{
+    border: 2px solid black !important;
+  }
+
+  @media screen and (max-width: 1000px) {
+    .rw {
+        flex-wrap: wrap;
+    }
+    .small-map{
+        width: 200%;
+        margin-bottom: 30px;
+        margin-left: 20px;
+    }
+    .rentals2{
+        margin-left: 20px !important;
+    }
+  }

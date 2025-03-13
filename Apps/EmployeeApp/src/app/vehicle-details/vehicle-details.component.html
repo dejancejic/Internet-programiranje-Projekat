@@ -76,7 +76,7 @@
                       class="badge text-bg-info descr" 
                       (click)="showDescription($event, malfunction.description)"
                     >
-                      {{ malfunction.description.length > 10 ? malfunction.description.substring(0, 10) + '...' : malfunction.description }}
+                      Tap to show...
                     </span>
                   </td>
                   
@@ -147,24 +147,26 @@
             <th>Name</th>
             <th>Date</th>
             <th>Duration</th>
+            <th *ngIf="vehicleType==='car'">Licence</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let rental of paginatedRentals">
                 <td class="rw" > 
-                    <div class="user-badge bgAdmin" >
-                      {{ rental.clientName.charAt(0) | uppercase }}
-                    </div>
-                    {{ rental.clientName}}
+                  <div class="user-badge">
+                    <img *ngIf="rental.client.image" [src]="rental.client.image"  />
+                    <span *ngIf="!rental.client.image">{{ rental.client.name.charAt(0) | uppercase }}</span>
+                  </div>
+                  {{rental.client.name+" "+rental.client.surname}}
                   </td>
               <td> 
                 {{ rental.dateTime | date:'dd.MM.yyyy.' }}
               </td>
               <td>{{calculateDuration(rental.dateTime,rental.duration)}}</td>
-
+              <td *ngIf="vehicleType==='car'">{{rental.licenceNumber}}</td>
             </tr>
             <tr *ngIf="paginatedRentals.length === 0">
-              <td [attr.colspan]="3" class="text-center nodata">
+              <td [attr.colspan]="vehicleType==='car'?4:3" class="text-center nodata">
                 No data to display!
               </td>
             </tr>

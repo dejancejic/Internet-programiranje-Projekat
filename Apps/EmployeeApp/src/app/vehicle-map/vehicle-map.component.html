@@ -1,0 +1,17 @@
+<div class="wrapper">
+    <operator-header
+    [searchBy]="'Search by vehicle ID...'"
+    [title]="'Map'"
+    [toShow]="'vehicles'"
+    (queryChanged)="search($event)"
+    (typesChanged)="changeType($event)"
+    [count]="this.vehicles.length"
+    ></operator-header>
+
+    <div *ngIf="loading" class="d-flex justify-content-center spinner noContent">
+        <div class="spinner-border sp" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+</div>

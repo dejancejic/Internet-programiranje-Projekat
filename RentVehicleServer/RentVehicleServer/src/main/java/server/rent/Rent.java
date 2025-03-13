@@ -7,11 +7,15 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
+import server.client.Client;
 
 @Entity
 @Table(name="rent")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Rent {
 
 	@Id
@@ -45,7 +49,10 @@ public class Rent {
 	private Integer clientId;
 	
 	@Transient
-	private String clientName;
+	private Client client;
+	
+	@Transient
+	private String vehicleName;
 
 	public Integer getId() {
 		return id;
@@ -119,12 +126,22 @@ public class Rent {
 		this.clientId = clientId;
 	}
 
-	public String getClientName() {
-		return clientName;
+	
+
+	public Client getClient() {
+		return client;
 	}
 
-	public void setClientName(String clientName) {
-		this.clientName = clientName;
+	public void setClient(Client client) {
+		this.client = client;
+	}
+
+	public String getVehicleName() {
+		return vehicleName;
+	}
+
+	public void setVehicleName(String vehicleName) {
+		this.vehicleName = vehicleName;
 	}
 	
 	

@@ -111,6 +111,8 @@ export class VehicleDetailsComponent implements OnInit,AfterViewInit{
     }
   }
 
+
+
   ngAfterViewInit(): void {
     const modalElement = this.addMalfunctionModal.nativeElement;
     this.modalInstance = new bootstrap.Modal(modalElement);
@@ -123,7 +125,7 @@ export class VehicleDetailsComponent implements OnInit,AfterViewInit{
   }
 
 
-  async initialize()
+  initialize()
   {
     this.loading=true;
     this.vehicleService.getVehicleById(this.vehicleId).subscribe((data:any)=>{
@@ -158,8 +160,14 @@ export class VehicleDetailsComponent implements OnInit,AfterViewInit{
 
     this.vehicleService.getVehicleRents(this.vehicleId).subscribe((data:any)=>{
       this.rentalsAll = JSON.parse(JSON.stringify(data));
-  this.rentals = JSON.parse(JSON.stringify(data));
-      
+  for(let rental of this.rentalsAll)
+    {
+      if(!rental.client.image.startsWith('data:')){
+        rental.client.image='data:image/png;base64,'+rental.client.image;
+        }
+    }
+    this.rentals = JSON.parse(JSON.stringify(this.rentalsAll));
+
       this.updatePaginationRentals();
       this.loading=false;
     },(error)=>{
