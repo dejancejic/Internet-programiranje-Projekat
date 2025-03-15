@@ -30,5 +30,10 @@ public class RentController {
 	public ResponseEntity<HashMap<String,List<Rent>>> getAllRents(){
 		return new ResponseEntity<HashMap<String,List<Rent>>>(service.getAllRents(),HttpStatus.OK);
 	}
+	@GetMapping("/map")
+	public ResponseEntity<HashMap<String, List<RentMapModel>>> getMapModels()
+	{
+		return new ResponseEntity<HashMap<String,List<RentMapModel>>>(service.getMapModels(),HttpStatus.OK);
+	}
 
 }

@@ -25,102 +25,15 @@
               <h3 class="active-tab">Malfunctions</h3>
             </div>
           </div>
-
-          <div class="search search1">
-            <input type="text" class="search-bar search-bar1"
-             (input)="searchMalfunctions($event)"
-             placeholder="Search by date..." />
-             <div class="buttons">    
-  
-                <button type="button" data-bs-toggle="modal" data-bs-target="#addMalfunctionModal" mat-raised-button class="btn btn-primary" (click)="selectAdd()">
-                    Add malfunction&nbsp;<span class="badge text-bg-warning bdge">+</span>
-                  </button>
-              
-              </div>
-             
-        </div>
-
-          <!-- Table malfunctions -->
-
-          <div class="table col">
-            <table id="malfunctions-table" class="table">
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Time</th>
-                  <th>Action</th>
-                  <th>Description</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let malfunction of paginatedMalfunctions">
-                  <td > 
-                    {{ malfunction.dateTime | date:'dd.MM.yyyy.' }}
-                  </td>
-                  <td > 
-                    {{ malfunction.dateTime | date:'HH:mm' }}
-                  </td>
-                  
-                
-                <td>
-                    <button
-                class="btn btn-danger"
-                (click)="deleteMalfunction(malfunction)"
-          >
-            Delete
-          </button>
-                </td>
-
-                <td>
-                    <span 
-                      class="badge text-bg-info descr" 
-                      (click)="showDescription($event, malfunction.description)"
-                    >
-                      Tap to show...
-                    </span>
-                  </td>
-                  
-                 
-                  <div 
-                    *ngIf="selectedDescription" 
-                    class="tooltip-modal"
-                    [ngStyle]="{ top: tooltipPosition.top + 'px', left: tooltipPosition.left + 'px' }"
-                    (click)="hideDescription()"
-                  >
-                    <div class="tooltip-arrow"></div>
-                    {{ selectedDescription }}
-                  </div>
-
-
-                </tr>
-                <tr *ngIf="paginatedMalfunctions.length === 0">
-                  <td [attr.colspan]="4" class="text-center nodata">
-                    No data to display!
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          
-            <nav aria-label="Page navigation" >
-              <ul class="pagination">
-                <li class="page-item" [class.disabled]="currentPageMalfunctions === 1">
-                  <a class="page-link" (click)="changePageMalfunctions(currentPageMalfunctions - 1)">Previous</a>
-                </li>
-          
-                <li 
-                  *ngFor="let page of pagesMalfunctions" 
-                  class="page-item" 
-                  [class.active]="page === currentPageMalfunctions"
-                >
-                  <a class="page-link" (click)="changePageMalfunctions(page)">{{ page }}</a>
-                </li>
-          
-                <li class="page-item" [class.disabled]="currentPageMalfunctions === totalPagesMalfunctions">
-                  <a class="page-link" (click)="changePageMalfunctions(currentPageMalfunctions + 1)">Next</a>
-                </li>
-              </ul>
-            </nav>
+        
+          <div class="mgleft">
+            <malfunction-table #malfunctionsTable
+            [showSearchBar]="true"
+            >
+            </malfunction-table>
           </div>
+
+         
 
 
 </div>
@@ -201,79 +114,4 @@
     <div class="spinner-border sp" role="status">
         <span class="visually-hidden">Loading...</span>
     </div>
-</div>
-
-
-
-<div #addMalfunctionModal class="modal fade" id="addMalfunctionModal" tabindex="-1" aria-labelledby="addMalfunctionModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="addMalfunctionModalLabel">Add new malfunction</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="closeModal()"></button>
-        </div>
-        <div class="modal-body">
-          <form class="d-flex flex-column gap-2" [formGroup]="selectedForm">
-            <div class="form-floating">
-              <input type="datetime-local" class="form-control form-control-sm w-100" id="priceInput" placeholder="Date" formControlName="dateTime">
-              <label for="priceInput">Date</label>
-            </div>
-        
-            <div class="form-floating">
-              <textarea class="form-control w-100" id="description" placeholder="Description" formControlName="description" style="height: 150px;"></textarea>
-              <label for="description">Description</label>
-            </div>
-            
-          </form>
-        
-          <div *ngIf="networkError" class="alert alert-danger alert-dismissible fade show fileError" role="alert">
-            Failed to add malfunction. Please try again! 
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" (click)="dismiss()"></button>
-          </div>
-
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="closeModal()">Close</button>
-          <button type="button" [disabled]="selectedForm.invalid" class="btn btn-primary" (click)="addMalfunctionToSystem()">Save changes</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-
-  <div #removeMalfunctionModal class="modal fade" id="removeMalfunctionModal" tabindex="-1" aria-labelledby="removeMalfunctionModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="removeMalfunctionModalLabel">Remove Malfunction</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>Are you sure you want to remove this malfunction?</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="closeModalRemove()">No</button>
-                <button type="button" class="btn btn-primary" (click)="removeMalfunctionToSystem()">Yes</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-
-<div #successModal class="modal fade" id="successModalModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-      <div class="modal-content">
-          <div class="modal-header">
-              <h5 class="modal-title" id="successModalLabel">{{add?'Adding successful':'Removal successful'}}</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-              <p>{{add?'Successfully added malfunction!':'Successfully removed malfunction!'}}</p>
-          </div>
-          <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">OK</button>
-          </div>
-      </div>
-  </div>
 </div>

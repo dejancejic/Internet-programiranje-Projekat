@@ -3,3 +3,46 @@
     min-height: 100vh;
     padding-left: 15px;
 }
+
+.map {
+
+    height: 65vh;
+    margin-left: 15px ;
+    border:2px solid blue;
+    border-radius: 8px;
+    margin-top: 20px;
+    margin-right: 25px;
+    margin-bottom: 30px;
+}
+
+.custom-marker {
+    background: none !important;
+    border: none;
+  }
+  
+  .marker-container {
+    width: 70px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    overflow: hidden;
+    
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  }
+
+  .image
+  {
+    height: 50px;
+    width: 100px;
+  }
+  
+  .marker-image {
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+    border-radius: 50%;
+  }
+  

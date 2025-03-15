@@ -110,5 +110,83 @@ public class RentService {
 		return map;
 	}
 	
+	
+	public HashMap<String,List<RentMapModel>> getMapModels()
+	{
+		HashMap<String,List<RentMapModel>> map=new HashMap<String,List<RentMapModel>>();
+		
+		List<RentMapModel> modelsCar=new ArrayList<RentMapModel>();
+		List<RentMapModel> modelsBike=new ArrayList<RentMapModel>();
+		List<RentMapModel> modelsScooter=new ArrayList<RentMapModel>();
+		
+		List<Car> cars=rpCar.findAll();
+		List<Bike> bikes=rpBike.findAll();
+		List<Scooter> scooters=rpScooter.findAll();
+		
+		for(Car c:cars)
+		{
+			List<Rent> rentCars=rpRent.findByVehicleId(c.getId());
+			
+			rentCars.sort((a,b)->{
+				if(a.getDateTime().isAfter(b.getDateTime()))
+					return 1;
+				else if(a.getDateTime().isBefore(b.getDateTime()))
+					return -1;
+				
+				return 0;
+			});
+			if(rentCars.size()>0)
+			{
+				modelsCar.add(new RentMapModel(c,rentCars.get(0).getLeftX(),rentCars.get(0).getLeftY()));
+			}
+			
+		}
+		for(Bike bike:bikes)
+		{
+			List<Rent> rentBikes=rpRent.findByVehicleId(bike.getId());
+			
+			rentBikes.sort((a,b)->{
+				if(a.getDateTime().isAfter(b.getDateTime()))
+					return 1;
+				else if(a.getDateTime().isBefore(b.getDateTime()))
+					return -1;
+				
+				return 0;
+			});
+			if(rentBikes.size()>0)
+			{
+				modelsBike.add(new RentMapModel(bike,rentBikes.get(0).getLeftX(),rentBikes.get(0).getLeftY()));
+			}
+			
+		}
+		
+		for(Scooter scooter:scooters)
+		{
+			List<Rent> rentScooters=rpRent.findByVehicleId(scooter.getId());
+			
+			rentScooters.sort((a,b)->{
+				if(a.getDateTime().isAfter(b.getDateTime()))
+					return 1;
+				else if(a.getDateTime().isBefore(b.getDateTime()))
+					return -1;
+				
+				return 0;
+			});
+			if(rentScooters.size()>0)
+			{
+				modelsScooter.add(new RentMapModel(scooter,rentScooters.get(0).getLeftX(),rentScooters.get(0).getLeftY()));
+			}
+			
+		}
+		
+		
+		
+		map.put("E-Car", modelsCar);
+		map.put("E-Bike", modelsBike);
+		map.put("E-Scooter", modelsScooter);
+		
+		return map;
+	}
+	
 
 }

@@ -14,12 +14,13 @@ import { ScooterDetailsTabComponent } from "../tabs/scooter-details-tab/scooter-
 import { DurationService } from '../services/utils/duration.service';
 import { Malfunction } from '../model/malfunction';
 import { futureDateValidator } from '../services/validators/dateValidator';
+import { MalfunctionTableComponent } from "../tables/malfunction-table/malfunction-table.component";
 
 declare var bootstrap:any;
 
 @Component({
   selector: 'app-vehicle-details',
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, HttpClientModule, CarDetailsTabComponent, BikeDetailsTabComponent, ScooterDetailsTabComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, HttpClientModule, CarDetailsTabComponent, BikeDetailsTabComponent, ScooterDetailsTabComponent, MalfunctionTableComponent],
   templateUrl: './vehicle-details.component.html',
   styleUrl: './vehicle-details.component.css',
   providers:[VehicleService,DurationService]
@@ -58,15 +59,10 @@ export class VehicleDetailsComponent implements OnInit,AfterViewInit{
   totalPagesRentals = 0;
   pagesRentals: number[] = [];
 
-  selectedMalfunction:Malfunction|null=null;
 
 
-  modalInstance: any;
-  @ViewChild('addMalfunctionModal') addMalfunctionModal: any; 
-  modalInstanceRemove: any;
-  @ViewChild('removeMalfunctionModal') removeMalfunctionModal: any; 
-  modalInstanceSuccess: any;
-  @ViewChild('successModal') successModal: any; 
+  @ViewChild('malfunctionsTable') malfunctionsTable: any; 
+
 
 
   formBuilder=inject(FormBuilder);
@@ -114,14 +110,19 @@ export class VehicleDetailsComponent implements OnInit,AfterViewInit{
 
 
   ngAfterViewInit(): void {
-    const modalElement = this.addMalfunctionModal.nativeElement;
-    this.modalInstance = new bootstrap.Modal(modalElement);
+    
+    this.vehicleService.getVehicleMalfunctions(this.vehicleId).subscribe((data:any)=>{
+      
+      setTimeout(()=>{
+        this.malfunctionsTable.setMalfunctions(data,this.vehicle);
 
-    const modalElementRemove = this.removeMalfunctionModal.nativeElement;
-    this.modalInstanceRemove = new bootstrap.Modal(modalElementRemove);
-
-    const modalElementSuccess = this.successModal.nativeElement;
-    this.modalInstanceSuccess = new bootstrap.Modal(modalElementSuccess);
+      },100);
+      this.loading=false;
+    },(error)=>{
+      this.loading=false;
+      this.error=true;
+    }
+    );
   }
 
 
@@ -143,17 +144,6 @@ export class VehicleDetailsComponent implements OnInit,AfterViewInit{
 
     this.loading=true;
 
-    this.vehicleService.getVehicleMalfunctions(this.vehicleId).subscribe((data:any)=>{
-      this.malfunctionsAll = JSON.parse(JSON.stringify(data));
-  this.malfunctions = JSON.parse(JSON.stringify(data));
-      
-      this.updatePaginationMalfunctions();
-      this.loading=false;
-    },(error)=>{
-      this.loading=false;
-      this.error=true;
-    }
-    );
 
 
     this.loading=true;
@@ -179,16 +169,7 @@ export class VehicleDetailsComponent implements OnInit,AfterViewInit{
 
   }
 
-  updatePaginationMalfunctions()
-  {
-    const collection = this.malfunctions;
-    this.totalPagesMalfunctions = Math.ceil(collection.length / this.malfunctionsPerPage);
-    this.pagesMalfunctions = Array.from({ length: this.totalPagesMalfunctions }, (_, i) => i + 1);
-    this.paginatedMalfunctions = collection.slice(
-      (this.currentPageMalfunctions - 1) * this.malfunctionsPerPage,
-      this.currentPageMalfunctions * this.malfunctionsPerPage
-    );
-  }
+  
   updatePaginationRentals()
   {
     const collection = this.rentals;
@@ -206,40 +187,8 @@ export class VehicleDetailsComponent implements OnInit,AfterViewInit{
     }
   }
 
-  changePageMalfunctions(page: number) {
-    if (page >= 1 && page <= this.totalPagesMalfunctions) {
-      this.currentPageMalfunctions = page;
-      this.updatePaginationMalfunctions();
-    }
-  }
+  
 
-
-  deleteMalfunction(malfunction:Malfunction)
-  {
-      this.selectedMalfunction=malfunction;
-    this.add=false;
-    this.modalInstanceRemove.show();
-  }
-
-
-  selectedDescription: string | null = null;
-  tooltipPosition = { top: 0, left: 0 };
-
-  showDescription(event: MouseEvent, description: string) {
-    this.selectedDescription = description;
-    const target = event.target as HTMLElement;
-    const rect = target.getBoundingClientRect();
-
-    
-    this.tooltipPosition = {
-      top: rect.top + window.scrollY + rect.height / 2,
-      left: rect.left + window.scrollX + rect.width + 10
-    };
-  }
-
-  hideDescription() {
-    this.selectedDescription = null;
-  }
 
 
   searchRentals(event:any)
@@ -257,69 +206,7 @@ export class VehicleDetailsComponent implements OnInit,AfterViewInit{
     this.updatePaginationRentals();
   }
 
-  searchMalfunctions(event:any)
-  {
-    const query = event.target.value.toLowerCase();
 
-    if(!query.trim() || query==='')
-    {
-      this.malfunctions = JSON.parse(JSON.stringify(this.malfunctionsAll));
-      this.updatePaginationMalfunctions();
-      return;
-    }
-    this.malfunctions=this.malfunctionsAll.filter(m=>m.dateTime.toString().toLowerCase().includes(query));
-    this.updatePaginationMalfunctions();
-  }
-
-  addMalfunctionToSystem()
-  {
-    let mal=this.selectedForm.value as Malfunction;
-    mal.vehicleId=this.vehicle.id;
-     this.vehicleService.addMalfunction(mal).subscribe((data:any)=>{
-
-      this.malfunctionsAll.push(data);
-      this.malfunctions.push(data);
-      this.vehicle.status='broken';
-      this.closeModal();
-    this.modalInstance.hide();
-    this.modalInstanceSuccess.show();
-      this.updatePaginationMalfunctions();
-     },
-    (error)=>{
-      
-      this.networkError=true;
-    });
-  }
-
-
-  removeMalfunctionToSystem()
-  {
-    if(this.selectedMalfunction!==null)
-    {
-        this.vehicleService.deleteMalfunction(this.selectedMalfunction!.id).subscribe((data)=>{
-
-          let index=this.malfunctionsAll.indexOf(this.selectedMalfunction!);
-          this.malfunctionsAll.splice(index,1);
-          index=this.malfunctionsAll.indexOf(this.selectedMalfunction!);
-          this.malfunctions.splice(index,1);
-          this.modalInstanceRemove.hide();
-          this.modalInstanceSuccess.show();
-          if(this.malfunctionsAll.length==0)
-          {
-            this.vehicle.status='free';
-          }
-          this.updatePaginationMalfunctions();
-        },(error)=>{
-          this.networkError=true;
-        });
-    }
-  }
-
-  closeModalRemove()
-  {
-    this.closeModal();
-    this.modalInstanceRemove.hide();
-  }
 
   dismiss() {
     this.networkError = false;

@@ -1,1 +1,109 @@
-<p>malfunctions works!</p>
+<div class="wrapper">
+    <operator-header
+    [searchBy]="'Search by model, vehicle ID...'"
+    [title]="'Malfunctions'"
+    (queryChanged)="search($event)"
+    (typesChanged)="changeType($event)"
+    [toShow]="'vehicles'"
+    [count]="this.paginatedVehicles.length"
+    ></operator-header>
+
+    <div *ngIf="loading" class="d-flex justify-content-center spinner noContent">
+        <div class="spinner-border sp" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+    <div class="rw">
+
+        <div class="r1 cl">
+            <div class="top rentals">
+                <div class="switcher">
+                  <h3 class="active-tab">Vehicles</h3>
+                </div>
+              </div>
+
+              <div class="table col mgleft">
+                <table id="rentals-table" class="table">
+                  <thead>
+                    <tr>
+                    <th>Vehicle</th>
+                    <th>Vehicle ID</th>
+                    <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let vehicle of paginatedVehicles;let i = index" (click)="setMalfunctionsTable(vehicle,i)"
+                    [ngClass]="{'selectedRow': selectedRowIndex === i}"
+                    >
+                        <td class="rw" > 
+                            <div class="user-badge">
+                              <img *ngIf="vehicle.image" [src]="vehicle.image"  />
+                            </div>
+                            {{vehicle.manufacturer+ " "+vehicle.model}}
+                            </td>
+                            <td *ngIf="selectedType==='E-Car'">
+                                {{vehicle.carId}}
+                            </td>
+                            <td *ngIf="selectedType==='E-Bike'">
+                                {{vehicle.bikeId}}
+                            </td>
+                            <td *ngIf="selectedType==='E-Scooter'">
+                                {{vehicle.scooterId}}
+                            </td>
+                          <td> 
+                            <span *ngIf="vehicle.status==='free'" class="badge text-bg-success bdg">Available now</span>
+                            <span *ngIf="vehicle.status==='rented'" class="badge text-bg-secondary bdg">Rented</span>
+                            <span *ngIf="vehicle.status==='broken'" class="badge text-bg-danger bdg">Broken</span>
+
+                          </td>
+                    </tr>
+                    <tr *ngIf="paginatedVehicles.length === 0">
+                      <td [attr.colspan]="3" class="text-center nodata">
+                        No data to display!
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              
+                <nav aria-label="Page navigation" >
+                  <ul class="pagination">
+                    <li class="page-item" [class.disabled]="currentPageVehicles === 1">
+                      <a class="page-link" (click)="changePageVehicles(currentPageVehicles - 1)">Previous</a>
+                    </li>
+              
+                    <li 
+                      *ngFor="let page of pagesVehicles" 
+                      class="page-item" 
+                      [class.active]="page === currentPageVehicles"
+                    >
+                      <a class="page-link" (click)="changePageVehicles(page)">{{ page }}</a>
+                    </li>
+              
+                    <li class="page-item" [class.disabled]="currentPageVehicles === totalPagesVehicles">
+                      <a class="page-link" (click)="changePageVehicles(currentPageVehicles + 1)">Next</a>
+                    </li>
+                  </ul>
+                </nav>
+              </div>      
+        
+        </div>
+
+        <div class="r2 cl">
+
+            <div class="top rentals2">
+                <div class="switcher">
+                    <h3 class="active-tab">Malfunctions</h3>
+                    <button [disabled]="selectedRowIndex===-1" type="button" class="btn btn-primary batn"  (click)="showAddMalfunctionTab()">
+                        Add malfunction&nbsp;<span class="badge text-bg-warning bdge">+</span>
+                    </button>
+                </div>
+            </div>
+            <malfunction-table #malfunctionTable
+            [showDeleteMalfunctionBtn]="false"
+            >
+            </malfunction-table>
+        </div>
+        </div>
+
+</div>

@@ -28,4 +28,19 @@ export class RentalsService extends BaseService{
     return this.http.get(this.constantsService.SERVER_URL+'rent/all',options).
       pipe(catchError(this.handleError));
       }
+
+      getMapData()
+      {
+        let options=this.getStandardOptions();
+        options.withCredentials=true;
+        options.params=new HttpParams({
+          fromObject:{
+            format:'json'
+          },
+        });
+        options.withCredentials=true;
+  
+    return this.http.get(this.constantsService.SERVER_URL+'rent/map',options).
+      pipe(catchError(this.handleError));
+      }
 }

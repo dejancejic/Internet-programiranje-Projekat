@@ -49,7 +49,7 @@ export class LoginComponent implements OnInit{
       
       sessionStorage.setItem("account",data.employee.name+' '+data.employee.surname);
 
-      if(accType === 'admin' || accType === 'manager'){
+      if(accType === 'admin'){
       this.router.navigate(['transport','cars'], {
         state: { accType }
       });
@@ -61,6 +61,12 @@ export class LoginComponent implements OnInit{
       });
       this.loading=false;
     }
+    else if(accType==='manager')
+      {
+        this.router.navigate(['manager','cars'], {
+          state: { accType }
+        });
+      }
     },(error:any)=>{
       alert(error.message);
       this.loading=false;
@@ -82,7 +88,7 @@ export class LoginComponent implements OnInit{
 
       sessionStorage.setItem("account",data.employee.name+' '+data.employee.surname);
 
-      if(accType === 'admin' || accType === 'manager'){
+      if(accType === 'admin'){
       this.router.navigate(['transport/cars'], {
         state: { accType }
       });
@@ -92,8 +98,14 @@ export class LoginComponent implements OnInit{
       this.router.navigate(['operator','rentals'], {
         state: { accType }
       });
-      this.loading=false;
     }
+    else if(accType==='manager')
+    {
+      this.router.navigate(['manager/cars'], {
+        state: { accType }
+      });
+    }
+    this.loading=false;
     },(error:any)=>{
       this.loading=false;
     });
