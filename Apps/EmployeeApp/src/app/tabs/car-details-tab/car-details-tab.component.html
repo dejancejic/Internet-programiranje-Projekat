@@ -1,8 +1,6 @@
 <div class="wrapper">
-    
-      <span *ngIf="car.status==='free'" class="badge text-bg-success bdg">Available now</span>
-      <span *ngIf="car.status==='rented'" class="badge text-bg-secondary bdg">Rented</span>
-      <span *ngIf="car.status==='broken'" class="badge text-bg-danger bdg">Broken</span>
+
+  <div class="rw1">
       <div class="rw">
         <svg xmlns="http://www.w3.org/2000/svg" width="23" height="26" fill="currentColor" class="bi bi-credit-card-2-front ic" viewBox="0 0 16 16">
             <path d="M14 3a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/>
@@ -10,6 +8,10 @@
         </svg>
         <p class="id">{{car.carId}}</p>
       </div>
+      <span *ngIf="car.status==='free'" class="badge text-bg-success bdg">Available now</span>
+      <span *ngIf="car.status==='rented'" class="badge text-bg-secondary bdg">Rented</span>
+      <span *ngIf="car.status==='broken'" class="badge text-bg-danger bdg">Broken</span>
+    </div>
       <img [src]="car.image"  (error)="onImageError($event)">
     <p class="manufacturer">{{car.manufacturer}}</p>
 

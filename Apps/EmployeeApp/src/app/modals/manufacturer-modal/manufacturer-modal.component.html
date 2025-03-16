@@ -1,0 +1,71 @@
+<div #addManufacturerModal class="modal fade" id="addManufacturerModal" tabindex="-1" aria-labelledby="addManufacturerModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addManufacturerModalLabel">{{update?'Update':'Add'}} {{type}} Manufacturer</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form class="d-flex flex-column gap-2" [formGroup]="selectedForm">
+            <div class="form-floating">
+              <input type="text" class="form-control form-control-sm w-100" id="nameInput" placeholder="Name" formControlName="name">
+              <label for="nameInput">Name</label>
+            </div>
+        
+            <div class="form-floating">
+              <input type="text" class="form-control form-control-sm w-100" id="countryInput" placeholder="Country" formControlName="country">
+              <label for="countryInput">Country</label>
+            </div>
+        
+            <div class="form-floating">
+              <input type="text" class="form-control form-control-sm w-100" id="addressInput" placeholder="Address" formControlName="address">
+              <label for="addressInput">Address</label>
+            </div>
+        
+            <div class="form-floating">
+              <input type="text" class="form-control form-control-sm w-100" id="phoneInput" placeholder="Phone" formControlName="phone">
+              <label for="phoneInput">Phone</label>
+            </div>
+        
+            <div class="form-floating">
+              <input type="text" class="form-control form-control-sm w-100" id="faxInput" placeholder="Fax" formControlName="fax">
+              <label for="faxInput">Fax</label>
+            </div>
+        
+            <div class="form-floating">
+              <input type="text" class="form-control form-control-sm w-100" id="emailInput" placeholder="Email" formControlName="email">
+              <label for="emailInput">Email</label>
+            </div>
+          </form>
+        </div>
+        <div *ngIf="error" class="alert alert-danger alert-dismissible fade show fileError" role="alert">
+            Could not {{update?'update':'add'}} manufacturer. Try again!
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" (click)="dismiss()"></button>
+          </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="resetForm()">Close</button>
+          <button [disabled]="selectedForm.invalid" type="button" class="btn btn-primary" (click)="addManufacturer()">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div #successModal class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="successModalLabel">{{update?'Updated':'Added'}} manufacturer</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Successfully {{update?'updated':'added'}} a manufacturer!</p>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>

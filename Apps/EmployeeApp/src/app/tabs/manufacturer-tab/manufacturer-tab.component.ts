@@ -2,36 +2,25 @@ import { AfterViewInit, Component, EventEmitter, inject, Input, OnInit, Output, 
 import { Manufacturer } from '../../model/manufacturer';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ManufacturerModalComponent } from "../../modals/manufacturer-modal/manufacturer-modal.component";
 
 declare var bootstrap: any;
 
 @Component({
   selector: 'manufacturer-tab',
-  imports: [CommonModule,ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, ManufacturerModalComponent],
   templateUrl: './manufacturer-tab.component.html',
   styleUrl: './manufacturer-tab.component.css'
 })
-export class ManufacturerTabComponent implements AfterViewInit{
+export class ManufacturerTabComponent {
 
   @Input() manufacturer:Manufacturer|null=null;
   @Output() removeManu=new EventEmitter(); 
   @Output() updateManu=new EventEmitter<Manufacturer>(); 
 
 
-  @ViewChild('successModal') successModal: any;
-  @ViewChild('addManufacturerModal') updateManufacturerModal: any;
+  @ViewChild('manufacturerModal') manufacturerModal: any;
 
-  modalInstanceSuccess: any;
-  modalInstanceUpdate: any;
-
-  ngAfterViewInit(): void {
-    const modalElement = this.successModal.nativeElement;
-  this.modalInstanceSuccess = new bootstrap.Modal(modalElement);
-  const modalElement1 = this.updateManufacturerModal.nativeElement;
-  this.modalInstanceUpdate = new bootstrap.Modal(modalElement1);
-
-  this.selectedForm.setValue(this.manufacturer!);
-  }
 
   
 
@@ -57,21 +46,14 @@ export class ManufacturerTabComponent implements AfterViewInit{
 
   showUpdateModal()
   {
-    this.selectedForm.setValue(this.manufacturer!);
-    this.modalInstanceUpdate.show();
+    this.manufacturerModal.showModal(this.manufacturer);
   }
 
-  updateManufacturer()
+  updateManufacturer(manufacturer:Manufacturer)
   {
-    this.manufacturer=this.selectedForm.value;
-    console.log(this.manufacturer);
+    this.manufacturer=manufacturer;
     this.updateManu.emit(this.manufacturer!);
-    
-    if (this.modalInstanceSuccess && this.modalInstanceUpdate) {
-
-      this.modalInstanceUpdate.hide();
-      this.modalInstanceSuccess.show();
-    }
+  
   }
 
 

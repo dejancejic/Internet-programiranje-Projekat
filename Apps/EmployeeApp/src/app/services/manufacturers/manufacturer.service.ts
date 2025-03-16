@@ -74,7 +74,7 @@ export class ManufacturerService extends BaseService{
         options.params=new HttpParams({
           fromObject:{
             format:'json',
-            id:id.toString()
+            id:id
           },
         });
         options.withCredentials=true;

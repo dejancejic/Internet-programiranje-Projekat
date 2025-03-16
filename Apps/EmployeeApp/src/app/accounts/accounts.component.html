@@ -2,7 +2,7 @@
 
 <div class="top col">
     <div class="col switcher">
-        <h3 id="clients-tab" class="tab" (click)="switchTab('clients')">Clients</h3>
+        <h3 id="clients-tab" class="tab" [ngClass]="adminsSelected?'tab':'tab active-tab'" (click)="switchTab('clients')">Clients</h3>
         <h3 id="employees-tab" class="tab" (click)="switchTab('employees')">Admins</h3>
     </div>
 

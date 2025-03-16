@@ -82,6 +82,14 @@ public class AccountService {
 		{
 			throw new UserAlreadyExistsException("Employee with that username already exists!");
 		}
+		if(employee.getPassword()==null || employee.getPassword().trim().equals(""))
+		{
+			employee.setPassword(e.getPassword());
+		}
+		else
+		{
+			employee.setPassword(passwordEncoder.encode(employee.getPassword()));
+		}
 		
 		employee=rpEmployee.save(employee);
 		return employee;

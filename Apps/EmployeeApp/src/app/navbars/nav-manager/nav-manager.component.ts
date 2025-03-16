@@ -16,8 +16,7 @@ export class NavManagerComponent {
    static showInfoTab=false;
   
     get showInfoTab() {
-      NavManagerComponent.showInfoTab=NavAdminComponent.showInfoTab;
-      return NavAdminComponent.showInfoTab;
+      return NavManagerComponent.showInfoTab;
     }
   
     constructor(private logoutService:LogoutService,private router:Router){}
@@ -38,7 +37,13 @@ export class NavManagerComponent {
     }
     else if(window.location.href.includes('details')){
       this.selectedTab='details';
-      NavAdminComponent.showInfoTab=true;
+      NavManagerComponent.showInfoTab=true;
+    }
+    else if(window.location.href.includes('statistics')){
+      this.selectedTab='statistics';
+    }
+    else if(window.location.href.includes('prices')){
+      this.selectedTab='prices';
     }
     else{
       this.selectedTab='cars';
@@ -60,11 +65,11 @@ export class NavManagerComponent {
   
       if(tabId!=='details'){
       this.selectedTab = tabId; 
-      NavAdminComponent.showInfoTab=false;
+      NavManagerComponent.showInfoTab=false;
       this.router.navigate(['manager', tabId]);
       }
       else{
-        NavAdminComponent.showInfoTab=true;
+        NavManagerComponent.showInfoTab=true;
       }
   
     }

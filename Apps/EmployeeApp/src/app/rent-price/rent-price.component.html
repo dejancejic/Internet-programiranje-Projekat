@@ -1,1 +1,43 @@
-<p>rent-price works!</p>
+<operator-header
+[count]="vehicles.length"
+[title]="'Rental Prices'"
+[searchBy]="'Search by vehicle ID, model...'"
+[toShow]="'vehicles'"
+(queryChanged)="search($event)"
+(typesChanged)="changeType($event)"
+>
+</operator-header>
+
+<cdk-virtual-scroll-viewport 
+  itemSize="120" 
+  class="virtual-scroll-container">
+  
+  <div class="tabs" *cdkVirtualFor="let row of visibleRows; let i = index">
+    <ng-container *ngFor="let vehicle of row">
+      <car-tab *ngIf="selectedType==='E-Car'"
+        [car]="vehicle"
+        [showDelete]="false"
+        (updatePrice)="showUpdatePriceModal(vehicle)"
+        >
+      </car-tab>
+      <bike-tab *ngIf="selectedType==='E-Bike'"
+      [bike]="vehicle"
+      [showDelete]="false"
+      (updatePrice)="showUpdatePriceModal(vehicle)">
+
+      </bike-tab>
+      <scooter-tab *ngIf="selectedType==='E-Scooter'"
+      [scooter]="vehicle"
+      [showDelete]="false"
+      (updatePrice)="showUpdatePriceModal(vehicle)">
+
+      </scooter-tab>
+    </ng-container>
+  </div>
+
+</cdk-virtual-scroll-viewport>
+
+<update-price-modal #updatePriceModal
+[selectedVehicle]="selectedVehicle"
+[selectedType]="selectedType">
+</update-price-modal>

@@ -30,9 +30,14 @@ export class EmployeeComponent implements AfterViewInit, OnChanges {
         username: [null, Validators.required],
         password: [
           null,
-          [Validators.required, Validators.minLength(5), Validators.maxLength(80)],
+          this.update===false?
+          [Validators.required,Validators.minLength(5), Validators.maxLength(80)]:[],
         ],
-        repeatPassword: [null, Validators.required],
+        repeatPassword: [
+          null, 
+          this.update===false?
+          [Validators.required,Validators.minLength(5), Validators.maxLength(80)]:[]
+        ],
         name: [null, Validators.required],
         surname: [null, Validators.required],
         role: ['admin', Validators.required],
@@ -79,13 +84,32 @@ export class EmployeeComponent implements AfterViewInit, OnChanges {
       let val:any={
         id:this.employee.id,
         username: this.employee.username,
-        password: this.employee.password,
-        repeatPassword: this.employee.password,
+        password: null,
+        repeatPassword: null,
       name: this.employee.name,
       surname: this.employee.surname,
       role: this.employee.role
       };
-      
+      this.employeeForm = this.formBuilder.group(
+        {
+          id: [null],
+          username: [null, Validators.required],
+          password: [
+            null,
+            this.update===false?
+            [Validators.required,Validators.minLength(5), Validators.maxLength(80)]:[],
+          ],
+          repeatPassword: [
+            null, 
+            this.update===false?
+            [Validators.required,Validators.minLength(5), Validators.maxLength(80)]:[]
+          ],
+          name: [null, Validators.required],
+          surname: [null, Validators.required],
+          role: ['admin', Validators.required],
+        },
+        { validators: this.passwordMatchValidator }
+      );
       
       this.employeeForm.setValue(val);
       }

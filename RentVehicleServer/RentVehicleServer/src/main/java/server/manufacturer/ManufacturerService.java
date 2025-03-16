@@ -32,7 +32,7 @@ public class ManufacturerService {
 		m.setDeleted(false);
 		m=rp.save(m);
 		
-		if(type.equals("Car"))
+		if(type.equals("E-Car"))
 		{
 			CarManufacturer cm=new CarManufacturer();
 			cm.setId(m.getId());
@@ -67,8 +67,9 @@ public class ManufacturerService {
 		Manufacturer m=rp.findById(id).get();
 	
 		m.setDeleted(true);
+	
 		
-		return m;
+		return rp.save(m);
 	}
 	
 	
@@ -82,14 +83,14 @@ public class ManufacturerService {
 		List<ScooterManufacturer> scooters=rpScooter.findAll();
 		
 		
-		map.put("Car", new ArrayList<Manufacturer>());
+		map.put("E-Car", new ArrayList<Manufacturer>());
 		map.put("E-Bike", new ArrayList<Manufacturer>());
 		map.put("E-Scooter", new ArrayList<Manufacturer>());
 		
 		
 		for(CarManufacturer car:cars)
 		{
-			addToMap(map,car.getId(),"Car");
+			addToMap(map,car.getId(),"E-Car");
 		}
 		
 		for(BikeManufacturer bike:bikes)

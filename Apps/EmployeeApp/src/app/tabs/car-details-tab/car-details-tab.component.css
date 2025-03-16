@@ -78,7 +78,7 @@ h6{
 {
     display: flex;
     flex-direction: row;
-    margin-top: 5px;
+    margin-top: 0px;
 }
 
 .ic
@@ -104,4 +104,11 @@ h6{
     flex-direction: row;
     column-gap: 5px;
     margin-top: 8px;
+}
+
+.rw1
+{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }

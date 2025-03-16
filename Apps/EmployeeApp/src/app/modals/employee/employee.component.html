@@ -30,7 +30,8 @@
                     <input type="text" class="form-control form-control-sm w-100" id="surnameInput" placeholder="Surname" formControlName="surname">
                     <label for="surnameInput">Surname</label>
                 </div>
-                <div class="form-floating" [hidden]="update">
+                <p class="enp" *ngIf="update">Enter new password(or leave blank to keep the original)</p>
+                <div class="form-floating">
                     <input
                       type="password"
                       class="form-control form-control-sm w-100"
@@ -49,7 +50,8 @@
                       <small
                         *ngIf="
                           employeeForm.get('password')?.errors!['minlength'] ||
-                          employeeForm.get('password')?.errors!['maxlength']
+                          employeeForm.get('password')?.errors!['maxlength'] ||
+                          (update===true && (employeeForm.get('password')?.value.length>80 || employeeForm.get('password')?.value.length<5))
                         "
                       >
                         Password must be 5-80 characters long.
@@ -57,7 +59,7 @@
                     </div>
                   </div>
                   
-                  <div class="form-floating" [hidden]="update">
+                  <div class="form-floating">
                     <input
                       type="password"
                       class="form-control form-control-sm w-100"
@@ -79,7 +81,17 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="closeModal()">Close</button>
-          <button type="button"  class="btn btn-primary" [disabled]="employeeForm.invalid" (click)="addEmployee()">Save changes</button>
+          <button type="button" class="btn btn-primary" 
+  [disabled]="
+    employeeForm.invalid || 
+    (update === true && employeeForm.get('password')?.value !==null &&
+    (employeeForm.get('password')?.value.length < 5 || 
+     employeeForm.get('password')?.value.length > 80))
+  " 
+  (click)="addEmployee()">
+  Save changes
+</button>
+ 
         </div>
       </div>
     </div>

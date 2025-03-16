@@ -1,6 +1,19 @@
+.virtual-scroll-container {
+    margin-top: 5px;
+    height: 75vh; 
+    width: 100%;
+    overflow-y: auto;
+  }
+
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 10px;
+    padding: 10px;
+  }
 .wrapper
 {
-    background-color:rgba(0, 0,0, .005);
     min-height: 100vh;
     padding-left: 15px;
 }
@@ -14,16 +27,6 @@
     font-size: 25px;
 }
 
-.tabs
-{
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    margin-top: 10px;
-    margin-left: 25px;
-    overflow-y: auto;
-    max-height: 520px;
-}
 
 .spinner
 {

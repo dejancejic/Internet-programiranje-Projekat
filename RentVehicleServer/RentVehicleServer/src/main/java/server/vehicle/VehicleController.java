@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -73,7 +74,22 @@ public class VehicleController {
         return new ResponseEntity<>(service.addScooter(scooter), HttpStatus.OK);
     }
 	
+	@PatchMapping("/car/update/price")
+	public ResponseEntity<Car> updateCarRentalPrice(@RequestBody Car vehicle)
+	{
+		return new ResponseEntity<Car>(service.updateCarRentPrice(vehicle),HttpStatus.OK);
+	}
+	@PatchMapping("/bike/update/price")
+	public ResponseEntity<Bike> updateBikeRentalPrice(@RequestBody Bike vehicle)
+	{
+		return new ResponseEntity<Bike>(service.updateBikeRentPrice(vehicle),HttpStatus.OK);
+	}
 	
+	@PatchMapping("/scooter/update/price")
+	public ResponseEntity<Scooter> updateScooterRentalPrice(@RequestBody Scooter vehicle)
+	{
+		return new ResponseEntity<Scooter>(service.updateScooterRentPrice(vehicle),HttpStatus.OK);
+	}
 	
 	
 	

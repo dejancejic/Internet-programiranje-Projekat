@@ -296,6 +296,46 @@ public class VehicleService {
 		return veh;
 	}
 	
+	Car updateCarRentPrice(Car vehicle)
+	{
+		Optional<Car> car=rpCar.findById(vehicle.getId());
+		if(car.isPresent())
+		{
+			Car c=car.get();
+			c.setPrice(((Car)(vehicle)).getPrice());
+			c=rpCar.save(c);
+			return c;
+		}
+		throw new VehicleNotFoundException("Vehicle with given id doesn't exist!");
+	}
+	
+	Bike updateBikeRentPrice(Bike vehicle)
+	{
+		Optional<Bike> bike=rpBike.findById(vehicle.getId());
+		if(bike.isPresent())
+		{
+			Bike b=bike.get();
+			b.setPrice(((Bike)(vehicle)).getPrice());
+			b=rpBike.save(b);
+			return b;
+		}
+		throw new VehicleNotFoundException("Vehicle with given id doesn't exist!");
+	}
+	
+	Scooter updateScooterRentPrice(Scooter vehicle)
+	{
+		Optional<Scooter> scooter=rpScooter.findById(vehicle.getId());
+		if(scooter.isPresent()) {
+		Scooter s=scooter.get();
+		s.setPrice(((Scooter)(vehicle)).getPrice());
+		s=rpScooter.save(s);
+		return s;
+		}
+		throw new VehicleNotFoundException("Vehicle with given id doesn't exist!");
+	}
+	
+	
+	
 	
 
 }

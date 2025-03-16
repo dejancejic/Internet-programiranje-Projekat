@@ -1,24 +1,30 @@
 <div class="wrapper">
   <header-manufacturer 
       (queryChanged)="search($event)" 
-      [count]="displayedManufacturers.length" 
+      [count]="manufacturers.length" 
       (typesChanged)="changeType($event)" 
       (addManufacturerOutput)="addManufacturer($event)">
   </header-manufacturer>
 
-  <p *ngIf="displayedManufacturers.length == 0 && !loading" class="noManufacturers">No manufacturers to show!</p>
+  <p *ngIf="manufacturers.length == 0 && !loading" class="noManufacturers">No manufacturers to show!</p>
 
 
-
-  <div class="tabs" #scrollContainer (scroll)="onScroll($event)">
-      <div *ngFor="let manufacturer of displayedManufacturers; let i = index" class="manufacturer-item">
-          <manufacturer-tab 
-              [manufacturer]="manufacturer" 
-              (removeManu)="showDeleteVehicleModal(i)" 
-              (updateManu)="updateManufacturer($event)">
-          </manufacturer-tab>
-      </div>
+  <cdk-virtual-scroll-viewport 
+  itemSize="120" 
+  class="virtual-scroll-container">
+  
+  <div class="tabs" *cdkVirtualFor="let row of visibleRows; let i = index">
+    <ng-container *ngFor="let manufacturer of row">
+        <manufacturer-tab 
+        [manufacturer]="manufacturer" 
+        (removeManu)="showDeleteVehicleModal(manufacturer)" 
+        (updateManu)="updateManufacturer($event)">
+    </manufacturer-tab>
+    </ng-container>
   </div>
+
+</cdk-virtual-scroll-viewport>
+
 
   <div *ngIf="loading" class="d-flex justify-content-center spinner">
     <div class="spinner-border sp" role="status">
@@ -43,4 +49,24 @@
           </div>
       </div>
   </div>
+
+  <div #successModal class="modal fade" id="successModal" tabindex="-1" aria-labelledby="removeManufacturerModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="removeManufacturerModalLabel">Remove Manufacturer</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>{{error?"Error occured. Please try again!":"Successfully deleted manufacturer!"}}</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
 </div>
+</div>
+
+
+

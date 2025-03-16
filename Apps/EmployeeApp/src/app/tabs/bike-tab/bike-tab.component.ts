@@ -3,6 +3,7 @@ import { AfterViewInit, Component, EventEmitter, inject, Input, OnInit, Output }
 import { Bike } from '../../model/bike';
 import { NavAdminComponent } from '../../navbars/nav-admin/nav-admin.component';
 import { Router } from '@angular/router';
+import { NavManagerComponent } from '../../navbars/nav-manager/nav-manager.component';
 
 @Component({
   selector: 'bike-tab',
@@ -12,10 +13,10 @@ import { Router } from '@angular/router';
 })
 export class BikeTabComponent implements OnInit{
 
-
+  @Input() showDelete:boolean=true;
   @Input() bike:Bike=null!;
   @Output() remove=new EventEmitter();
-  
+  @Output() updatePrice=new EventEmitter();
   router=inject(Router);
 
 
@@ -36,9 +37,21 @@ export class BikeTabComponent implements OnInit{
   }
   showDetails()
     {
+
+      if(this.showDelete===false){
+
+        this.updatePrice.emit();
+        return;
+      }
+
+      if(window.location.href.includes("manager")){
+            NavManagerComponent.showInfoTab=true;
+            this.router.navigate(['manager','details'], { queryParams: { id: this.bike.id,type:'bike'} });
+          }
+          else{
       NavAdminComponent.showInfoTab=true;
       this.router.navigate(['transport','details'], { queryParams: { id: this.bike.id,type:'bike'} });
-  
+          }
     }
 
 }

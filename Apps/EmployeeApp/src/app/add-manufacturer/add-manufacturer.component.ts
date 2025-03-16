@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, inject, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, HostListener, inject, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { HeaderManufacturerComponent } from "../header-manufacturer/header-manufacturer.component";
 import { CommonModule } from '@angular/common';
 import { Manufacturer } from '../model/manufacturer';
@@ -7,6 +7,7 @@ import { AuthService } from '../services/utils/auth.service';
 import { LogoutService } from '../services/logout/logout.service';
 import { ManufacturerService } from '../services/manufacturers/manufacturer.service';
 import { HttpClientModule } from '@angular/common/http';
+import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling';
 
 
 
@@ -14,19 +15,45 @@ declare var bootstrap: any;
 
 @Component({
   selector: 'app-add-manufacturer',
-  imports: [HeaderManufacturerComponent, CommonModule, ManufacturerTabComponent,HttpClientModule],
+  imports: [HeaderManufacturerComponent, CommonModule, ManufacturerTabComponent,HttpClientModule,CdkVirtualScrollViewport,ScrollingModule],
   templateUrl: './add-manufacturer.component.html',
   styleUrl: './add-manufacturer.component.css',
   providers:[ManufacturerService]
 })
 export class AddManufacturerComponent implements AfterViewInit,OnInit{
 
+  visibleRows: any[] = [];
+    constructor(private cdr: ChangeDetectorRef){}
+    itemsPerRow = 1;
+    rowHeight = 150;
+
+    error:boolean=false;
+    
+  
+    @HostListener('window:resize')
+    onResize() {
+      this.calculateItemsPerRow();
+      this.formatCarsIntoRows();
+    }
+  
+    private calculateItemsPerRow() {
+      const containerWidth = window.innerWidth - 50; 
+      const itemWidth = 180; 
+      this.itemsPerRow = Math.floor(containerWidth / itemWidth) || 1;
+  
+      this.rowHeight=290;
+    }
+  
+    private formatCarsIntoRows() {
+      this.visibleRows = [];
+      for (let i = 0; i < this.manufacturers.length; i += this.itemsPerRow) {
+        this.visibleRows.push(this.manufacturers.slice(i, i + this.itemsPerRow));
+      }
+    }
+
   manufacturers:Manufacturer[]=[];
 
   query='';
-
-  displayedManufacturers: Manufacturer[] = [];
-  displayedManufacturersAll: Manufacturer[] = [];
 
   manufacturerMap: { [key: string]: Manufacturer[] } = {};
 
@@ -35,29 +62,30 @@ export class AddManufacturerComponent implements AfterViewInit,OnInit{
   logoutService=inject(LogoutService);
   
   
+selectedManufacturer!:Manufacturer;
 
-  selectedManufacturerIndex:number=-1;
+
   loading:boolean=true;
 
 
-  loadingVirtual:boolean=false;
-
-  selectedVehicleType='Car';
-
-  private currentBatch = 0;
-  private batchSize = 3;
-
+  selectedVehicleType='E-Car';
 
 
 
   modalInstance: any;
   @ViewChild('removeManufacturerModal') removeVehicleModal: any; 
 
-  @ViewChild('scrollContainer') scrollContainer: any;
+  modalInstanceSuccess: any;
+  @ViewChild('successModal') successModal: any; 
+
+
 
   ngAfterViewInit(): void {
     const modalElement = this.removeVehicleModal.nativeElement;
     this.modalInstance = new bootstrap.Modal(modalElement);
+
+    const modalElement1 = this.successModal.nativeElement;
+    this.modalInstanceSuccess = new bootstrap.Modal(modalElement1);
   }
 
 
@@ -71,100 +99,49 @@ export class AddManufacturerComponent implements AfterViewInit,OnInit{
 
   }
 
-  private loadManufacturers() {
-    if (this.loading) return; 
-    if (this.query.trim() || this.displayedManufacturers.length >= this.manufacturers.length) {
-    
-        return; 
-    }
-
-    this.loading = true;
-    
-
-    setTimeout(() => {
-        const start = this.displayedManufacturers.length;
-        const end = start + this.batchSize;
-
-    
-        this.displayedManufacturers = [...this.displayedManufacturers, ...this.manufacturers.slice(start, end)];
-        this.displayedManufacturersAll= [...this.displayedManufacturers, ...this.manufacturers.slice(start, end)];
-        this.loading = false;
-    }, 1000); 
-}
-
-
-  loadManufacturersInitial()
-  {
-    if(this.manufacturers.length>=6){
-      this.displayedManufacturers = this.manufacturers.slice(0, 6);
-      this.displayedManufacturersAll = this.manufacturers.slice(0, 6);
-      }
-    else{
-      this.displayedManufacturers = this.manufacturers;
-      this.displayedManufacturersAll = this.manufacturers;
-    }
-    this.currentBatch=0;
-  
-  }
-
   private getManufacturers()
   {
   
     this.manufacturerService.getManufacturers().subscribe((data:any)=>{
       this.manufacturerMap=data;
-      this.manufacturers = [...this.manufacturers, ...data[this.selectedVehicleType]];
-      if(this.manufacturers.length>=6){
-      this.displayedManufacturers = this.manufacturers.slice(0, 6);
-      this.displayedManufacturersAll = this.manufacturers.slice(0, 6);
-      }
-    else{
-      this.displayedManufacturers = this.manufacturers;
-      this.displayedManufacturersAll = this.manufacturers;
- 
-    }
+      this.manufacturers = JSON.parse(JSON.stringify(data[this.selectedVehicleType]));
+
+      this.calculateItemsPerRow();
+      this.formatCarsIntoRows();
+      this.cdr.detectChanges();
      this.loading=false;
-     this.currentBatch++;
   },(error)=>{
     alert(error);
     this.loading=false;
     });
 
   }
-
-
-  onScroll(event: any) {
-    const container = this.scrollContainer.nativeElement;
-    const threshold = 100; 
-
-    if (container.scrollTop + container.clientHeight + threshold >= container.scrollHeight) {
-      
-
-      this.loadManufacturers();
-    }
-  }
   
 
   search(query: any) {
     this.query=query;
     if (!query.trim()) {
-     
-      this.displayedManufacturers = [...new Set(this.displayedManufacturersAll)];
-      
+  
+      this.manufacturers=this.manufacturerMap[this.selectedVehicleType];
+      this.calculateItemsPerRow();
+      this.formatCarsIntoRows();
+      this.cdr.detectChanges();
       return;
     }
   
 
-    const filtered = this.manufacturers.filter(m =>
+    this.manufacturers = this.manufacturerMap[this.selectedVehicleType].filter(m =>
       m.name.toLowerCase().includes(query.toLowerCase())
     );
-  
-    this.displayedManufacturers = [...filtered]; 
+    this.calculateItemsPerRow();
+      this.formatCarsIntoRows();
+      this.cdr.detectChanges();
   }
   
-  showDeleteVehicleModal(index:number)
+  showDeleteVehicleModal(manu:Manufacturer)
   {
     if (this.modalInstance) {
-      this.selectedManufacturerIndex=index;
+      this.selectedManufacturer=manu;
       this.modalInstance.show();
     }
   }
@@ -173,30 +150,28 @@ export class AddManufacturerComponent implements AfterViewInit,OnInit{
   removeManufacturer()
   {
    
-    if(this.selectedManufacturerIndex!==-1)
+    if(this.selectedManufacturer!==undefined && this.selectedManufacturer!=null)
     {
-      let manu=this.manufacturers[this.selectedManufacturerIndex];
-      
-      let man=this.manufacturers[this.selectedManufacturerIndex];
-      this.manufacturers.splice(this.selectedManufacturerIndex,1);
-      let index=this.displayedManufacturers.indexOf(man);
-      this.displayedManufacturers.splice(index,1);
+      var index=this.manufacturers.indexOf(this.selectedManufacturer);
+
+      this.manufacturerService.deleteManufacturer(this.selectedManufacturer.id).subscribe((data:any)=>{
+
+      this.manufacturers.splice(index,1);
       this.manufacturerMap[this.selectedVehicleType]=this.manufacturers;
-
-      this.manufacturerService.deleteManufacturer(manu.id).subscribe((data:any)=>{
-         
-
+      this.calculateItemsPerRow();
+      this.formatCarsIntoRows();
+      this.cdr.detectChanges();
+      this.modalInstance.hide();
+      this.modalInstanceSuccess.show();
 
       },(error)=>{
-        alert(error);
-        this.loading=false;
+        error=true;
+        this.modalInstanceSuccess.show();
         });
       
-      
-      this.modalInstance.hide();
    
     }
-    this.selectedManufacturerIndex=-1;
+    this.selectedManufacturer=null!;
   }
 
 
@@ -205,36 +180,28 @@ export class AddManufacturerComponent implements AfterViewInit,OnInit{
     this.selectedVehicleType=type;
     
     this.manufacturers=this.manufacturerMap[type];
-    this.loadManufacturersInitial();
+    this.calculateItemsPerRow();
+      this.formatCarsIntoRows();
+      this.cdr.detectChanges();
   }
 
 
   addManufacturer(manufacturer:any)
   {
-
-    this.manufacturerService.addManufacturer(manufacturer,this.selectedVehicleType).subscribe((data:any)=>{
-      this.manufacturers = [...this.manufacturers, manufacturer];
-      this.displayedManufacturers = [...this.displayedManufacturers, manufacturer];
-    
+      this.manufacturers.push(manufacturer);
     this.manufacturerMap[this.selectedVehicleType]=this.manufacturers;
-    
-    this.loading=false;
 
-  },(error)=>{
-    alert(error);
-    this.loading=false;
-    });
+    this.calculateItemsPerRow();
+      this.formatCarsIntoRows();
+      this.cdr.detectChanges();
   }
 
-
   updateManufacturer(manufacturer:any)
-  {
-    this.manufacturerService.updateManufacturer(manufacturer).subscribe((data:any)=>{
-       
-    },(error)=>{
-      alert(error);
-      });
+  {}
 
+
+  dismiss()
+  {
     
   }
 

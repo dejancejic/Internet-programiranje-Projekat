@@ -115,4 +115,30 @@ export class VehicleService extends BaseService{
     pipe(catchError(this.handleError));
     }
 
+
+    updateRentalPrice(vehicle: any, price: any,type:string) {
+      let options = this.getStandardOptions();
+      options.withCredentials = true;
+      options.params = new HttpParams({ fromObject: { format: 'json' } });
+    
+      let newVeh ={id:vehicle.id,
+        price:price
+      };       
+    
+      let body = JSON.stringify(newVeh);
+      if(type==='E-Car'){
+      return this.http.patch(this.constantsService.SERVER_URL + 'vehicle/car/update/price', body, options)
+        .pipe(catchError(this.handleError));
+      }
+      else if(type==='E-Bike')
+      {
+        return this.http.patch(this.constantsService.SERVER_URL + 'vehicle/bike/update/price', body, options)
+        .pipe(catchError(this.handleError));
+      }
+      return this.http.patch(this.constantsService.SERVER_URL + 'vehicle/scooter/update/price', body, options)
+        .pipe(catchError(this.handleError));
+    }
+    
+    
+
 }
