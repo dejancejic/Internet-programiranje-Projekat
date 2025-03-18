@@ -1,0 +1,261 @@
+html,body{
+    margin:0;
+}
+.app {
+    margin: 0;
+    color: #6a6f8c;
+    background: linear-gradient(135deg, #e0f7fa, #80deea);
+    background-attachment: fixed;
+    font: 600 16px/18px 'Open Sans', sans-serif;
+    width: 100%;
+    min-height: 100vh;
+    padding-top: calc(1%);
+    padding-bottom: calc(1%);
+    
+}
+
+.login-box {
+    width: 100%;
+    margin: auto;
+    max-width: 525px;
+    min-height: 650px;
+    position: relative;
+    background: url(https://images.unsplash.com/photo-1507208773393-40d9fc670acf?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1268&q=80) no-repeat center;
+    background-size: cover;
+    box-shadow: 0 12px 15px 0 rgba(0, 0, 0, .24), 0 17px 50px 0 rgba(0, 0, 0, .19);
+    border-radius: 10px; 
+}
+
+
+.login-snip {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    position: absolute;
+    padding: 90px 70px 50px 70px;
+    background: rgba(0, 47, 107, .9)
+}
+
+.login-snip .login,
+.login-snip .sign-up-form {
+    top: 40px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position: absolute;
+    transform: rotateY(180deg);
+    backface-visibility: hidden;
+    transition: all .4s linear
+}
+
+.login-snip .sign-in,
+.login-snip .sign-up,
+.login-space .group .check {
+    display: none
+}
+
+.login-snip .tab,
+.login-space .group .label,
+.login-space .group {
+    text-transform: uppercase
+}
+
+.login-snip .tab {
+    font-size: 22px;
+    margin-right: 15px;
+    padding-bottom: 5px;
+    margin: 0 15px 10px 0;
+    display: inline-block;
+    border-bottom: 2px solid transparent
+}
+
+.login-snip .sign-in:checked+.tab,
+.login-snip .sign-up:checked+.tab {
+    color: #fff;
+    border-color: #1161ee
+}
+
+.login-space {
+    min-height: 345px;
+    position: relative;
+    perspective: 1000px;
+    transform-style: preserve-3d
+}
+
+.login-space .group {
+    margin-bottom: 15px
+}
+
+.login-space .group .label,
+.login-space .group .input,
+.login-space .group {
+    width: 100%;
+    color: #fff;
+    display: block
+}
+
+.login-space .group .input,
+.login-space .group .button {
+    border: none;
+    padding: 15px 20px;
+    border-radius: 25px;
+    background: rgba(255, 255, 255, .1)
+}
+
+.button
+{
+	  text-align:center;
+	  justify-content:center;
+}
+
+.login-space .group input[data-type="password"] {
+    
+    -webkit-text-security: circle
+}
+
+.login-space .group .label {
+    color: #aaa;
+    font-size: 12px
+}
+
+.login-space .group .button {
+    margin-top: 50px;
+    background: #fff;
+}
+.button{
+    width: 90%;
+    display: flex;
+    color:#fff !important;
+    background-color: rgba(205, 205, 205, .4) !important;
+    font-size: 22px;
+    justify-self: center;
+    text-transform: none
+}
+
+.login-space .group label .icon {
+    width: 15px;
+    height: 15px;
+    border-radius: 2px;
+    position: relative;
+    display: inline-block;
+    background: rgba(255, 255, 255, .1)
+}
+
+.login-space .group label .icon:before,
+.login-space .group label .icon:after {
+    content: '';
+    width: 10px;
+    height: 2px;
+    background: #fff;
+    position: absolute;
+    transition: all .2s ease-in-out 0s
+}
+
+.login-space .group label .icon:before {
+    left: 3px;
+    width: 5px;
+    bottom: 6px;
+    transform: scale(0) rotate(0)
+}
+
+.login-space .group label .icon:after {
+    top: 6px;
+    right: 0;
+    transform: scale(0) rotate(0)
+}
+
+.login-space .check:checked+label {
+    color: #fff
+}
+
+.login-space .group .check:checked+label .icon {
+    background: #1161ee
+}
+
+.login-space .group .check:checked+label .icon:before {
+    transform: scale(1) rotate(45deg)
+}
+
+.login-space .group .check:checked+label .icon:after {
+    transform: scale(1) rotate(-45deg)
+}
+
+.login-snip .sign-in:checked+.tab+.sign-up+.tab+.login-space .login {
+    transform: rotate(0)
+}
+
+.login-snip .sign-up:checked+.tab+.login-space .sign-up-form {
+    transform: rotate(0)
+}
+
+*,
+:after,
+:before {
+    box-sizing: border-box
+}
+
+.clearfix:after,
+.clearfix:before {
+    content: '';
+    display: table
+}
+
+.clearfix:after {
+    clear: both;
+    display: block
+}
+
+a {
+    color: #faff;
+    text-decoration: none
+}
+
+.hr {
+    height: 2px;
+    margin: 40px 0 25px 0;
+    background: rgba(255, 255, 255, .2)
+}
+
+.foot {
+    text-align: center
+}
+
+.card {
+    width: 500px;
+    left: 100px
+}
+
+::placeholder {
+    color: #b3b3b3
+}
+.no-gutters{margin: 0px;}
+
+.foot a:hover{
+
+    color: #fff;
+}
+
+
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 30px;
+  }
+  
+  .spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid rgba(0, 0, 0, 0.1);
+        border-left-color: #007bff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+  
+  
+  
+  

@@ -37,8 +37,12 @@ public class AuthenticationService {
 	public EmployeeResponse authenticateEmployee(Account request,HttpServletResponse response) {
 		Account user=rp.findByusername(request.getUsername()).orElseThrow(()->new AccessDeniedException("Credentials are not valid!"));
 				
+		try {
 		authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
-
+		}catch(Exception ex)
+		{
+			throw new AccessDeniedException("Credentials are not valid!");
+		}
 		
 		String token=jwtService.generateToken(user);
 	

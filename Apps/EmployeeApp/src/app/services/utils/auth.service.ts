@@ -1,6 +1,7 @@
-import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { BehaviorSubject } from 'rxjs';
+
 
 @Injectable({
   providedIn: 'root',
@@ -29,6 +30,14 @@ export class AuthService {
       
       document.cookie = `jwt=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
       this.authStatus.next(false);
+    }
+  }
+
+  checkUserAccessToPage(type:string)
+  {
+    if(sessionStorage.getItem('accType')===null || sessionStorage.getItem('accType')===undefined || !this.isLoggedIn() || type!==sessionStorage.getItem('accType'))
+    {
+      window.location.href='error';
     }
   }
 

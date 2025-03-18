@@ -36,7 +36,7 @@ public class SecurityConfig {
         return http.csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) 
                 .authorizeHttpRequests(req -> req
-                    .requestMatchers("/login/**", "/register")
+                    .requestMatchers("/login/**", "/register","/rss/**","/promotions/**","/post/**")
                     .permitAll()
                     .anyRequest().authenticated())
                 .userDetailsService(userDetailsServiceImp)
@@ -51,12 +51,9 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("http://localhost:4200");
-        config.addAllowedOrigin("http://localhost:4201");
         config.addAllowedOrigin("https://localhost:4200");
-        config.addAllowedOrigin("https://localhost:4201");
-        config.addAllowedOrigin("http://localhost:4202");
-        config.addAllowedOrigin("https://localhost:4202");
+        config.addAllowedOrigin("https://localhost:9443");
+        config.addAllowedOrigin("http://localhost:8080");
         
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
@@ -70,12 +67,9 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("http://localhost:4200");
-        config.addAllowedOrigin("http://localhost:4201");
         config.addAllowedOrigin("https://localhost:4200");
-        config.addAllowedOrigin("https://localhost:4201");
-        config.addAllowedOrigin("http://localhost:4202");
-        config.addAllowedOrigin("https://localhost:4202");
+        config.addAllowedOrigin("https://localhost:9443");
+        config.addAllowedOrigin("http://localhost:8080");
         
         config.addAllowedHeader("*");
         config.addAllowedMethod("GET");

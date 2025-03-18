@@ -1,15 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit, ViewChild } from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {MatButtonModule} from '@angular/material/button';
 import { LoginService } from '../services/login/login.service';
 import { Router } from '@angular/router';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { AuthService } from '../services/utils/auth.service';
+import { ErrorComponent } from "../modals/error/error.component";
 @Component({
   selector: 'app-login',
-  imports: [CommonModule,FormsModule,MatButtonModule,HttpClientModule,MatProgressSpinnerModule],
+  imports: [CommonModule, FormsModule, MatButtonModule, HttpClientModule, MatProgressSpinnerModule, ErrorComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
   providers:[LoginService,AuthService]
@@ -19,6 +20,8 @@ export class LoginComponent implements OnInit{
   @Input() username:string='';
   @Input() password:string='';
 
+
+  @ViewChild("errorModal") errorModal:any;
 
   loading:boolean=false;
 
@@ -48,7 +51,7 @@ export class LoginComponent implements OnInit{
       var accType=data.employee.role;
       
       sessionStorage.setItem("account",data.employee.name+' '+data.employee.surname);
-
+      sessionStorage.setItem("accType",accType);
       if(accType === 'admin'){
       this.router.navigate(['transport','cars'], {
         state: { accType }
@@ -68,7 +71,8 @@ export class LoginComponent implements OnInit{
         });
       }
     },(error:any)=>{
-      alert(error.message);
+      this.errorModal.showModal('Failed to login',error.message);
+      
       this.loading=false;
     });
 
@@ -83,11 +87,11 @@ export class LoginComponent implements OnInit{
     }
     this.loading=true;
     this.loginService.tokenLogin(this.authService.getToken()!).subscribe((data: any) => {
-      var token=data.token;
+      
       var accType=data.employee.role;
 
       sessionStorage.setItem("account",data.employee.name+' '+data.employee.surname);
-
+      sessionStorage.setItem("accType",accType);
       if(accType === 'admin'){
       this.router.navigate(['transport/cars'], {
         state: { accType }
