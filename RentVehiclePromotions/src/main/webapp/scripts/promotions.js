@@ -62,7 +62,8 @@ function switchTab(tab) {
 		document.getElementById("postsDiv").style="display:none";
 		document.getElementById("promotionsDiv").style="display:block";
 		
-		document.getElementById("showDiv").innerHTML="promotions to show";
+		document.getElementById("showDivPromotions").style="display:block";
+        document.getElementById("showDivPosts").style="display:none";
 		
 		 document.getElementById("postsDiv").style="display:none";
 		document.getElementById("promotionsDiv").style="tabs";
@@ -74,7 +75,8 @@ function switchTab(tab) {
         else {
 			document.getElementById("addPostBtn").style="display:block";
         document.getElementById("addPromotionBtn").style="display:none";
-        document.getElementById("showDiv").innerHTML="posts to show";
+         document.getElementById("showDivPromotions").style="display:none";
+        document.getElementById("showDivPosts").style="display:block";
         
         
         document.getElementById("postsDiv").style="tabs";
@@ -90,7 +92,9 @@ function switchTab(tab) {
     });
 
    	let el = document.getElementById(tab + '-tab');
-   	el?.classList.add('active-tab');
+   	if (el) {
+    el.classList.add('active-tab');
+	}
 }
 
 

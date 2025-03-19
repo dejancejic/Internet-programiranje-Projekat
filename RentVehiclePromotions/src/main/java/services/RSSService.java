@@ -2,7 +2,9 @@ package services;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import beans.PostBean;
 import beans.PromotionBean;
@@ -69,13 +71,13 @@ public class RSSService implements Serializable{
 	                Element itemElement = (Element) itemNode;
 
 	                String title = getElementValue(itemElement, "title");
-	                String link = getElementValue(itemElement, "link");
+	                //String link = getElementValue(itemElement, "link");
 	                String description = getElementValue(itemElement, "description");
-
+	                String pubDateStr = getElementValue(itemElement, "pubDate");
 	              
 	                if (title.startsWith("Promotion:")) {
-	         
-	                    PromotionBean promotion = new PromotionBean(null, title.substring(10), LocalDate.now(), description);
+	                	LocalDate parsedDate = parseRssDate(pubDateStr);
+	                    PromotionBean promotion = new PromotionBean(null, title.substring(10), parsedDate, description);
 	                    promotions.add(promotion);
 	                } else {
 	        
@@ -90,6 +92,20 @@ public class RSSService implements Serializable{
 
 	    } catch (Exception e) {
 	        e.printStackTrace(); 
+	    }
+	}
+	
+	
+	private LocalDate parseRssDate(String dateStr) {
+	    if (dateStr == null || dateStr.isEmpty()) {
+	        return null;
+	    }
+	    try {
+	        DateTimeFormatter formatter = DateTimeFormatter.RFC_1123_DATE_TIME.withLocale(Locale.ENGLISH);
+	        return LocalDate.parse(dateStr, formatter);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return null;
 	    }
 	}
 

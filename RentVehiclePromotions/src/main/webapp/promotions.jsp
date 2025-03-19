@@ -13,43 +13,21 @@
 
 <% if (!(userBean.isLoggedIn())) response.sendRedirect("login.jsp");
 
-String successMessage = null;
-String errorMessage = null;
-
-if (request.getMethod().equalsIgnoreCase("POST")) {
-    String promotionTitle = request.getParameter("promotionTitle");
-    String promotionDescription = request.getParameter("promotionDescription");
-    String promotionDateStr = request.getParameter("promotionDate");
-    
-    if (promotionTitle != null && promotionDescription != null) {
-        LocalDate promotionDate = LocalDate.now();
-        PromotionBean newPromotion = new PromotionBean(null,promotionTitle,promotionDate,promotionDescription);
-
-        if (rss.addPromotion(newPromotion) == false) {
-            errorMessage = "Failed to add promotion!";
-        } else {
-            successMessage = "Promotion added successfully!";
-        }
-    }
-    
-    // Handle Post form submission
-    String postTitle = request.getParameter("postTitle");
-    String postContent = request.getParameter("postContent");
-    
-    if (postTitle != null && postContent != null) {
-        PostBean newPost = new PostBean(null,postTitle, postContent);
-        rss.addPost(newPost); 
-        
-        if (rss.addPost(newPost) == false) {
-            errorMessage = "Failed to add post!";
-        } else {
-            successMessage = "Post added successfully!";
-        }
-    }
-    
-    request.setAttribute("successMessage", successMessage);
-    request.setAttribute("errorMessage", errorMessage);
-}
+	boolean isPost=false;
+	
+		if(request.getSession()!=null && (request.getSession().getAttribute("successMessage")!=null || request.getSession().getAttribute("errorMessage")!=null))
+		{
+			if(request.getSession().getAttribute("successMessage")!=null &&
+				((String)request.getSession().getAttribute("successMessage")).contains("Post"))
+			{
+				isPost=true;
+			}else if(request.getSession().getAttribute("errorMessage")!=null &&
+				((String)request.getSession().getAttribute("errorMessage")).contains("post"))
+			{
+				isPost=true;
+			}
+		}
+		
 
 %>
 
@@ -68,12 +46,12 @@ if (request.getMethod().equalsIgnoreCase("POST")) {
 <button class="col end button" type="button" onclick="logout()">Logout</button> 
 <div class="top col">
   <div class="col switcher">
-    <h3 id="promotions-tab" class="tab active-tab" onclick="javascript:switchTab('promotions')">Promotions</h3>
-    <h3 id="posts-tab" class="tab" onclick="javascript:switchTab('posts')">Posts</h3>
+    <h3 id="promotions-tab" class="tab <%= isPost ? "" : "active-tab" %>" onclick="javascript:switchTab('promotions')">Promotions</h3>
+    <h3 id="posts-tab" class="tab <%= isPost ? "active-tab" : "" %>" onclick="javascript:switchTab('posts')">Posts</h3>
   </div>
-  <h2 class="mess" id="successMessage"><%=request.getAttribute("successMessage")!=null?request.getAttribute("successMessage"):"" %> </h2>
+  <h2 class="mess" id="successMessage"><%=request.getSession().getAttribute("successMessage")!=null?request.getSession().getAttribute("successMessage"):"" %> </h2>
 
-	<h2 class="mess" id="failMessage"><%= request.getAttribute("errorMessage")!=null?request.getAttribute("errorMessage"):"" %> </h2>
+	<h2 class="mess" id="failMessage"><%= request.getSession().getAttribute("errorMessage")!=null?request.getSession().getAttribute("errorMessage"):"" %> </h2>
 </div>
 
 
@@ -82,8 +60,17 @@ if (request.getMethod().equalsIgnoreCase("POST")) {
 <div class="search col">
   <input id="searchInput" type="text" class="search-bar" onkeyup="javascript:search()" placeholder="Search by title or content..." />
    <div class="buttons">
-      <button id="addPromotionBtn" type="button" class="button" data-bs-toggle="modal" data-bs-target="#addPromotionModal">Add new promotion &nbsp;&nbsp;<span class="badge text-bg-warning bdge">+</span></button>
-      <button id="addPostBtn" type="button" class="button" style="display:none" data-bs-toggle="modal" data-bs-target="#addPostModal">Add new post &nbsp; <span class="badge text-bg-warning bdge">+</span></button>
+      <button id="addPromotionBtn" type="button" class="button" 
+    style="display: <%= isPost ? "none" : "block" %>;" 
+    data-bs-toggle="modal" data-bs-target="#addPromotionModal">
+    Add new promotion &nbsp;&nbsp;<span class="badge text-bg-warning bdge">+</span>
+</button>
+
+<button id="addPostBtn" type="button" class="button" 
+    style="display: <%= isPost ? "block" : "none" %>;" 
+    data-bs-toggle="modal" data-bs-target="#addPostModal">
+    Add new post &nbsp; <span class="badge text-bg-warning bdge">+</span>
+</button>
   </div>
 </div>
 
@@ -96,7 +83,7 @@ if (request.getMethod().equalsIgnoreCase("POST")) {
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form action="promotions.jsp" method="POST">
+        <form action="addContent.jsp" method="POST">
           <div class="mb-3">
             <label for="promotionTitle" class="form-label">Title</label>
             <input type="text" class="form-control" id="promotionTitle" name="promotionTitle" required>
@@ -121,7 +108,7 @@ if (request.getMethod().equalsIgnoreCase("POST")) {
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form action="promotions.jsp" method="POST" >
+        <form action="addContent.jsp" method="POST" >
           <div class="mb-3">
             <label for="postTitle" class="form-label">Title</label>
             <input type="text" class="form-control" id="postTitle" name="postTitle" required>
@@ -140,13 +127,14 @@ if (request.getMethod().equalsIgnoreCase("POST")) {
 
 
 <div class="rw">
-  <p id="promotionsCount" class="p"><%= rss.getPromotions().size() %></p>
-  <p id="postsCount" class="p" style="display:none"><%= rss.getPosts().size() %></p>
-  <p id="showDiv" class="p">promotions to show</p>
+  <p id="promotionsCount" style="display: <%= isPost ? "none" : "block" %>;"  class="p"><%= rss.getPromotions().size() %></p>
+  <p id="postsCount" class="p" style="display: <%= isPost ? "block" : "none" %>;"><%= rss.getPosts().size() %></p>
+  <p id="showDivPromotions" style="display: <%= isPost ? "none" : "block" %>;" class="p">promotions to show</p>
+  <p id="showDivPosts" style="display: <%= isPost ? "block" : "none" %>;" class="p">posts to show</p>
 </div>
 
 <div class="rw1">
-    <div class="tabs" id="promotionsDiv">
+    <div class="tabs" id="promotionsDiv" style="display: <%= isPost ? "none" : "flex" %>;" >
     <% for (PromotionBean promotion : rss.getPromotions()) { %>
         <div class="tab-item">
             <div class="rw2">
@@ -164,7 +152,7 @@ if (request.getMethod().equalsIgnoreCase("POST")) {
     <% } %>
     </div>
 
-    <div class="tabs" id="postsDiv" style="display:none">
+    <div class="tabs" id="postsDiv" style="display: <%= isPost ? "flex" : "none" %>;">
     <% for (PostBean post : rss.getPosts()) { %>
         <div class="tab-item">
             <h2><%= post.getTitle() %></h2>
