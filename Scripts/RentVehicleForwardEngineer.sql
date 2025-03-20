@@ -206,7 +206,7 @@ ENGINE = InnoDB;
 -- Table `rentvehicle`.`document`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `rentvehicle`.`document` (
-  `id` INT NOT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `number` VARCHAR(255) NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
@@ -296,6 +296,7 @@ CREATE TABLE IF NOT EXISTS `rentvehicle`.`passport` (
   `id` INT NOT NULL,
   `passport_number` VARCHAR(255) NOT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE INDEX `passport_number_UNIQUE` (`passport_number` ASC) VISIBLE,
   CONSTRAINT `fk_passport_document1`
     FOREIGN KEY (`id`)
     REFERENCES `rentvehicle`.`document` (`id`)

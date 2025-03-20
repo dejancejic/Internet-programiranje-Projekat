@@ -24,6 +24,15 @@ public class ClientBean implements Serializable{
 		return false;
 	}
 	
+	public boolean register(Client client)
+	{
+		if ((client = ClientDAO.insertAccount(client))!=null) {
+			isLoggedIn = true;
+			return true;
+		}
+		return false;
+	}
+	
 	public boolean isLoggedIn() {
 		return isLoggedIn;
 	}

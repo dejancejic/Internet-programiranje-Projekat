@@ -21,6 +21,8 @@ public class ClientDAO {
 	private static final String SQL_CLIENT_PASSPORT = "SELECT * FROM passport WHERE id=?";
 	private static final String SQL_INSERT_ACCOUNT = "INSERT INTO account (username, password, name, surname) VALUES (?,?,?,?)";
 	private static final String SQL_INSERT_CLIENT = "INSERT INTO client (id, email, phone, image, document_id, blocked) VALUES (?,?,?,?,?,?)";
+	private static final String SQL_INSERT_DOCUMENT = "INSERT INTO document (number) VALUES (?)";
+	private static final String SQL_INSERT_PASSPORT = "INSERT INTO passport (id,passport_number) VALUES (?,?)";
 	
 	public static Client selectByUsernameAndPassword(String username, String password){
 		Client user = null;
@@ -142,36 +144,44 @@ public class ClientDAO {
 		return document;
 	}
 	
-	public static boolean insertAccount(Client client) {
-		boolean result = false;
+	public static Client insertAccount(Client client) {
+
 		Connection connection = null;
 		ResultSet generatedKeys = null;
-		Object values[] = { client.getUsername(), client.getPassword(), client.getName(), client.getSurname()};
+		String pw=BCrypt.hashpw(client.getPassword(),BCrypt.gensalt());
+		Object values[] = { client.getUsername(), pw, client.getName(), client.getSurname()};
 		try {
 			connection = connectionPool.checkOut();
 			PreparedStatement pstmt = DAOUtil.prepareStatement(connection, SQL_INSERT_ACCOUNT, true, values);
+			
+			if(!insertDocument(client.getDocument()))
+			{
+				return null;
+			}
+			
 			pstmt.executeUpdate();
 			generatedKeys = pstmt.getGeneratedKeys();
-			if(pstmt.getUpdateCount()>0) {
-				result = true;
-			}
+			
 			if (generatedKeys.next())
 				client.setId(generatedKeys.getInt(1));
 			pstmt.close();
 			
-			insertClient(client);
+			if(insertClient(client)==null)
+			{
+				client=null;
+			}
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
+			client=null;
 		} finally {
 			connectionPool.checkIn(connection);
 		}
-		return result;
+		return client;
 	}
 	
 	
-	public static boolean insertClient(Client client) {
-		boolean result = false;
+	public static Client insertClient(Client client) {
 		Connection connection = null;
 		
 		Object values[] = {client.getId(), client.getEmail(), client.getPhone(), client.getImage(), client.getDocument().getId(),false};
@@ -183,12 +193,68 @@ public class ClientDAO {
 			pstmt.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
+			client=null;
+		} finally {
+			connectionPool.checkIn(connection);
+		}
+		return client;
+	}
+	
+	
+	public static boolean insertDocument(Document document)
+	{
+		boolean result = false;
+		Connection connection = null;
+		ResultSet generatedKeys = null;
+		Object values[] = {document.getNumber()};
+		try {
+			connection = connectionPool.checkOut();
+			PreparedStatement pstmt = DAOUtil.prepareStatement(connection, SQL_INSERT_DOCUMENT, true, values);
+			pstmt.executeUpdate();
+			generatedKeys = pstmt.getGeneratedKeys();
+			if(pstmt.getUpdateCount()>0) {
+				result = true;
+			}
+			if (generatedKeys.next())
+				document.setId(generatedKeys.getInt(1));
+			
+			if(document.getNumber()==null)
+			{
+				if(!insertPassport((Passport)document))
+				{
+					return false;
+				}	
+			
+			pstmt.close();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
 		} finally {
 			connectionPool.checkIn(connection);
 		}
 		return result;
 	}
 	
+	
+	public static boolean insertPassport(Passport passport)
+	{
+		boolean result = false;
+		Connection connection = null;
+		
+		Object values[] = {passport.getId(),passport.getPassportNumber()};
+		try {
+			connection = connectionPool.checkOut();
+			PreparedStatement pstmt = DAOUtil.prepareStatement(connection, SQL_INSERT_PASSPORT, false, values);
+			pstmt.executeUpdate();
+			
+			pstmt.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			connectionPool.checkIn(connection);
+		}
+		return result;
+	}
 	
 	
 	

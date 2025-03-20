@@ -1,6 +1,7 @@
 package controller;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -9,8 +10,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.Part;
 
 import beans.ClientBean;
+import dto.Client;
+import dto.Document;
+import dto.Passport;
 
 
 
@@ -49,6 +54,10 @@ public class Controller extends HttpServlet {
 			session.invalidate();
 			address = "/WEB-INF/pages/login.jsp";
 		}
+		else if(action.equals("register"))
+		{
+			address="/WEB-INF/pages/register.jsp";
+		}
 		else if(action.equals("login"))
 		{
 			String username = request.getParameter("username");
@@ -61,6 +70,48 @@ public class Controller extends HttpServlet {
 				address = "/WEB-INF/pages/welcome.jsp";
 			} else {
 				session.setAttribute("notification", "Credentials are not valid!");
+			}
+		}
+		else if(action.equals("registration"))
+		{
+			String username = request.getParameter("username");
+			String password = request.getParameter("password");
+			String name = request.getParameter("name");
+			String surname = request.getParameter("surname");
+			String email = request.getParameter("email");
+			String phone = request.getParameter("phone");
+			
+			String imageBase64 = request.getParameter("profileImageBase64"); // Get the Base64 string
+		    
+			String number=request.getParameter("documentnumber");
+			String passportNumber=request.getParameter("passportnumber");
+			Document doc=null;
+			
+			if(number==null)
+			{
+				doc=new Passport(null,number,passportNumber);
+			}
+			else
+			{
+				doc=new Document(null,number);
+			}
+			
+			
+			Client cl=new Client(null,username,password,name,surname,email,phone,imageBase64,doc);
+			
+			
+			
+			ClientBean clientBean = new ClientBean();
+			
+			if(clientBean.register(cl))
+			{
+				session.setAttribute("clientBean", clientBean);
+				
+				address = "/WEB-INF/pages/welcome.jsp";
+			}
+			else {
+				address = "/WEB-INF/pages/register.jsp";
+				session.setAttribute("notification", "Account already exists!");
 			}
 		}
 		
