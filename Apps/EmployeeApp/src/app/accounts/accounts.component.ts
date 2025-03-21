@@ -158,6 +158,7 @@ private async initialize(): Promise<void> {
         }
         this.allClients = data;
 
+
         this.currentPage = 1;
         this.updatePagination();
       }),

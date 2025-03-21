@@ -15,6 +15,8 @@ public class Client implements Serializable {
 	private String image;
 	private Document document;
 	
+
+	
 	public Client() {
 		super();
 	}
@@ -106,6 +108,7 @@ public class Client implements Serializable {
 	public void setDocument(Document document) {
 		this.document = document;
 	}
+
 	
 	
 

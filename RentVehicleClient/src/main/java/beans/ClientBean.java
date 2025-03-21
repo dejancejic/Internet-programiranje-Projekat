@@ -33,6 +33,14 @@ public class ClientBean implements Serializable{
 		return false;
 	}
 	
+	public boolean setClientBlockedStatus(Client client,boolean status)
+	{
+		if (ClientDAO.setClientBlocked(client.getId(), status)) {
+
+			return true;
+		}
+		return false;
+	}
 	public boolean isLoggedIn() {
 		return isLoggedIn;
 	}
@@ -46,5 +54,15 @@ public class ClientBean implements Serializable{
 		return client;
 	}
 	
+	
+	public boolean checkOldPassword(String oldPassword)
+	{
+		return ClientDAO.checkOldPassword(client.getId(), oldPassword);
+	}
 
+	public boolean updatePassword(String newPassword)
+	{
+		return ClientDAO.setClientPassword(client, newPassword);
+	}
+	
 }

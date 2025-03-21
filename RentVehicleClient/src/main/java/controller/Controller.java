@@ -114,6 +114,58 @@ public class Controller extends HttpServlet {
 				session.setAttribute("notification", "Account already exists!");
 			}
 		}
+		else if(action.equals("scooter"))
+		{
+			address = "/WEB-INF/pages/scooter.jsp";
+		}
+		else if(action.equals("bike"))
+		{
+			address = "/WEB-INF/pages/bike.jsp";	
+		}
+		else if(action.equals("car"))
+		{
+			address = "/WEB-INF/pages/car.jsp";
+		}
+		else if(action.equals("profile"))
+		{
+			address = "/WEB-INF/pages/profile.jsp";
+		}
+		else if(action.equals("deactivate"))
+		{
+			ClientBean cl=(ClientBean)session.getAttribute("clientBean");
+			
+			 
+			if(cl.setClientBlockedStatus(cl.getClient(), true))
+			{
+			
+			session.removeAttribute("clientBean");
+			address = "/WEB-INF/pages/login.jsp";
+			}else 
+			{
+				address = "/WEB-INF/pages/profile.jsp";
+			}			
+		}
+		else if(action.equals("changePassword"))
+		{
+			String oldPassword = request.getParameter("oldPassword");
+            String newPassword = request.getParameter("newPassword");
+            
+            ClientBean cl=(ClientBean)session.getAttribute("clientBean");
+			
+            if(!cl.checkOldPassword(oldPassword))
+            {
+                request.setAttribute("error", "wrongPassword");
+            }
+            else if (cl.updatePassword(newPassword)) {
+                request.setAttribute("success", "changed");
+            } else if(!cl.updatePassword(newPassword)){
+                request.setAttribute("error", "updateFailed");
+            }
+            
+            
+			address = "/WEB-INF/pages/profile.jsp";
+		
+		}
 		
 		
 		RequestDispatcher dispatcher=request.getRequestDispatcher(address);

@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function() {
             if (file) {
                 const reader = new FileReader();
                 reader.onloadend = function() {
-                    hiddenInput.value = reader.result.split(',')[1]; 
+                    hiddenInput.value = reader.result.split(",")[1];
                 };
                 reader.readAsDataURL(file);
             }

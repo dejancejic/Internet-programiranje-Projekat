@@ -1,9 +1,13 @@
 package dao;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Base64;
 
 import dto.Client;
 import dto.Document;
@@ -16,7 +20,10 @@ public class ClientDAO {
 	private static ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
 	
 	private static final String SQL_SELECT_BY_USERNAME_AND_PASSWORD = "SELECT * FROM account WHERE username=?";
-	private static final String SQL_SELECT_CLIENT = "SELECT * FROM client WHERE id=?";
+	private static final String SQL_SELECT_CLIENT = "SELECT * FROM client WHERE id=? AND blocked=0";
+	private static final String SQL_SELECT_CLIENT_PASSWORD = "SELECT password FROM account WHERE id=?";
+	private static final String SQL_UPDATE_CLIENT_PASSWORD = "UPDATE account SET password=? WHERE id=?";
+	private static final String SQL_SET_CLIENT_BLOCKED = "UPDATE client SET blocked=? WHERE id=?";
 	private static final String SQL_CLIENT_DOCUMENT = "SELECT * FROM document WHERE id=?";
 	private static final String SQL_CLIENT_PASSPORT = "SELECT * FROM passport WHERE id=?";
 	private static final String SQL_INSERT_ACCOUNT = "INSERT INTO account (username, password, name, surname) VALUES (?,?,?,?)";
@@ -41,10 +48,12 @@ public class ClientDAO {
 				if(BCrypt.checkpw(password, passwordToCheck))
 				{
 				user=selectClientById(rs.getInt("id"));
+					if(user!=null) {
 				user.setUsername(username);
 				user.setPassword(passwordToCheck);
 				user.setName(rs.getString("name"));
 				user.setSurname(rs.getString("surname"));
+					}
 				}
 			}
 			
@@ -73,7 +82,23 @@ public class ClientDAO {
 				Document document=selectClientDocument(rs.getInt("document_id"));
 				
 				client = new Client(rs.getInt("id"), "","","","",
-						rs.getString("email"),rs.getString("phone"),rs.getString("image"),document);
+						rs.getString("email"),rs.getString("phone"),null,document);
+				
+				 Blob blob = rs.getBlob("image");
+
+		            if (blob != null) {
+		                try (InputStream inputStream = blob.getBinaryStream()) {
+		                    byte[] imageBytes = inputStream.readAllBytes();
+		                    
+		                    
+		                    String base64Image = Base64.getEncoder().encodeToString(imageBytes);
+		                    
+		                    
+		                    client.setImage(base64Image);
+		                } catch (IOException ex) {
+		                    ex.printStackTrace();
+		                }
+		            }
 			}
 			pstmt.close();
 		} catch (SQLException exp) {
@@ -183,8 +208,9 @@ public class ClientDAO {
 	
 	public static Client insertClient(Client client) {
 		Connection connection = null;
+		byte[] decodedBytes = Base64.getDecoder().decode(client.getImage());
 		
-		Object values[] = {client.getId(), client.getEmail(), client.getPhone(), client.getImage(), client.getDocument().getId(),false};
+		Object values[] = {client.getId(), client.getEmail(), client.getPhone(), decodedBytes, client.getDocument().getId(),false};
 		try {
 			connection = connectionPool.checkOut();
 			PreparedStatement pstmt = DAOUtil.prepareStatement(connection, SQL_INSERT_CLIENT, false, values);
@@ -257,6 +283,83 @@ public class ClientDAO {
 	}
 	
 	
+	public static boolean setClientBlocked(Integer id,boolean status) {
+		boolean result=false;
+		
+		Connection connection = null;
+		int num=0;
+		if(status==true)
+			num=1;
+		
+		Object values[] = {num,id};
+		try {
+			connection = connectionPool.checkOut();
+			PreparedStatement pstmt = DAOUtil.prepareStatement(connection, SQL_SET_CLIENT_BLOCKED, false, values);
+			pstmt.executeUpdate();
+			
+			result=true;
+			pstmt.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			connectionPool.checkIn(connection);
+		}
+		return result;
+	}
+	
+	
+	
+	public static boolean checkOldPassword(Integer id,String oldPassword) {
+		boolean result=false;
+		
+		Connection connection = null;
+		ResultSet rs = null;
+		Object values[] = {id};
+		try {
+			connection = connectionPool.checkOut();
+			PreparedStatement pstmt = DAOUtil.prepareStatement(connection, SQL_SELECT_CLIENT_PASSWORD, false, values);
+			rs = pstmt.executeQuery();
+			String password="";
+			
+			if (rs.next()) { 
+	            password = rs.getString("password");
+	        }
+			if(BCrypt.checkpw(oldPassword, password)) {
+	
+			result=true;
+			}
+			pstmt.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			connectionPool.checkIn(connection);
+		}
+		return result;
+	}
+	
+	
+	public static boolean setClientPassword(Client client,String newPassword) {
+		boolean result=false;
+		
+		Connection connection = null;
+		String pw=BCrypt.hashpw(newPassword,BCrypt.gensalt());
+		
+		Object values[] = {pw,client.getId()};
+		try {
+			connection = connectionPool.checkOut();
+			PreparedStatement pstmt = DAOUtil.prepareStatement(connection, SQL_UPDATE_CLIENT_PASSWORD, false, values);
+			pstmt.executeUpdate();
+			
+			result=true;
+			client.setPassword(pw);
+			pstmt.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			connectionPool.checkIn(connection);
+		}
+		return result;
+	}
 	
 	
 	
