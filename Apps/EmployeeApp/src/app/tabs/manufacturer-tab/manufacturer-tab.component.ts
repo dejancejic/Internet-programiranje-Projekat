@@ -15,6 +15,7 @@ declare var bootstrap: any;
 export class ManufacturerTabComponent {
 
   @Input() manufacturer:Manufacturer|null=null;
+  @Input() type:string='E-Car';
   @Output() removeManu=new EventEmitter(); 
   @Output() updateManu=new EventEmitter<Manufacturer>(); 
 

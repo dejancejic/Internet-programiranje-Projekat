@@ -1,0 +1,35 @@
+.active-tab {
+    color: rgb(59, 59, 227);
+}
+
+ body {
+            background-color: #f8f9fa;
+        }
+        .card {
+            border-radius: 10px;
+        }
+        .profile-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #007bff;
+        }
+        .td1
+        {
+        	line-height: 80px;
+        }
+        
+        .vehicle-image {
+            width: 90px;
+            height: 90px;
+            border-radius: 30%;
+            object-fit: fit;
+            border: 3px solid #007bff;
+        }
+        .btn-danger {
+            transition: background-color 0.3s ease-in-out;
+        }
+        .btn-danger:hover {
+            background-color: #dc3545;
+        }

@@ -156,7 +156,7 @@ public class VehicleService {
 		c.setManufacturerId(car.getManufacturerId());
 		c.setModel(car.getModel());
 		c.setPrice(car.getPrice());
-		
+		c.setBuyDate(car.getBuyDate());
 		
 		
 		Vehicle veh=c;

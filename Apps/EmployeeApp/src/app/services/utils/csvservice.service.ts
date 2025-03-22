@@ -33,7 +33,8 @@ export class CSVserviceService {
           price: headers.indexOf("price"),
           description: headers.indexOf("description"),
           model: headers.indexOf("model"),
-          manufacturerId: headers.indexOf("manufacturerId")
+          manufacturerId: headers.indexOf("manufacturerId"),
+          buyDate: headers.indexOf("buyDate")
         };
   
         if (Object.values(carDataIndex).includes(-1)) {
@@ -50,11 +51,10 @@ export class CSVserviceService {
           return;
         }
   
-        let car: Car = new Car(null!, dataRow[carDataIndex.status],'','',dataRow[carDataIndex.carId],null!,
+        let car: Car = new Car(null!, dataRow[carDataIndex.status],'','',dataRow[carDataIndex.carId],new Date(dataRow[carDataIndex.buyDate]),
           parseFloat(dataRow[carDataIndex.price]),
           dataRow[carDataIndex.description],
           dataRow[carDataIndex.model],parseInt(dataRow[carDataIndex.manufacturerId]),
-          
         );
         resolve(car);
       };
@@ -111,6 +111,7 @@ export class CSVserviceService {
           dataRow[bikeDataIndex.model],parseInt(dataRow[bikeDataIndex.manufacturerId]),
           
         );
+        console.log(bike.manufacturerId);
         resolve(bike);
       };
   

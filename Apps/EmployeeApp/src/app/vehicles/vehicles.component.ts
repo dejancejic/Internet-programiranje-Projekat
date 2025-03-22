@@ -168,6 +168,8 @@ export class VehiclesComponent implements OnInit,AfterViewInit{
   addNewVehicle(event:any)
   {
     this.cars.push(event);
+    this.calculateItemsPerRow();
+    this.formatCarsIntoRows();
   }
 
   dismiss()

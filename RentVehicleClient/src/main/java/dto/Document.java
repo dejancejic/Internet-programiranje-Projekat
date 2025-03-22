@@ -9,6 +9,7 @@ public class Document implements Serializable {
 	private String number;
 	
 	
+	
 	public Document() {
 		
 	}
@@ -35,5 +36,10 @@ public class Document implements Serializable {
 		this.number = number;
 	}
 	
+	@Override
+	public String toString()
+	{
+		return number;
+	}
 	
 }

@@ -13,6 +13,7 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 
 import beans.ClientBean;
+import beans.RentBean;
 import dto.Client;
 import dto.Document;
 import dto.Passport;
@@ -128,6 +129,14 @@ public class Controller extends HttpServlet {
 		}
 		else if(action.equals("profile"))
 		{
+			RentBean rentBean=new RentBean();
+			
+			ClientBean cl=(ClientBean)session.getAttribute("clientBean");
+			
+			rentBean.getClientRents(cl.getClient().getId());
+			
+			session.setAttribute("rentBean", rentBean);
+			
 			address = "/WEB-INF/pages/profile.jsp";
 		}
 		else if(action.equals("deactivate"))

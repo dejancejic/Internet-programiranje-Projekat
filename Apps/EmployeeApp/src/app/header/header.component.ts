@@ -79,7 +79,7 @@ export class HeaderComponent implements AfterViewInit,OnInit{
     
       if(this.type==='cars')
       {
-        this.manufacturers = [...this.manufacturers,...data['Car']];
+        this.manufacturers = [...this.manufacturers,...data['E-Car']];
       }
       else if(this.type==='bikes')
       {
@@ -103,6 +103,7 @@ export class HeaderComponent implements AfterViewInit,OnInit{
       carId:[null,Validators.required],
       manufacturerId:[null,Validators.required],
       model:[null,Validators.required],
+      buyDate:[null,Validators.required],
       price:[null,[
         Validators.required,
         Validators.min(2.99),

@@ -18,7 +18,8 @@
         <manufacturer-tab 
         [manufacturer]="manufacturer" 
         (removeManu)="showDeleteVehicleModal(manufacturer)" 
-        (updateManu)="updateManufacturer($event)">
+        (updateManu)="updateManufacturer($event)"
+        [type]="selectedVehicleType">
     </manufacturer-tab>
     </ng-container>
   </div>

@@ -26,6 +26,11 @@ public class Passport extends Document {
 		this.passportNumber = passportNumber;
 	}
 	
+	@Override
+	public String toString()
+	{
+		return passportNumber;
+	}
 	
 
 }

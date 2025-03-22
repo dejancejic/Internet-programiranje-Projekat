@@ -1,3 +1,11 @@
+<%@page import="java.time.Duration"%>
+<%@page import="java.time.LocalDateTime"%>
+<%@page import="java.time.format.DateTimeFormatter"%>
+<%@page import="dto.Scooter"%>
+<%@page import="dto.Bike"%>
+<%@page import="dto.Car"%>
+<%@page import="beans.RentBean"%>
+<%@page import="dto.Rental"%>
 <%@page import="java.io.Console"%>
 <%@page import="java.util.Base64"%>
 <%@page import="beans.ClientBean"%>
@@ -10,6 +18,8 @@
 	ClientBean client=(ClientBean)request.getSession().getAttribute("clientBean");
 	String error = (String) request.getAttribute("error");
 	String success = (String) request.getAttribute("success");
+	
+	RentBean rentBean=(RentBean)request.getSession().getAttribute("rentBean");
 %>
 <!DOCTYPE html>
 <html lang="sr">
@@ -20,33 +30,14 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="styles/profile.css">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        .card {
-            border-radius: 10px;
-        }
-        .profile-image {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid #007bff;
-        }
-        .btn-danger {
-            transition: background-color 0.3s ease-in-out;
-        }
-        .btn-danger:hover {
-            background-color: #dc3545;
-        }
-    </style>
+    
 </head>
 <body>
 
 <div class="container mt-5">
-    <h2 class="text-center mb-4">My Account</h2>
+    <h2 class="text-center mb-4 active-tab">My Account</h2>
 
     <div class="row">
 
@@ -61,10 +52,12 @@
                     <%=client.getClient().getName() %> <%= client.getClient().getSurname() %>
                 </h4>
                 <p class="text-muted">@<%= client.getClient().getUsername() %></p>
+                
+                <p class="text-muted">ID: <%= client.getClient().getDocument().toString() %></p>
             </div>
 
 
-            <div class="card p-4 mt-2">
+            <div class="card p-4 mt-2 mb-3">
                 <h5 class="text-center">Settings</h5>
 
          	<form method="POST" action="?action=changePassword">
@@ -84,43 +77,72 @@
             </div>
         </div>
 
-        <div class="col-md-8">
-            <div class="card p-3">
-                <h5 class="text-center">All Rentals</h5>
+       <div class="col-md-8">
+    <div class="card p-3 mb-4">
+        <h5 class="text-center">All Rentals</h5>
 
-                <table class="table table-striped mt-3">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Vozilo</th>
-                            <th>Datum</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                      
-                        <tr>
-                            <td>1</td>
-                            <td>Trotinet</td>
-                            <td>15.03.2025</td>
-                            <td class="text-success">Završeno</td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>Bicikl</td>
-                            <td>18.03.2025</td>
-                            <td class="text-warning">U toku</td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>Automobil</td>
-                            <td>20.03.2025</td>
-                            <td class="text-danger">Otkazano</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        <table class="table table-striped mt-3" id="rentalsTable">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Type</th>
+                    <th>Vehicle</th>
+                    <th>Date</th>
+                    <th>Duration</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% 
+                // Define formatter for date display
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"); 
+
+                for (Rental r : rentBean.getRents()) { 
+                    LocalDateTime startDate = r.getDate();
+                    LocalDateTime endDate = r.getDuration(); // Assuming this is the return date
+
+                    // Calculate duration difference
+                    Duration duration = Duration.between(startDate, endDate);
+                    long days = duration.toDays();
+                    long minutes = duration.toMinutesPart(); // Only Java 9+, otherwise use (duration.toMinutes() % 60)
+                %>
+                <tr>
+                    <td>
+                        <img src="data:image/png;base64,<%= r.getVehicle().getImage() %>" 
+                            alt="Vehicle" class="vehicle-image mx-auto d-block">
+                    </td>
+                    <td class="td1">
+                        <% if (r.getVehicle() instanceof Car) { %>
+                            <span class="badge text-bg-primary">Car</span>
+                        <% } %>
+                        <% if (r.getVehicle() instanceof Bike) { %>
+                            <span class="badge text-bg-warning">Bike</span>
+                        <% } %>
+                        <% if (r.getVehicle() instanceof Scooter) { %>
+                            <span class="badge text-bg-success">Scooter</span>
+                        <% } %>
+                    </td>
+                    <td class="td1">
+                        <%= r.getVehicle().getManufacturer() + " " + r.getVehicle().getModel() %>
+                    </td>
+                    <td class="td1">
+                        <%= startDate.format(formatter) %> 
+                    </td>
+                    <td class="td1">
+                        <%= days + " days, " + minutes + " minutes" %>
+                    </td>
+                </tr>
+                <% } %>
+            </tbody>
+        </table>
+
+        <!-- Bootstrap Pagination Controls -->
+        <nav>
+            <ul class="pagination justify-content-start" id="pagination">
+                <!-- Pagination items will be added dynamically -->
+            </ul>
+        </nav>
+    </div>
+</div>
     </div>
 </div>
 
@@ -196,6 +218,58 @@
         <% } %>
     });
 </script>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    var rowsPerPage = 4; // Number of rows per page
+    var rows = $("#rentalsTable tbody tr");
+    var totalRows = rows.length;
+    var totalPages = Math.ceil(totalRows / rowsPerPage);
+
+    function showPage(page) {
+        rows.hide();
+        rows.slice((page - 1) * rowsPerPage, page * rowsPerPage).show();
+        $(".page-item").removeClass("active");
+        $("#page" + page).addClass("active");
+    }
+
+    // Generate pagination buttons
+    var pagination = $("#pagination");
+    pagination.append('<li class="page-item disabled" id="prevPage"><a class="page-link" href="#">Previous</a></li>');
+    for (var i = 1; i <= totalPages; i++) {
+        pagination.append('<li class="page-item" id="page' + i + '"><a class="page-link" href="#">' + i + '</a></li>');
+    }
+    pagination.append('<li class="page-item" id="nextPage"><a class="page-link" href="#">Next</a></li>');
+
+    showPage(1); 
+
+    $(".page-item").click(function() {
+        var id = $(this).attr("id");
+        if (id.startsWith("page")) {
+            var pageNum = parseInt(id.replace("page", ""));
+            showPage(pageNum);
+        }
+    });
+
+    $("#prevPage").click(function() {
+        var currentPage = $(".page-item.active").attr("id").replace("page", "");
+        if (currentPage > 1) {
+            showPage(parseInt(currentPage) - 1);
+        }
+    });
+
+    $("#nextPage").click(function() {
+        var currentPage = $(".page-item.active").attr("id").replace("page", "");
+        if (currentPage < totalPages) {
+            showPage(parseInt(currentPage) + 1);
+        }
+    });
+});
+</script>
+
+
 
 
 </body>

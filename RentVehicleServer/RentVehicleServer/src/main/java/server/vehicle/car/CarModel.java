@@ -10,7 +10,7 @@ public class CarModel {
 	private String carId;
 	
 	
-	private LocalDate rentDate;
+	private LocalDate buyDate;
 	
 	private Double price;
 	
@@ -47,12 +47,12 @@ public class CarModel {
 		this.carId = carId;
 	}
 
-	public LocalDate getRentDate() {
-		return rentDate;
+	public LocalDate getBuyDate() {
+		return buyDate;
 	}
 
-	public void setRentDate(LocalDate rentDate) {
-		this.rentDate = rentDate;
+	public void setBuyDate(LocalDate rentDate) {
+		this.buyDate = rentDate;
 	}
 
 	public Double getPrice() {
