@@ -31,5 +31,11 @@ public class RentBean implements Serializable{
 	}
 	
 	
+	public boolean addRent(Rental rental)
+	{
+		return RentalDAO.insertRental(rental)!=null;
+	}
+	
+	
 
 }

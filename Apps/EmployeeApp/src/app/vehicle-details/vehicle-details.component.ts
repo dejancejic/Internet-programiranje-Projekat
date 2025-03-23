@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { AfterViewInit, Component, inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -15,6 +15,8 @@ import { DurationService } from '../services/utils/duration.service';
 import { Malfunction } from '../model/malfunction';
 import { futureDateValidator } from '../services/validators/dateValidator';
 import { MalfunctionTableComponent } from "../tables/malfunction-table/malfunction-table.component";
+import { NavAdminComponent } from '../navbars/nav-admin/nav-admin.component';
+import { NavManagerComponent } from '../navbars/nav-manager/nav-manager.component';
 
 declare var bootstrap:any;
 
@@ -92,6 +94,15 @@ export class VehicleDetailsComponent implements OnInit,AfterViewInit{
       this.initialize();
     });
   }
+  constructor(private location: Location) {
+    this.location.subscribe(() => {
+      NavAdminComponent.showInfoTab=false;
+      NavManagerComponent.showInfoTab=false;
+    });
+  }
+  
+
+
 
   onImageError(event:any){
     if(this.vehicleType==='scooter'){

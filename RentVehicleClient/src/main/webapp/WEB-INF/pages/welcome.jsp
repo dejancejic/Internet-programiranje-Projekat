@@ -1,7 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <jsp:useBean id="clientBean" class="beans.ClientBean" scope="session"></jsp:useBean>
 
-<% if (!(clientBean.isLoggedIn())) response.sendRedirect("login.jsp"); %>
+<% if (clientBean==null || !(clientBean.isLoggedIn())) response.sendRedirect("login.jsp"); %>
 
 <!DOCTYPE html>
 <html lang="sr">
@@ -28,7 +28,7 @@
                 <i class="fa-solid fa-motorcycle icon"></i>
                 <div class="card-body">
                     <h5 class="card-title">Rent E-Scooter</h5>
-                    <a href="?action=scooter" class="btn btn-primary">Go</a>
+                    <a href="?action=scooter0" class="btn btn-primary">Go</a>
                 </div>
             </div>
         </div>
@@ -39,7 +39,7 @@
                 <i class="fa-solid fa-bicycle icon"></i>
                 <div class="card-body">
                     <h5 class="card-title">Rent E-Bike</h5>
-                    <a href="?action=bike" class="btn btn-primary">Go</a>
+                    <a href="?action=bike0" class="btn btn-primary">Go</a>
                 </div>
             </div>
         </div>
@@ -50,7 +50,7 @@
                 <i class="fa-solid fa-car icon"></i>
                 <div class="card-body">
                     <h5 class="card-title">Rent E-Car</h5>
-                    <a href="?action=car" class="btn btn-primary">Go</a>
+                    <a href="?action=car0" class="btn btn-primary">Go</a>
                 </div>
             </div>
         </div>

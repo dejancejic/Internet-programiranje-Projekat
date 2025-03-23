@@ -1,0 +1,85 @@
+.wrapper {
+    background: rgba(255, 255, 255, 0.95); 
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    margin: 20px;
+    width: 375px;
+    min-height: 320px; 
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+img {
+    height: 160px;
+}
+
+.row1 {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap; 
+    align-items: flex-start; 
+}
+
+.day {
+    opacity: 0.5;
+    margin-left: 3px;
+}
+
+.manufacturer {
+    text-transform: uppercase;
+    margin-top: 10px;
+    font-weight: bold;
+    opacity: 0.35;
+}
+
+.amount {
+    font-weight: bold;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap; 
+    justify-content: flex-end; 
+    margin-left: 10px; 
+}
+
+.model {
+    font-weight: bold;
+    flex-grow: 1; 
+    word-wrap: break-word; 
+    margin-right: 10px;
+}
+h6{
+    margin-top: 2px;
+    font-size: 17px;
+}
+.bin
+{
+    align-self: flex-end;
+    color: red;
+    margin-top: -5px;
+   
+}
+
+.bin2
+{
+    margin-top: -20px;
+   
+}
+
+.bdg
+{
+    width: 120px;
+    height: 25px;
+    margin-top: 0px;
+    margin-bottom: 7px;
+}
+  
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 10px;
+    padding: 10px;
+  }

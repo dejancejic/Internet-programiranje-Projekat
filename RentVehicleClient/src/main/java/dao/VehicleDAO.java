@@ -7,77 +7,84 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Base64;
 
-import org.mindrot.jbcrypt.BCrypt;
-
 import dto.Bike;
 import dto.Car;
-import dto.Client;
-import dto.Passport;
-import dto.Rental;
 import dto.Scooter;
 import dto.Vehicle;
 
-public class RentalDAO {
+public class VehicleDAO {
 
 	private static ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
 	
-	private static final String SQL_SELECT_CLIENT_RENTALS = "SELECT * FROM rent WHERE client_id=?";
-	private static final String SQL_SELECT_VEHICLE = "SELECT * FROM vehicle WHERE id=?";
+	private static final String SQL_SELECT_VEHICLE_BY_ID = "SELECT * FROM vehicle WHERE id=? AND status=?";
+	private static final String SQL_SELECT_ALL_CARS = "SELECT * FROM car";
+	private static final String SQL_SELECT_ALL_BIKES = "SELECT * FROM bike";
+	private static final String SQL_SELECT_ALL_SCOOTERS = "SELECT * FROM scooter";
 	private static final String SQL_SELECT_CAR = "SELECT * FROM car WHERE id=?";
+	private static final String SQL_SELECT_MANUFACTURER = "SELECT * FROM manufacturer WHERE id=?";
 	private static final String SQL_SELECT_BIKE = "SELECT * FROM bike WHERE id=?";
 	private static final String SQL_SELECT_SCOOTER = "SELECT * FROM scooter WHERE id=?";
-	private static final String SQL_SELECT_MANUFACTURER = "SELECT * FROM manufacturer WHERE id=?";
-	private static final String SQL_INSERT_RENTAL = "INSERT INTO rent (date_time,taken_x,taken_y,left_x,left_y,duration,vehicle_id,client_id) VALUES (?,?,?,?,?,?,?,?)";
-	private static final String SQL_INSERT_CAR_RENTAL = "INSERT INTO car_rent (id,licence_number,document_id) VALUES (?,?,?)";
-	public static ArrayList<Rental> selectClientRentals(Integer id)
+	
+	
+	private static void helperMethod(ArrayList<Vehicle> list,String query)
 	{
-		ArrayList<Rental> list=new ArrayList<Rental>();
 		Connection connection = null;
 		ResultSet rs = null;
-		Object values[] = {id};
-		
 		try {
 			connection = connectionPool.checkOut();
 			PreparedStatement pstmt = DAOUtil.prepareStatement(connection,
-					SQL_SELECT_CLIENT_RENTALS, false, values);
+					query, false);
 			
 			rs = pstmt.executeQuery();
-			while (rs.next()){
-				
 
-				
-				Vehicle veh=selectVehicleById(rs.getInt("vehicle_id"));
-				list.add(new Rental(rs.getInt("id"),rs.getTimestamp("date_time").toLocalDateTime(),
-						rs.getString("taken_x"),rs.getString("taken_y"),
-						rs.getString("left_x"),rs.getString("left_y"),rs.getTimestamp("duration").toLocalDateTime(),veh));
+			
+			while(rs.next()){
+				list.add(selectVehicleById(rs.getInt("id")));
 			}
 			pstmt.close();
 		} catch (SQLException exp) {
 			exp.printStackTrace();
-			list=null;
 		} finally {
 			connectionPool.checkIn(connection);
 		}
+	}
+	
+	public static ArrayList<Vehicle> getVehicleByType(String type)
+	{
 		
+		ArrayList<Vehicle> list=new ArrayList<Vehicle>();
+		
+		if(type.equals("car"))
+		{
+			helperMethod(list, SQL_SELECT_ALL_CARS);
+		}
+		else if(type.equals("bike"))
+		{
+			helperMethod(list, SQL_SELECT_ALL_BIKES);
+		}
+		else 
+		{
+			helperMethod(list, SQL_SELECT_ALL_SCOOTERS);
+		}
 		
 		return list;
 	}
+	
 	
 	public static Vehicle selectVehicleById(Integer id)
 	{
 		Vehicle veh=null;
 		Connection connection = null;
 		ResultSet rs = null;
-		Object values[] = {id};
+		Object values[] = {id,"free"};
 		
 		try {
 			connection = connectionPool.checkOut();
 			PreparedStatement pstmt = DAOUtil.prepareStatement(connection,
-					SQL_SELECT_VEHICLE, false, values);
+					SQL_SELECT_VEHICLE_BY_ID, false, values);
 			
 			rs = pstmt.executeQuery();
 			if(rs.next()){
@@ -177,7 +184,7 @@ public class RentalDAO {
 			if(rs.next()){
 				String manufacturer=selectManufacturerById(rs.getInt("manufacturer_id"));
 				veh=new Bike(manufacturer,rs.getString("model"),rs.getString("bike_id"),
-						rs.getDouble("price"),rs.getString("range"));
+						rs.getDouble("price"),rs.getString("bike_range"));
 			}
 			pstmt.close();
 		} catch (SQLException exp) {
@@ -224,8 +231,6 @@ public class RentalDAO {
 	
 	
 	
-	
-	
 	public static String selectManufacturerById(Integer id)
 	{
 		String manu=null;
@@ -255,58 +260,5 @@ public class RentalDAO {
 		return manu;
 	}
 	
-	public static Rental insertRental(Rental rental) {
 
-		Connection connection = null;
-		ResultSet generatedKeys = null;
-		Object values[] = {rental.getDate(),rental.getTakenX(),rental.getTakenY(),
-				rental.getLeftX(),rental.getLeftY(),rental.getDuration(),rental.getVehicle().getId(),rental.getClientId()};
-		try {
-			connection = connectionPool.checkOut();
-			PreparedStatement pstmt = DAOUtil.prepareStatement(connection, SQL_INSERT_RENTAL, true, values);
-			
-			pstmt.executeUpdate();
-			generatedKeys = pstmt.getGeneratedKeys();
-			
-			if (generatedKeys.next())
-				rental.setId(generatedKeys.getInt(1));
-			
-			pstmt.close();
-			
-			if(rental.getLicenceNumber()!=null)
-			{
-				rental=insertCarRental(rental);
-			}
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-			rental=null;
-		} finally {
-			connectionPool.checkIn(connection);
-		}
-		return rental;
-	}
-	
-	
-	public static Rental insertCarRental(Rental rental) {
-		Connection connection = null;
-		
-		Object values[] = {rental.getId(),rental.getLicenceNumber(),rental.getDocumentId()};
-		try {
-			connection = connectionPool.checkOut();
-			PreparedStatement pstmt = DAOUtil.prepareStatement(connection, SQL_INSERT_CAR_RENTAL, false, values);
-			pstmt.executeUpdate();
-			
-			pstmt.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			rental=null;
-		} finally {
-			connectionPool.checkIn(connection);
-		}
-		return rental;
-	}
-	
-	
-	
 }

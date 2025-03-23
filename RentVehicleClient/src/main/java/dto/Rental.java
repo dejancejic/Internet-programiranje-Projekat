@@ -17,6 +17,9 @@ public class Rental implements Serializable{
 	private LocalDateTime duration;
 	private Vehicle vehicle;
 	
+	private String licenceNumber;
+	private Integer documentId;
+	private Integer clientId;
 	
 
 	public Rental() {
@@ -98,6 +101,30 @@ public class Rental implements Serializable{
 
 	public void setVehicle(Vehicle vehicle) {
 		this.vehicle = vehicle;
+	}
+
+	public String getLicenceNumber() {
+		return licenceNumber;
+	}
+
+	public void setLicenceNumber(String licenceNumber) {
+		this.licenceNumber = licenceNumber;
+	}
+
+	public Integer getDocumentId() {
+		return documentId;
+	}
+
+	public void setDocumentId(Integer documentId) {
+		this.documentId = documentId;
+	}
+
+	public Integer getClientId() {
+		return clientId;
+	}
+
+	public void setClientId(Integer clientId) {
+		this.clientId = clientId;
 	}
 	
 	
