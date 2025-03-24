@@ -27,8 +27,8 @@
     
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    const fileInput = document.getElementById("profileImageInput"); // File input field
-    const hiddenInput = document.getElementById("profileImageBase64"); // Hidden field
+    const fileInput = document.getElementById("profileImageInput"); 
+    const hiddenInput = document.getElementById("profileImageBase64"); 
 
     if (fileInput && hiddenInput) { 
         fileInput.addEventListener("change", function(event) {
@@ -46,8 +46,8 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 </head>
 <body>
-
-<div class="login-container">
+ 
+<div class="login-container mt-4">
     <h3>Client Register</h3>
     <p class="text-white-50">Sign up to rent your electric vehicle</p>
 
@@ -137,9 +137,9 @@ document.addEventListener("DOMContentLoaded", function() {
         <div class="text-center mt-3">
         <p class="text-red-50 text-decoration-none"><%=session.getAttribute("notification")!=null?session.getAttribute("notification").toString():"" %></p>
         </div>
-
+ 
         <div class="text-center mt-3">
-            <a href="?action=login" class="text-blue-50 text-decoration-none">Already have an account? Login here!</a>
+            <a href="?action=login" class="text-blue-60 text-decoration-none have">Already have an account? Login here!</a>
         </div>
     </form>
 </div>

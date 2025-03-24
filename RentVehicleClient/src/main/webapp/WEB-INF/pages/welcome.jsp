@@ -18,7 +18,16 @@
 </head>
 <body>
 
-<div class="container mt-5">
+<div class="container mt-5 mb-5">
+
+<div class="container mt-3 d-flex justify-content-end">
+    <form action="?action=logout" method="post">
+        <button type="submit" class="btn btn-danger">
+            <i class="fa-solid fa-sign-out-alt"></i> Logout
+        </button>
+    </form>
+</div>
+
     <h2 class="text-center mb-4">Choose an option</h2>
     
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">

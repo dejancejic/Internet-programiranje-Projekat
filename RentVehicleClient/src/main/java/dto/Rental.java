@@ -1,7 +1,7 @@
 package dto;
 
 import java.io.Serializable;
-
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 
@@ -127,6 +127,37 @@ public class Rental implements Serializable{
 		this.clientId = clientId;
 	}
 	
+	
+	public double calculatePrice()
+	{
+		double price=0.0;
+		
+		long durationMinutes = Duration.between(date, duration).toMinutes();
+	    long durationDays = Duration.between(date,duration).toDays();
+		
+		if(durationDays==0)
+			durationDays=1;
+		if(durationMinutes==0)
+			durationMinutes=1;
+	    
+		if(vehicle instanceof Car)
+		{
+			price=((Car)vehicle).getPrice() *(double) durationDays;
+		}
+		else if(vehicle instanceof Bike)
+		{
+			price=((Bike)vehicle).getPrice() * (double)durationMinutes;
+			
+		}
+		else if(vehicle instanceof Scooter)
+		{
+			price=((Scooter)vehicle).getPrice() * (double)durationMinutes;
+		}
+		
+		
+		
+		return price;
+	}
 	
 
 }

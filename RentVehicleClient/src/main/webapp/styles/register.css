@@ -1,15 +1,17 @@
 
-      body {
+    body {
     background: url('https://www.revv.co.in/blogs/wp-content/uploads/2020/09/Car-Rentals-in-India.jpg') no-repeat center center fixed;
     background-size: cover;
     backdrop-filter: blur(5px);
     margin: 0;
-    padding: 20px 0;
-    min-height: 100vh;
+    padding: 0;
+    min-height: 100vh; /* Allow scrolling if needed */
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: flex-start; /* Keep it at the top */
+    align-items: center;
 }
+
 
 
 
@@ -22,18 +24,18 @@
         }
 
         .login-container {
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 2rem;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            max-width: 400px;
-            width: 90%;
-            margin-top:20px !important;
-            margin-bottom:20px !important;
-            text-align: center;
-            color: white;
-        }
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    max-width: 400px;
+    width: 90%;
+    margin: 50px auto; /* Add more top margin */
+    text-align: center;
+    color: white;
+}
+
 
         .form-control {
             background: rgba(255, 255, 255, 0.2);
@@ -99,4 +101,9 @@ select.form-control:focus {
     border: 1px solid white;
     box-shadow: none;
     color: white;
+}
+
+.have
+{
+	font-weight:bold;
 }

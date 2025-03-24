@@ -89,6 +89,7 @@
                     <th>Vehicle</th>
                     <th>Date</th>
                     <th>Duration</th>
+                    <th>Cost</th>
                 </tr>
             </thead>
             <tbody>
@@ -128,7 +129,10 @@
                         <%= startDate.format(formatter) %> 
                     </td>
                     <td class="td1">
-                        <%= days + " days, " + minutes + " minutes" %>
+                        <%= days + " d, " + minutes + " m" %>
+                    </td>
+                    <td class="td1">
+                        €<%=r.calculatePrice() %>
                     </td>
                 </tr>
                 <% } %>

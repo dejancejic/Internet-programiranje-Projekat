@@ -75,6 +75,7 @@
             timeInterval = setInterval(function() {
                 rideDuration++;
                 document.getElementById("timeElapsed").innerText = rideDuration;
+                getCurrentPosition();
             }, <%if(carsSelected==true){ %>15000 <%}else{ %>3600 <%} %>); 
         }
 
@@ -127,6 +128,37 @@
             }
         }
         
+        function getCurrentPosition()
+        {
+        	if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function (position) {
+                        var userLat = position.coords.latitude;
+                        var userLng = position.coords.longitude;
+
+                        map.setView([userLat, userLng], 15);
+
+                        map.eachLayer(function (layer) {
+                            if (layer instanceof L.Marker) {
+                                map.removeLayer(layer);
+                            }
+                        });
+                        
+                        L.marker([userLat, userLng]).addTo(map)
+                            .bindPopup("You are here!")
+                            .openPopup();
+                            
+                    },
+                    function () {
+                        alert("Geolocation failed. Using default location.");
+                    }
+                );
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+        
+        
         function sendEndRideLocation(totalPrice) {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
@@ -176,7 +208,6 @@
         locateUser(); 
     </script>
 
-    <!-- Bootstrap JavaScript -->
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

@@ -14,6 +14,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfWriter;
+
 import beans.ClientBean;
 import beans.RentBean;
 import beans.VehicleBean;
@@ -55,6 +61,8 @@ public class Controller extends HttpServlet {
 
 		session.setAttribute("notification", "");
 		
+		
+		try {
 		if(action==null || action.equals(""))
 		{
 			address=("WEB-INF/pages/login.jsp");
@@ -301,11 +309,7 @@ public class Controller extends HttpServlet {
 		            
 		            session.setAttribute("startLatitude", latitude);
 		            session.setAttribute("startLongitude", longitude);
-
-		           // System.out.println("Written coordinates");
-		        } else {
-		            //System.out.println("Failed to write coordinates");
-		        }
+		        } 
 		}
 		else if(action.equals("endRide"))
 		{
@@ -319,12 +323,9 @@ public class Controller extends HttpServlet {
 	            session.setAttribute("endLatitude", latitude);
 	            session.setAttribute("endLongitude", longitude);
 	            session.setAttribute("endPrice", price);
-	           // System.out.println("Written coordinates");
 	            address= "/WEB-INF/pages/welcome.jsp";
 	            
 	            
-	        } else {
-	           // System.out.println("Failed to write coordinates");
 	        }
 		
 		}
@@ -358,8 +359,20 @@ public class Controller extends HttpServlet {
 			
 			RentBean rd=new RentBean();
 			rd.addRent(rental);
-			generatePDFReceipt(request, response);
+			generatePDFReceipt(request, response,rental,cb.getClient());
 			return;
+		}
+		else if(action.equals("logout"))
+		{
+			address= "/WEB-INF/pages/login.jsp";
+			
+			ClientBean cb=(ClientBean)session.getAttribute("clientBean");
+			cb.logout();
+			session.setAttribute("clientBean",cb);
+		}
+		}catch(Exception ex)
+		{
+			address= "/WEB-INF/pages/login.jsp";
 		}
 		
 		
@@ -376,47 +389,53 @@ public class Controller extends HttpServlet {
 		doGet(request, response);
 	}
 	
-	private void generatePDFReceipt(HttpServletRequest request, HttpServletResponse response) throws IOException {
-	    // Get ride details from session
-	    HttpSession session = request.getSession();
-
-	    String startLat = session.getAttribute("startLatitude") != null ? session.getAttribute("startLatitude").toString() : "N/A";
-	    String startLng = session.getAttribute("startLongitude") != null ? session.getAttribute("startLongitude").toString() : "N/A";
-	    String endLat = session.getAttribute("endLatitude") != null ? session.getAttribute("endLatitude").toString() : "N/A";
-	    String endLng = session.getAttribute("endLongitude") != null ? session.getAttribute("endLongitude").toString() : "N/A";
-	    String totalAmount = session.getAttribute("endPrice") != null ? session.getAttribute("endPrice").toString() : "0.00";
-
-	    // Set PDF response headers
+	private void generatePDFReceipt(HttpServletRequest request, HttpServletResponse response, Rental rental,Client client) throws IOException {
 	    response.setContentType("application/pdf");
 	    response.setHeader("Content-Disposition", "inline; filename=ride_receipt.pdf");
 
+	    
+	    String cardNumber=(String)request.getSession().getAttribute("cardNumber");
+	    
 	    OutputStream out = response.getOutputStream();
+	    
+	    try {
+	    	
+	    	 BaseFont baseFont = BaseFont.createFont("C:/Windows/Fonts/arial.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+	         Font utf8Font = new Font(baseFont, 12, Font.NORMAL);
+	         Font titleFont = new Font(baseFont, 18, Font.BOLD);
+	         
+	        com.itextpdf.text.Document document = new com.itextpdf.text.Document();
+	        PdfWriter.getInstance(document, out);
+	        document.open();
 
-	    // Proper PDF structure with correct font definitions
-	    String pdfContent = "%PDF-1.4\n" +
-	            "1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n" +
-	            "2 0 obj\n<< /Type /Pages /Count 1 /Kids [3 0 R] >>\nendobj\n" +
-	            "3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 500 700] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>\nendobj\n" +
-	            "4 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj\n" + // Font definition
-	            "5 0 obj\n<< /Length 200 >>\nstream\n" +
-	            "BT\n" +
-	            "/F1 14 Tf\n" +  // Set font and size
-	            "100 650 Td (Ride Receipt) Tj\n" +
-	            "100 620 Td (Start Location: " + startLat + ", " + startLng + ") Tj\n" +
-	            "100 600 Td (End Location: " + endLat + ", " + endLng + ") Tj\n" +
-	            "100 580 Td (Total Amount: €" + totalAmount + ") Tj\n" +
-	            "100 560 Td (Date: " + new java.util.Date() + ") Tj\n" +
-	            "ET\n" +
-	            "endstream\n" +
-	            "endobj\n" +
-	            "xref\n0 6\n0000000000 65535 f\n0000000010 00000 n\n0000000079 00000 n\n0000000170 00000 n\n0000000267 00000 n\n0000000355 00000 n\n" +
-	            "trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n450\n%%EOF";
 
-	    // Write PDF content to response output stream
-	    out.write(pdfContent.getBytes());
-	    out.flush();
-	    out.close();
+	        document.add(new Paragraph("Ride Receipt",titleFont));
+	        document.add(new Paragraph("\nStart Location: " + rental.getTakenX() + ", " + rental.getTakenY(),utf8Font));
+	        document.add(new Paragraph("End Location: " + rental.getLeftX() + ", " + rental.getLeftY(),utf8Font));
+	        document.add(new Paragraph("Total Amount: €" + rental.calculatePrice(),utf8Font));
+	        document.add(new Paragraph("Card Number: " + cardNumber,utf8Font));
+	        document.add(new Paragraph("Client: " + client.getName()+" "+client.getSurname(),utf8Font));
+	        if(client.getDocument() instanceof Passport)
+	        {
+	        	document.add(new Paragraph("Passport ID: " + ((Passport)client.getDocument()).getPassportNumber(),utf8Font));
+	        }else {
+	        document.add(new Paragraph("ID: " + client.getDocument().getNumber(),utf8Font));
+	        }
+	        if(rental.getVehicle() instanceof Car)
+	        {
+	        	document.add(new Paragraph("Licence Number: " + rental.getLicenceNumber(),utf8Font));
+	        }
+	        document.add(new Paragraph("\nThank you for choosing our services!",utf8Font));
+
+	        document.close(); 
+	    } catch (DocumentException e) {
+	        throw new IOException("Error generating PDF", e);
+	    } finally {
+	        out.flush(); 
+	        out.close(); 
+	    }
 	}
+
 
 
 	
