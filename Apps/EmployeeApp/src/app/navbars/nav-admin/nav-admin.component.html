@@ -1,5 +1,5 @@
-<div class="side">
-    <div class="logo">
+<div class="side" [class.collapsed]="collapsed">
+    <div class="logo" (click)="toggleSidebar()">
       <img src="./assets/logo.png" alt="logo">
     </div>
   
@@ -18,7 +18,7 @@
           color="primary"
           fontIcon="drive_eta"
         ></mat-icon>
-        <p [class.active-text]="selectedTab === 'cars' && showInfoTab===false" class="text">E-Cars</p>
+        <p *ngIf="!collapsed" [class.active-text]="selectedTab === 'cars' && showInfoTab===false" class="text">E-Cars</p>
       </div>
       <div
         class="item"
@@ -34,7 +34,7 @@
           color="primary"
           fontIcon="pedal_bike"
         ></mat-icon>
-        <p [class.active-text]="selectedTab === 'bikes' && showInfoTab===false" class="text">E-Bikes</p>
+        <p *ngIf="!collapsed" [class.active-text]="selectedTab === 'bikes' && showInfoTab===false" class="text">E-Bikes</p>
       </div>
       <div
         class="item"
@@ -50,7 +50,7 @@
           color="primary"
           fontIcon="electric_scooter"
         ></mat-icon>
-        <p [class.active-text]="selectedTab === 'scooters' && showInfoTab===false"  class="text">E-Scooters</p>
+        <p *ngIf="!collapsed" [class.active-text]="selectedTab === 'scooters' && showInfoTab===false"  class="text">E-Scooters</p>
       </div>
       <div *ngIf="showInfoTab==true"
         class="item"
@@ -66,7 +66,7 @@
           color="primary"
           fontIcon="info"
         ></mat-icon>
-        <p [class.active-text]="showInfoTab==true" class="text">Details</p>
+        <p *ngIf="!collapsed" [class.active-text]="showInfoTab==true" class="text">Details</p>
       </div>
       <div
         class="item space"
@@ -82,7 +82,7 @@
           color="primary"
           fontIcon="add_business"
         ></mat-icon>
-        <p [class.active-text]="selectedTab === 'manufacturer-add'" class="text">Manufacturers</p>
+        <p *ngIf="!collapsed" [class.active-text]="selectedTab === 'manufacturer-add'" class="text">Manufacturers</p>
       </div>
       
       <div
@@ -99,7 +99,7 @@
           color="primary"
           fontIcon="manage_accounts"
         ></mat-icon>
-        <p [class.active-text]="selectedTab === 'accounts'" class="text">Accounts</p>
+        <p *ngIf="!collapsed" [class.active-text]="selectedTab === 'accounts'" class="text">Accounts</p>
       </div>
       
       <div class="spacer"></div>
@@ -111,7 +111,7 @@
           color="primary"
           fontIcon="logout"
         ></mat-icon>
-        <p class="text">Logout</p>
+        <p *ngIf="!collapsed" class="text">Logout</p>
       </div>
     </div>
   </div>

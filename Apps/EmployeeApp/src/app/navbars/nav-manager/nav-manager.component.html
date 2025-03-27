@@ -1,5 +1,5 @@
-<div class="side">
-    <div class="logo">
+<div class="side" [class.collapsed]="collapsed">
+  <div class="logo" (click)="toggleSidebar()">
       <img src="./assets/logo.png" alt="logo">
     </div>
   
@@ -18,7 +18,7 @@
           color="primary"
           fontIcon="drive_eta"
         ></mat-icon>
-        <p [class.active-text]="selectedTab === 'cars' && showInfoTab===false" class="text">E-Cars</p>
+        <p *ngIf="!collapsed" [class.active-text]="selectedTab === 'cars' && showInfoTab===false" class="text">E-Cars</p>
       </div>
       <div
         class="item"
@@ -34,7 +34,7 @@
           color="primary"
           fontIcon="pedal_bike"
         ></mat-icon>
-        <p [class.active-text]="selectedTab === 'bikes' && showInfoTab===false" class="text">E-Bikes</p>
+        <p *ngIf="!collapsed" [class.active-text]="selectedTab === 'bikes' && showInfoTab===false" class="text">E-Bikes</p>
       </div>
       <div
         class="item"
@@ -50,7 +50,7 @@
           color="primary"
           fontIcon="electric_scooter"
         ></mat-icon>
-        <p [class.active-text]="selectedTab === 'scooters' && showInfoTab===false"  class="text">E-Scooters</p>
+        <p *ngIf="!collapsed" [class.active-text]="selectedTab === 'scooters' && showInfoTab===false"  class="text">E-Scooters</p>
       </div>
       <div *ngIf="showInfoTab==true"
         class="item"
@@ -66,7 +66,7 @@
           color="primary"
           fontIcon="info"
         ></mat-icon>
-        <p [class.active-text]="showInfoTab==true" class="text">Details</p>
+        <p *ngIf="!collapsed" [class.active-text]="showInfoTab==true" class="text">Details</p>
       </div>
       <div
         class="item"
@@ -82,7 +82,7 @@
           color="primary"
           fontIcon="add_business"
         ></mat-icon>
-        <p [class.active-text]="selectedTab === 'manufacturer-add'" class="text">Manufacturers</p>
+        <p *ngIf="!collapsed" [class.active-text]="selectedTab === 'manufacturer-add'" class="text">Manufacturers</p>
       </div>
       
       <div
@@ -99,7 +99,7 @@
           color="primary"
           fontIcon="manage_accounts"
         ></mat-icon>
-        <p [class.active-text]="selectedTab === 'accounts'" class="text">Accounts</p>
+        <p *ngIf="!collapsed" [class.active-text]="selectedTab === 'accounts'" class="text">Accounts</p>
       </div>
       <div class="items">
         <div
@@ -116,7 +116,7 @@
             color="primary"
             fontIcon="car_rental"
           ></mat-icon>
-          <p [class.active-text]="selectedTab === 'rentals'" class="text">Rentals</p>
+          <p *ngIf="!collapsed" [class.active-text]="selectedTab === 'rentals'" class="text">Rentals</p>
         </div>
         <div
           class="item"
@@ -132,7 +132,7 @@
             color="primary"
             fontIcon="map"
           ></mat-icon>
-          <p [class.active-text]="selectedTab === 'map'" class="text">Map</p>
+          <p *ngIf="!collapsed" [class.active-text]="selectedTab === 'map'" class="text">Map</p>
         </div>
         <div
           class="item"
@@ -148,7 +148,7 @@
             color="primary"
             fontIcon="group"
           ></mat-icon>
-          <p [class.active-text]="selectedTab === 'clients'"  class="text">Clients</p>
+          <p *ngIf="!collapsed" [class.active-text]="selectedTab === 'clients'"  class="text">Clients</p>
         </div>
         <div
           class="item"
@@ -164,7 +164,7 @@
             color="primary"
             fontIcon="build_circle"
           ></mat-icon>
-          <p [class.active-text]="selectedTab === 'malfunctions'" class="text">Malfunctions</p>
+          <p *ngIf="!collapsed" [class.active-text]="selectedTab === 'malfunctions'" class="text">Malfunctions</p>
         </div>
         <div
           class="item"
@@ -180,7 +180,7 @@
             color="primary"
             fontIcon="bar_chart"
           ></mat-icon>
-          <p [class.active-text]="selectedTab === 'statistics'" class="text">Statistics</p>
+          <p *ngIf="!collapsed" [class.active-text]="selectedTab === 'statistics'" class="text">Statistics</p>
         </div>
         <div
           class="item"
@@ -196,7 +196,7 @@
             color="primary"
             fontIcon="paid"
           ></mat-icon>
-          <p [class.active-text]="selectedTab === 'prices'" class="text">Rent prices</p>
+          <p *ngIf="!collapsed" [class.active-text]="selectedTab === 'prices'" class="text">Rent prices</p>
         </div>
       
       <div class="spacer"></div>
@@ -208,7 +208,7 @@
           color="primary"
           fontIcon="logout"
         ></mat-icon>
-        <p class="text">Logout</p>
+        <p *ngIf="!collapsed" class="text">Logout</p>
       </div>
     </div>
   </div>

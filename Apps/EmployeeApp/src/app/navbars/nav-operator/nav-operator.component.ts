@@ -13,6 +13,14 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class NavOperatorComponent {
 
+
+  
+  collapsed: boolean = false;
+
+toggleSidebar() {
+  this.collapsed = !this.collapsed;
+}
+
     constructor(private logoutService:LogoutService,private router:Router){}
   
   ngOnInit(): void {

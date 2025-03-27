@@ -1,18 +1,49 @@
 .side {
-    display: flex;
-    flex-direction: column;
-    width: 193px;
-    margin: 0;
-    padding-right: 5px;
-    border-right: 2px solid #ccc;
-    min-height: 100vh;
-    height: 100%; 
-  }
+  display: flex;
+  flex-direction: column;
+  width: 193px;
+  transition: width 0.3s ease;
+  padding-right: 5px;
+  border-right: 2px solid #ccc;
+  min-height: 100vh;
+  height: 100%;
+  overflow: hidden;
+}
 
-  .logo{
-    align-self: center;
-    justify-self: center;
-  }
+.side.collapsed {
+  width: 70px;
+}
+
+.side .text {
+  transition: opacity 0.2s ease;
+}
+
+.side.collapsed .text {
+  display: none;
+}
+
+.side .item {
+  display: flex;
+  align-items: center;
+  padding: 13px;
+}
+
+.side.collapsed .item {
+  justify-content: center;
+}
+
+.side .icon {
+  font-size: 35px;
+  width: 38px;
+  height: 38px;
+}
+
+.logo {
+  cursor: pointer;
+  text-align: center;
+ 
+}
+
   
   .logo img {
     width: 60px;

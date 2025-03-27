@@ -18,6 +18,14 @@ export class NavManagerComponent {
     get showInfoTab() {
       return NavManagerComponent.showInfoTab;
     }
+
+    
+  collapsed: boolean = false;
+
+  toggleSidebar() {
+    this.collapsed = !this.collapsed;
+  }
+
   
     constructor(private logoutService:LogoutService,private router:Router){}
   

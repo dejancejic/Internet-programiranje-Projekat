@@ -92,6 +92,11 @@ export class VehicleMapComponent implements OnInit,AfterViewInit{
         L.Marker.prototype.options.icon = defaultIcon;
     
         // Initialize map
+        if (this.map) {
+          this.map.remove();  
+          this.map = null;    
+        }
+          
         this.map = L.map('map', {
         }).setView([this.constantsService.MAP_INITIAL_POSITION.x, this.constantsService.MAP_INITIAL_POSITION.y], this.constantsService.MAP_ZOOM);
     
@@ -99,6 +104,8 @@ export class VehicleMapComponent implements OnInit,AfterViewInit{
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           attribution: '&copy; OpenStreetMap contributors'
         }).addTo(this.map);
+
+      
 
   }
 
@@ -126,7 +133,6 @@ export class VehicleMapComponent implements OnInit,AfterViewInit{
     setMapLocation(x: any, y: any, vehicle:any): void {
       this.map.setView([x, y], this.constantsService.MAP_ZOOM);
     
-      this.clearMap();
     
       
       const customIcon = L.divIcon({
@@ -164,6 +170,9 @@ export class VehicleMapComponent implements OnInit,AfterViewInit{
 
     showVehicleInfoDialog(vehicle:any)
   {
+    const modalElement = this.vehicleInfoModal.nativeElement;
+    this.modalInstanceVehicleInfo = new bootstrap.Modal(modalElement);
+    this.selectedVehicle=vehicle;
     this.modalInstanceVehicleInfo.show();
   }
     

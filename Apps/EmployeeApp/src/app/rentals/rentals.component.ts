@@ -71,6 +71,12 @@ export class RentalsComponent implements OnInit,AfterViewInit {
 
     L.Marker.prototype.options.icon = defaultIcon;
 
+
+    if (this.map) {
+      this.map.remove();  
+      this.map = null;    
+    }
+
     // Initialize map
     this.map = L.map('map', {
     }).setView([this.constantsService.MAP_INITIAL_POSITION.x, this.constantsService.MAP_INITIAL_POSITION.y], this.constantsService.MAP_ZOOM);

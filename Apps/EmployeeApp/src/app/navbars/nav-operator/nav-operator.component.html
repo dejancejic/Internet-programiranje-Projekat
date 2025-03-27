@@ -1,5 +1,5 @@
-<div class="side">
-    <div class="logo">
+<div class="side" [class.collapsed]="collapsed">
+  <div class="logo" (click)="toggleSidebar()">
       <img src="./assets/logo.png" alt="logo">
     </div>
   
@@ -18,7 +18,7 @@
           color="primary"
           fontIcon="car_rental"
         ></mat-icon>
-        <p [class.active-text]="selectedTab === 'rentals'" class="text">Rentals</p>
+        <p *ngIf="!collapsed" [class.active-text]="selectedTab === 'rentals'" class="text">Rentals</p>
       </div>
       <div
         class="item"
@@ -34,7 +34,7 @@
           color="primary"
           fontIcon="map"
         ></mat-icon>
-        <p [class.active-text]="selectedTab === 'map'" class="text">Map</p>
+        <p *ngIf="!collapsed" [class.active-text]="selectedTab === 'map'" class="text">Map</p>
       </div>
       <div
         class="item"
@@ -50,7 +50,7 @@
           color="primary"
           fontIcon="group"
         ></mat-icon>
-        <p [class.active-text]="selectedTab === 'clients'"  class="text">Clients</p>
+        <p *ngIf="!collapsed" [class.active-text]="selectedTab === 'clients'"  class="text">Clients</p>
       </div>
       <div
         class="item"
@@ -66,7 +66,7 @@
           color="primary"
           fontIcon="build_circle"
         ></mat-icon>
-        <p [class.active-text]="selectedTab === 'malfunctions'" class="text">Malfunctions</p>
+        <p *ngIf="!collapsed" [class.active-text]="selectedTab === 'malfunctions'" class="text">Malfunctions</p>
       </div>
 
       
@@ -79,7 +79,7 @@
           color="primary"
           fontIcon="logout"
         ></mat-icon>
-        <p class="text">Logout</p>
+        <p *ngIf="!collapsed" class="text">Logout</p>
       </div>
     </div>
   </div>
