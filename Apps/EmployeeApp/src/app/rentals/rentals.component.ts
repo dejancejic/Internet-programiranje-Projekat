@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewChecked, AfterViewInit, Component, inject, OnInit } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
 import { OperatorHeaderComponent } from '../operator-header/operator-header.component';
 import { DurationService } from '../services/utils/duration.service';
 import { RentalsService } from '../services/rentals/rentals.service';
@@ -54,6 +54,8 @@ export class RentalsComponent implements OnInit,AfterViewInit {
       this.rentalMap[type]=collection;
   }
  private map: any;
+
+
   ngAfterViewInit(): void {
     const iconUrl = './assets/marker-icon.png';
     const iconRetinaUrl = './assets/marker-icon-2x.png';
@@ -76,9 +78,9 @@ export class RentalsComponent implements OnInit,AfterViewInit {
       this.map.remove();  
       this.map = null;    
     }
-
+    
     // Initialize map
-    this.map = L.map('map', {
+    this.map = L.map('map1', {
     }).setView([this.constantsService.MAP_INITIAL_POSITION.x, this.constantsService.MAP_INITIAL_POSITION.y], this.constantsService.MAP_ZOOM);
 
     // Add OpenStreetMap tiles

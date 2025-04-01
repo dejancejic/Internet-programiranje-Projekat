@@ -36,6 +36,8 @@ export class VehicleMapComponent implements OnInit,AfterViewInit{
   layers: L.Layer[] = [];
   private map: any;
 
+  
+
   modalInstanceVehicleInfo: any;
   @ViewChild('vehicleInfoModal') vehicleInfoModal: any;
 
