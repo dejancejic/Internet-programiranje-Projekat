@@ -28,6 +28,9 @@ public class Malfunction {
 	@Column(name="vehicle_id")
 	private Integer vehicleId;
 
+	@Column(name="solved")
+	private Boolean solved;
+
 	public Integer getId() {
 		return id;
 	}
@@ -59,9 +62,13 @@ public class Malfunction {
 	public void setVehicleId(Integer vehicleId) {
 		this.vehicleId = vehicleId;
 	}
-	
-	
-	
-	
 
+
+    public Boolean getSolved() {
+        return solved;
+    }
+
+    public void setSolved(Boolean solved) {
+        this.solved = solved;
+    }
 }

@@ -4,6 +4,7 @@ export class Malfunction
         public id:number,
         public description:string,
         public dateTime:Date,
-        public vehicleId:number
+        public vehicleId:number,
+        public solved:boolean
     ){}
 }

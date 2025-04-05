@@ -19,7 +19,6 @@ public class MalfunctionService {
 	
 	public List<Malfunction> getVehicleMalfunctions(Integer id)
 	{
-		System.out.println(id);
 		return rpMalfunction.findByVehicleId(id);
 	}
 	
@@ -29,6 +28,7 @@ public class MalfunctionService {
 				orElseThrow(()-> new VehicleNotFoundException("Vehicle with that id doesn't exist!"));
 		
 		veh.setStatus("broken");
+		malfunction.setSolved(false);
 		rpVehicle.save(veh);
 		
 		malfunction=rpMalfunction.save(malfunction);
@@ -36,16 +36,27 @@ public class MalfunctionService {
 		return malfunction;
 	}
 	
-	public Malfunction removeMalfunction(Integer id)
+	public Malfunction solveMalfunction(Integer id)
 	{
 		Malfunction mal=rpMalfunction.findById(id).orElseThrow(()->new VehicleNotFoundException("Malfunction with that id doesn't exist!"));
 		
 		Vehicle veh=rpVehicle.findById(mal.getVehicleId()).
 				orElseThrow(()-> new VehicleNotFoundException("Vehicle with that id doesn't exist!"));
-		
-		rpMalfunction.deleteById(id);
-		
-		if(rpMalfunction.findByVehicleId(veh.getId()).size()==0)
+
+		mal.setSolved(true);
+		rpMalfunction.save(mal);
+
+		List<Malfunction> malfunctions=rpMalfunction.findByVehicleId(veh.getId());
+		boolean found=false;
+		for(Malfunction m:malfunctions)
+		{
+			if(m.getSolved()==false)
+			{
+				found=true;
+				break;
+			}
+		}
+		if(found==false)
 		{
 			veh.setStatus("free");
 			rpVehicle.save(veh);

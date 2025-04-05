@@ -18,7 +18,8 @@
         <tr>
           <th>Date</th>
           <th>Time</th>
-          <th *ngIf="showDeleteMalfunctionBtn">Action</th>
+          <th *ngIf="showDeleteMalfunctionBtn">Solve</th>
+          <th *ngIf="!showDeleteMalfunctionBtn">Solved</th>
           <th>Description</th>
         </tr>
       </thead>
@@ -32,14 +33,38 @@
           </td>
           
         
-        <td *ngIf="showDeleteMalfunctionBtn">
+        <td *ngIf="showDeleteMalfunctionBtn && malfunction.solved===false">
             <button
-        class="btn btn-danger"
+        class="btn btn-success"
         (click)="deleteMalfunction(malfunction)"
   >
-    Delete
+    Solve
   </button>
         </td>
+        <td *ngIf="showDeleteMalfunctionBtn && malfunction.solved===true">
+          <span 
+              class="badge text-bg-warning" 
+            >
+              Solved
+            </span>
+        </td>
+
+        <td *ngIf="!showDeleteMalfunctionBtn && malfunction.solved===true">
+          <span 
+              class="badge text-bg-success" 
+            >
+              Yes
+            </span>
+        </td>
+        <td *ngIf="!showDeleteMalfunctionBtn && malfunction.solved===false">
+          <span 
+              class="badge text-bg-danger" 
+            >
+              No
+            </span>
+        </td>
+
+
 
         <td>
             <span 
@@ -140,15 +165,20 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="removeMalfunctionModalLabel">Remove Malfunction</h5>
+                <h5 class="modal-title" id="removeMalfunctionModalLabel">Solve Malfunction</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>Are you sure you want to remove this malfunction?</p>
+                <p>Are you sure you want to solve this malfunction?</p>
+            </div>
+
+            <div *ngIf="networkError" class="alert alert-danger alert-dismissible fade show fileError" role="alert">
+              Failed to solve malfunction. Please try again! 
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" (click)="dismiss()"></button>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="closeModalRemove()">No</button>
-                <button type="button" class="btn btn-primary" (click)="removeMalfunctionToSystem()">Yes</button>
+                <button type="button" class="btn btn-primary" (click)="solveMalfunctionToSystem()">Yes</button>
             </div>
         </div>
     </div>
@@ -160,11 +190,11 @@
   <div class="modal-dialog">
       <div class="modal-content">
           <div class="modal-header">
-              <h5 class="modal-title" id="successModalLabel">{{add?'Adding successful':'Removal successful'}}</h5>
+              <h5 class="modal-title" id="successModalLabel">{{add?'Adding successful':'Malfunction solved'}}</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-              <p>{{add?'Successfully added malfunction!':'Successfully removed malfunction!'}}</p>
+              <p>{{add?'Successfully added malfunction!':'Successfully solved a malfunction!'}}</p>
           </div>
           <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">OK</button>

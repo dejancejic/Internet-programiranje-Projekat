@@ -99,7 +99,7 @@ export class VehicleService extends BaseService{
     pipe(catchError(this.handleError));
     }
 
-    deleteMalfunction(id:number)
+    solveMalfunction(id:number)
     {
       let options=this.getStandardOptions();
       options.withCredentials=true;
@@ -111,7 +111,7 @@ export class VehicleService extends BaseService{
       });
       options.withCredentials=true;
 
-  return this.http.delete(this.constantsService.SERVER_URL+'malfunction/delete',options).
+  return this.http.put(this.constantsService.SERVER_URL+'malfunction/solve',{},options).
     pipe(catchError(this.handleError));
     }
 

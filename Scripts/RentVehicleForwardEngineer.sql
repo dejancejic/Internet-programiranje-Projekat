@@ -178,6 +178,7 @@ CREATE TABLE IF NOT EXISTS `rentvehicle`.`malfunction` (
   `description` VARCHAR(1000) NOT NULL,
   `date_time` DATETIME NOT NULL,
   `vehicle_id` INT NOT NULL,
+  `solved` TINYINT(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   INDEX `fk_malfunction_vehicle1_idx` (`vehicle_id` ASC) VISIBLE,
   CONSTRAINT `fk_malfunction_vehicle1`

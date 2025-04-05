@@ -59,7 +59,8 @@ export class MalfunctionTableComponent implements AfterViewInit {
       id:[null],
       description:[null,Validators.required],
       dateTime:[null,[Validators.required, futureDateValidator()]],
-      vehicleId:[null]
+      vehicleId:[null],
+      solved:[false]
     });
 
     setMalfunctions(malfunctions:Malfunction[],vehicle:any)
@@ -150,22 +151,36 @@ export class MalfunctionTableComponent implements AfterViewInit {
     
   }
 
-  removeMalfunctionToSystem()
+  solveMalfunctionToSystem()
   {
     if(this.selectedMalfunction!==null)
     {
-        this.vehicleService.deleteMalfunction(this.selectedMalfunction!.id).subscribe((data)=>{
+        this.vehicleService.solveMalfunction(this.selectedMalfunction!.id).subscribe((data)=>{
+          
+          this.selectedMalfunction!.solved=true;
+          
 
-          let index=this.malfunctionsAll.indexOf(this.selectedMalfunction!);
-          this.malfunctionsAll.splice(index,1);
-          index=this.malfunctionsAll.indexOf(this.selectedMalfunction!);
-          this.malfunctions.splice(index,1);
           this.modalInstanceRemove.hide();
           this.modalInstanceSuccess.show();
-          if(this.malfunctionsAll.length==0)
-          {
-            this.vehicle.status='free';
-          }
+          let found=false;
+
+          for(let m of this.malfunctionsAll)
+            {
+              if(m.id===this.selectedMalfunction!.id)
+              {
+                m.solved=true;
+              }
+              if(m.solved===false)
+              {
+                found=true;
+                break;
+              }
+            }
+            if(found==false)
+            {
+              this.vehicle.status='free';
+            }
+      
           this.updatePaginationMalfunctions();
         },(error)=>{
           this.networkError=true;
