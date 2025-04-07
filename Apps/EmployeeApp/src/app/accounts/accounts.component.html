@@ -15,7 +15,7 @@
 <div class="search col">
     <input type="text" class="search-bar"
      (input)="search($event)"
-     placeholder="Search username, email..." />
+     [placeholder]="'Search by username' + (!adminsSelected ? ', ' + 'email' : '') + '...'" />
      <div class="form-floating slct" *ngIf="adminsSelected">
     <select class="form-select w-300" id="manuInput" (change)="onSelectionChange($event)">
         <option name="All">All types</option>
@@ -47,7 +47,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let user of paginatedUsers">
+      <tr *ngFor="let user of users">
         <td class="rw" *ngIf="adminsSelected"> 
           <div class="user-badge" [ngClass]="{
             'bgAdmin': user.role === 'admin',
@@ -102,7 +102,7 @@
           </div>
         </td>
       </tr>
-      <tr *ngIf="paginatedUsers.length === 0">
+      <tr *ngIf="users.length === 0">
         <td [attr.colspan]="adminsSelected ? 4 : 5" class="text-center nodata">
           No data to display!
         </td>
@@ -214,7 +214,7 @@
         <div class="modal-body">
           <p *ngIf="!sameEmployeeError">{{employeeFailed ? "Failed to " + 
           (!update ? "add" : "update") + " employee. Try again!" : "Successfully " + (!update ? "added" : "updated") + " employee!"}}</p>
-          <p *ngIf="sameEmployeeError">Employee with same username already exists!</p>
+          <p *ngIf="sameEmployeeError">User with same username already exists!</p>
         </div>
         
         <div class="modal-footer">

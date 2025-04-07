@@ -10,7 +10,8 @@
 
 <cdk-virtual-scroll-viewport 
   itemSize="120" 
-  class="virtual-scroll-container">
+  class="virtual-scroll-container"
+  (scrolledIndexChange)="onScroll($event)">
   
   <div class="tabs" *cdkVirtualFor="let row of visibleRows; let i = index">
     <ng-container *ngFor="let vehicle of row">

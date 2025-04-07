@@ -25,7 +25,7 @@ export class RentalsComponent implements OnInit,AfterViewInit {
   carsSelected:boolean=true;
 
 
-  paginatedRentals: any[] = [];
+ 
   currentPageRentals = 1;
   rentalsPerPage = 6;
   totalPagesRentals = 0;
@@ -35,24 +35,13 @@ export class RentalsComponent implements OnInit,AfterViewInit {
   rentals:any[]=[];
   selectedType='cars';
 
-  rentalMap: { [key: string]: any[] } = {};
-
+  rentalMap: { [key: string]: any } = {};
 
   options: any;
   layers: L.Layer[] = [];
  
 
- private adjustImageData(type:string)
-  {
-    let collection=this.rentalMap[type];
-      for(let element of collection)
-      {
-        if(!element.client.image.startsWith('data:')){
-          element.client.image='data:image/png;base64,'+element.client.image;
-          }
-      }
-      this.rentalMap[type]=collection;
-  }
+ 
  private map: any;
 
 
@@ -106,11 +95,11 @@ export class RentalsComponent implements OnInit,AfterViewInit {
 
     this.setMap();
 
-    const takenMarker = L.marker([rental.takenX, rental.takenY])
+     L.marker([rental.takenX, rental.takenY])
       .addTo(this.map)
       .bindPopup('Taken Location');
 
-    const leftMarker = L.marker([rental.leftX, rental.leftY])
+    L.marker([rental.leftX, rental.leftY])
       .addTo(this.map)
       .bindPopup('Left Location').openPopup();
   }
@@ -119,17 +108,25 @@ export class RentalsComponent implements OnInit,AfterViewInit {
 
   ngOnInit(): void {
     this.loading=true;
-    this.rentalsService.getAllRentals().subscribe((data:any)=>{
+    this.loadData();
+    
+  }
+  
+  loadData(page: number = 1,query:string='')
+  {
+    this.currentPageRentals = page;
+    this.rentalsService.getAllRentals(page - 1, this.rentalsPerPage,query).subscribe((data:any)=>{
       this.loading=false;
-      this.rentalMap=data;
+
+      this.rentalMap=JSON.parse(JSON.stringify(data));
 
       this.adjustImageData('cars');
       this.adjustImageData('scooters');
       this.adjustImageData('bikes');
-
-      this.rentals=JSON.parse(JSON.stringify(this.rentalMap['cars']));
-      
-      this.updatePaginationRentals();
+  
+      this.rentals=this.rentalMap[this.selectedType].content;
+      this.totalPagesRentals = data[this.selectedType].totalPages;
+    this.pagesRentals = Array.from({ length: this.totalPagesRentals }, (_, i) => i + 1);
 
     },(error)=>{
 
@@ -137,26 +134,31 @@ export class RentalsComponent implements OnInit,AfterViewInit {
       this.loading=false;
     }
     );
+  }
 
+
+  private adjustImageData(type:string)
+  {
+    let collection=this.rentalMap[type].content;
+
+      for(let element of collection)
+      {
+        if(!element.client.image.startsWith('data:')){
+          element.client.image='data:image/png;base64,'+element.client.image;
+          }
+      }
+      this.rentalMap[type].content=collection;
+    
   }
   
 
   search(event:any)
   {
     const query = event.toLowerCase();
-    this.setMap();
-    this.selectedRowIndex=-1;
-    if(!query.trim() || query==='')
-    {
-      this.rentals=JSON.parse(JSON.stringify(this.rentalMap[this.selectedType]));
-      this.updatePaginationRentals();
-      return;
-    }
-    this.rentals=this.rentalMap[this.selectedType].filter(r=>r.client.name.toString().toLowerCase().includes(query)||
-    r.client.surname.toString().toLowerCase().includes(query) ||
-    (r.client.name+" "+r.client.surname).toLowerCase().includes(query)||
-    r.vehicleName.toString().toLowerCase().includes(query));
-    this.updatePaginationRentals();
+    this.currentPageRentals=1;
+
+
+    this.loadData(this.currentPageRentals, query);
   }
 
   changeType(event:any)
@@ -177,8 +179,7 @@ export class RentalsComponent implements OnInit,AfterViewInit {
     }
     this.selectedRowIndex=-1;
     this.setMap();
-    this.rentals=this.rentalMap[this.selectedType];
-    this.updatePaginationRentals();
+    this.rentals=this.rentalMap[this.selectedType].content;
   }
 
   calculateDuration(start: Date, end: Date): string {
@@ -187,21 +188,9 @@ export class RentalsComponent implements OnInit,AfterViewInit {
   }
 
 
-  updatePaginationRentals()
-  {
-    const collection = this.rentals;
-    this.totalPagesRentals = Math.ceil(collection.length / this.rentalsPerPage);
-    this.pagesRentals = Array.from({ length: this.totalPagesRentals }, (_, i) => i + 1);
-    this.paginatedRentals = collection.slice(
-      (this.currentPageRentals - 1) * this.rentalsPerPage,
-      this.currentPageRentals * this.rentalsPerPage
-    );
-    
-  }
   changePageRentals(page: number) {
     if (page >= 1 && page <= this.totalPagesRentals) {
-      this.currentPageRentals = page;
-      this.updatePaginationRentals();
+      this.loadData(page);
     }
   }
 

@@ -3,6 +3,7 @@ package server.malfunction;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,8 +18,11 @@ public class MalfunctionController {
 	
 	
 	@GetMapping("/id")
-	public ResponseEntity<List<Malfunction>> getVehicleMalfunctions(@RequestParam Integer id){
-		return new ResponseEntity<List<Malfunction>>(service.getVehicleMalfunctions(id),HttpStatus.OK);
+	public Page<Malfunction> getVehicleMalfunctions(@RequestParam Integer id,
+													@RequestParam(defaultValue = "0") int page,
+													@RequestParam(defaultValue = "6") int size,
+													@RequestParam(defaultValue = "") String query){
+		return service.getVehicleMalfunctions(id,page,size,query);
 	}
 	
 	@PostMapping("/add")
@@ -28,8 +32,8 @@ public class MalfunctionController {
 	}
 	
 	@PutMapping("/solve")
-	public ResponseEntity<Malfunction> solveMalfunction(@RequestParam Integer id){
-		return new ResponseEntity<Malfunction>(service.solveMalfunction(id),HttpStatus.OK);
+	public ResponseEntity<Boolean> solveMalfunction(@RequestParam Integer id){
+		return new ResponseEntity<Boolean>(service.solveMalfunction(id),HttpStatus.OK);
 	}
 	
 

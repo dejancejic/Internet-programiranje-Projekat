@@ -8,6 +8,7 @@ import { LogoutService } from '../services/logout/logout.service';
 import { ManufacturerService } from '../services/manufacturers/manufacturer.service';
 import { HttpClientModule } from '@angular/common/http';
 import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling';
+import { ConstantsService } from '../services/utils/constants.service';
 
 
 
@@ -24,8 +25,14 @@ export class AddManufacturerComponent implements AfterViewInit,OnInit{
 
   visibleRows: any[] = [];
     constructor(private cdr: ChangeDetectorRef){}
-    itemsPerRow = 1;
+    itemsPerRow = 6;
     rowHeight = 150;
+    manufacturersPerPage = inject(ConstantsService).PAGINATION_NUMBER;
+    currentPageManufacturers = 1;
+    totalPagesManufacturers = 0;
+          
+    pagesManufacturers: number[] = [];
+    endReached = false;
 
     error:boolean=false;
     
@@ -52,10 +59,11 @@ export class AddManufacturerComponent implements AfterViewInit,OnInit{
     }
 
   manufacturers:Manufacturer[]=[];
+  allManufacturers:Manufacturer[]=[];
 
   query='';
 
-  manufacturerMap: { [key: string]: Manufacturer[] } = {};
+  manufacturerMap: { [key: string]: any } = {};
 
   manufacturerService=inject(ManufacturerService);
   authService=inject(AuthService);
@@ -95,44 +103,50 @@ selectedManufacturer!:Manufacturer;
       return;
     }
     
-    this.getManufacturers();
-
+    //this.getManufacturers();
+    this.loadData();
   }
 
-  private getManufacturers()
-  {
-  
-    this.manufacturerService.getManufacturers().subscribe((data:any)=>{
+
+  loadData(page: number = this.currentPageManufacturers, query: string = '') {
+    this.loading = true;
+    
+    this.manufacturerService.getManufacturers(page - 1, this.itemsPerRow, query).subscribe((data: any) => {
+
       this.manufacturerMap=data;
-      this.manufacturers = JSON.parse(JSON.stringify(data[this.selectedVehicleType]));
+      const newManus = this.manufacturerMap[this.selectedVehicleType].content;
 
-      this.calculateItemsPerRow();
-      this.formatCarsIntoRows();
-      this.cdr.detectChanges();
-     this.loading=false;
-  },(error)=>{
-    alert(error);
-    this.loading=false;
+      this.totalPagesManufacturers = data.totalPages;
+  
+      if (newManus.length === 0 || page >= this.totalPagesManufacturers) {
+        this.endReached = true;
+      }
+      
+
+      this.allManufacturers = [...this.allManufacturers, ...newManus];
+      this.manufacturers=JSON.parse(JSON.stringify(this.allManufacturers));
+      this.visibleRows = this.chunkArray(this.allManufacturers, this.itemsPerRow);
+      
+      this.currentPageManufacturers++; 
+      this.loading = false;
+    }, (error) => {
+      alert("Error occurred while reading data!");
+      this.loading = false;
     });
-
   }
+
+
   
 
   search(query: any) {
     this.query=query;
-    if (!query.trim()) {
-  
-      this.manufacturers=this.manufacturerMap[this.selectedVehicleType];
-      this.calculateItemsPerRow();
-      this.formatCarsIntoRows();
-      this.cdr.detectChanges();
-      return;
-    }
-  
-
-    this.manufacturers = this.manufacturerMap[this.selectedVehicleType].filter(m =>
-      m.name.toLowerCase().includes(query.toLowerCase())
-    );
+    this.currentPageManufacturers=1;
+    this.endReached=false;
+    this.pagesManufacturers=[];
+    this.manufacturers=[];
+    this.allManufacturers=[];
+    this.totalPagesManufacturers=0;
+    this.loadData(this.currentPageManufacturers,query);
     this.calculateItemsPerRow();
       this.formatCarsIntoRows();
       this.cdr.detectChanges();
@@ -178,8 +192,14 @@ selectedManufacturer!:Manufacturer;
   changeType(type:string)
   {
     this.selectedVehicleType=type;
-    
-    this.manufacturers=this.manufacturerMap[type];
+    this.currentPageManufacturers=1;
+    this.endReached=false;
+    this.pagesManufacturers=[];
+    this.manufacturers=[];
+    this.allManufacturers=[];
+    this.totalPagesManufacturers=0;
+
+    this.loadData(this.currentPageManufacturers)
     this.calculateItemsPerRow();
       this.formatCarsIntoRows();
       this.cdr.detectChanges();
@@ -188,8 +208,13 @@ selectedManufacturer!:Manufacturer;
 
   addManufacturer(manufacturer:any)
   {
-      this.manufacturers.push(manufacturer);
-    this.manufacturerMap[this.selectedVehicleType]=this.manufacturers;
+    this.currentPageManufacturers=1;
+    this.endReached=false;
+    this.pagesManufacturers=[];
+    this.manufacturers=[];
+    this.allManufacturers=[];
+    this.totalPagesManufacturers=0;
+      this.loadData(this.currentPageManufacturers,this.query);
 
     this.calculateItemsPerRow();
       this.formatCarsIntoRows();
@@ -203,6 +228,22 @@ selectedManufacturer!:Manufacturer;
   dismiss()
   {
     
+  }
+
+
+  onScroll(index: number) {
+    const buffer = this.manufacturersPerPage;
+    const totalItems = this.visibleRows.length;
+  
+    if (!this.loading && !this.endReached && index + buffer >= totalItems) {
+      this.loadData(this.currentPageManufacturers);
+    }
+  }
+
+  chunkArray(arr: any[], size: number): any[][] {
+    return Array.from({ length: Math.ceil(arr.length / size) }, (_, i) =>
+      arr.slice(i * size, i * size + size)
+    );
   }
 
 

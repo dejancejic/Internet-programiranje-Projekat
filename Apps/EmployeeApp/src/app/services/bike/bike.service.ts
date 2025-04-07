@@ -14,13 +14,16 @@ export class BikeService extends BaseService{
     super();
    }
 
-getBikes()
+getBikes(page: number = 0, size: number = this.constantsService.PAGINATION_NUMBER,query:string='')
           { 
             let options=this.getStandardOptions();
             options.withCredentials=true;
             options.params=new HttpParams({
               fromObject:{
-                format:'json'
+                format:'json',
+                page: page.toString(),
+            size: size.toString(),
+            query:query,
               },
             });
             options.withCredentials=true;

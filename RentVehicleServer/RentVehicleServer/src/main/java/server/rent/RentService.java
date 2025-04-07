@@ -1,11 +1,13 @@
 package server.rent;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import server.client.Client;
@@ -42,75 +44,117 @@ public class RentService {
 	
 	@Autowired
 	private ScooterRepository rpScooter;
-	
-	
-	
-	
-	public List<Rent> getVehicleRents(Integer idVehicle)
-	{
-		List<Rent> rents=rpRent.findByVehicleId(idVehicle);
-		
-		for(Rent r:rents)
-		{
-			Optional<CarRent> crent=rpCarRent.findById(r.getId());
-			if(crent.isPresent())
-			{
-				r=crent.get();
+
+
+
+
+	public Page<Rent> getVehicleRents(Integer idVehicle,Pageable pageable,String clientName) {
+		Page<Rent> rents = rpRent.findByVehicleId(idVehicle, pageable);
+		List<Rent> processedRents = new ArrayList<>();
+
+		for (Rent r : rents.getContent()) {
+			Optional<CarRent> crent = rpCarRent.findById(r.getId());
+			if (crent.isPresent()) {
+				r = crent.get();
 			}
-			Client cl=rpClient.findById(r.getClientId()).orElseThrow(()->new UserNotFoundException("User doesn't exist!"));
+
+			Client cl = rpClient.findById(r.getClientId())
+					.orElseThrow(() -> new UserNotFoundException("User doesn't exist!"));
 			r.setClient(cl);
+
+			processedRents.add(r);
 		}
-		return rents;
+
+		if (clientName != null && !clientName.trim().isEmpty()) {
+			List<Rent> filtered = processedRents.stream()
+					.filter(r ->
+							r.getClient().getName().toLowerCase().contains(clientName.toLowerCase()) ||
+							r.getClient().getSurname().toLowerCase().contains(clientName.toLowerCase()) ||
+									(r.getClient().getName()+" "+r.getClient().getSurname()).toLowerCase().contains(clientName.toLowerCase())
+					)
+					.toList();
+
+			return new PageImpl<>(filtered, pageable, filtered.size());
+		}
+
+		return new PageImpl<>(processedRents, pageable, rents.getTotalElements());
 	}
-	
-	public HashMap<String,List<Rent>> getAllRents()
-	{
-		HashMap<String,List<Rent>> map=new HashMap<String,List<Rent>>();
-		List<CarRent> carRents=rpCarRent.findAll();
-		List<Rent> rentalsCar=new ArrayList<Rent>();
-		List<Rent> bikeRents=new ArrayList<Rent>();
-		List<Rent> scooterRents=new ArrayList<Rent>();
-		
-		for(CarRent cr:carRents)
-		{
-			Client cl=rpClient.findById(cr.getClientId()).orElseThrow(()->new UserNotFoundException("User doesn't exist!"));
+
+	public Map<String, Page<Rent>> getAllRents(Pageable pageable,String query) {
+		List<Rent> carRentsProcessed = new ArrayList<>();
+		List<Rent> bikeRentsProcessed = new ArrayList<>();
+		List<Rent> scooterRentsProcessed = new ArrayList<>();
+
+		for (CarRent cr : rpCarRent.findAll()) {
+			Client cl = rpClient.findById(cr.getClientId())
+					.orElseThrow(() -> new UserNotFoundException("User doesn't exist!"));
 			cr.setClient(cl);
-			Car car=rpCar.findById(cr.getVehicleId()).get();
-			
-			cr.setVehicleName(car.getCarId());
-			rentalsCar.add(cr);
+
+			Car car = rpCar.findById(cr.getVehicleId()).orElse(null);
+			if (car != null && !car.getDeleted()) {
+				cr.setVehicleName(car.getCarId());
+				carRentsProcessed.add(cr);
+			}
 		}
-		map.put("cars", rentalsCar);
-		
-		List<Rent>all= rpRent.findAll();
-		
-		for(Rent r:all)
-		{
-			Optional<Bike> bike=rpBike.findById(r.getVehicleId());
-			Optional<Scooter> scooter=rpScooter.findById(r.getVehicleId());
-			if(bike.isPresent())
-			{
-				Client cl=rpClient.findById(r.getClientId()).orElseThrow(()->new UserNotFoundException("User doesn't exist!"));
-				r.setClient(cl);
+		for (Rent r : rpRent.findAll()) {
+			Optional<Bike> bike = rpBike.findById(r.getVehicleId());
+			Optional<Scooter> scooter = rpScooter.findById(r.getVehicleId());
+
+			Client cl = rpClient.findById(r.getClientId())
+					.orElseThrow(() -> new UserNotFoundException("User doesn't exist!"));
+			r.setClient(cl);
+
+			if (bike.isPresent() && !bike.get().getDeleted()) {
 				r.setVehicleName(bike.get().getBikeId());
-				bikeRents.add(r);
-			}
-			else if(scooter.isPresent())
-			{
-				Client cl=rpClient.findById(r.getClientId()).orElseThrow(()->new UserNotFoundException("User doesn't exist!"));
-				r.setClient(cl);
+				bikeRentsProcessed.add(r);
+			} else if (scooter.isPresent() && !scooter.get().getDeleted()) {
 				r.setVehicleName(scooter.get().getScooterId());
-				scooterRents.add(r);
+				scooterRentsProcessed.add(r);
 			}
 		}
-		map.put("bikes", bikeRents);
-		map.put("scooters", scooterRents);
-		
-	
-		return map;
+		Page<Rent> carsPage = filterAndPaginate(carRentsProcessed, query, pageable);
+		Page<Rent> bikesPage = filterAndPaginate(bikeRentsProcessed, query, pageable);
+		Page<Rent> scootersPage = filterAndPaginate(scooterRentsProcessed, query, pageable);
+
+		Map<String, Page<Rent>> result = new HashMap<>();
+		result.put("cars", carsPage);
+		result.put("bikes", bikesPage);
+		result.put("scooters", scootersPage);
+
+		return result;
 	}
-	
-	
+
+	private Page<Rent> filterAndPaginate(List<Rent> rents, String queryInitial,Pageable pageable) {
+		Stream<Rent> stream = rents.stream();
+
+		if (queryInitial != null && !queryInitial.trim().isEmpty()) {
+			String query = queryInitial.toLowerCase();
+			stream = stream.filter(r -> {
+				String name = r.getClient().getName().toLowerCase();
+				String surname = r.getClient().getSurname().toLowerCase();
+				String fullName = name + " " + surname;
+				return name.contains(query) || surname.contains(query) || fullName.contains(query)||
+						r.getVehicleName().toLowerCase().contains(query);
+			});
+		}
+
+		List<Rent> filtered = stream.toList();
+
+		int start = (int) pageable.getOffset();
+		int end = Math.min(start + pageable.getPageSize(), filtered.size());
+
+		List<Rent> paged = start >= filtered.size() ? Collections.emptyList() : filtered.subList(start, end);
+		return new PageImpl<>(paged, pageable, filtered.size());
+	}
+
+
+
+
+
+
+
+
+
 	public HashMap<String,List<RentMapModel>> getMapModels()
 	{
 		HashMap<String,List<RentMapModel>> map=new HashMap<String,List<RentMapModel>>();
@@ -135,7 +179,7 @@ public class RentService {
 				
 				return 0;
 			});
-			if(rentCars.size()>0)
+			if(rentCars.size()>0 && !c.getDeleted())
 			{
 				modelsCar.add(new RentMapModel(c,rentCars.get(0).getLeftX(),rentCars.get(0).getLeftY()));
 			}
@@ -153,7 +197,7 @@ public class RentService {
 				
 				return 0;
 			});
-			if(rentBikes.size()>0)
+			if(rentBikes.size()>0 && !bike.getDeleted())
 			{
 				modelsBike.add(new RentMapModel(bike,rentBikes.get(0).getLeftX(),rentBikes.get(0).getLeftY()));
 			}
@@ -172,7 +216,7 @@ public class RentService {
 				
 				return 0;
 			});
-			if(rentScooters.size()>0)
+			if(rentScooters.size()>0  && !scooter.getDeleted())
 			{
 				modelsScooter.add(new RentMapModel(scooter,rentScooters.get(0).getLeftX(),rentScooters.get(0).getLeftY()));
 			}

@@ -2,8 +2,11 @@ package server.rent;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,14 +25,25 @@ public class RentController {
 	private RentService service;
 	
 	@GetMapping("/id")
-	public ResponseEntity<List<Rent>> getVehicleRents(@RequestParam Integer id){
-		return new ResponseEntity<List<Rent>>(service.getVehicleRents(id),HttpStatus.OK);
+	public Page<Rent> getVehicleRents(@RequestParam Integer id,
+									  @RequestParam(defaultValue = "0") int page,
+									  @RequestParam(defaultValue = "6") int size,
+									  @RequestParam(defaultValue = "") String query){
+		return service.getVehicleRents(id,PageRequest.of(page, size),query);
 	}
 	
+//	@GetMapping("/all")
+//	public ResponseEntity<HashMap<String,List<Rent>>> getAllRents(){
+//		return new ResponseEntity<HashMap<String,List<Rent>>>(service.getAllRents(),HttpStatus.OK);
+//	}
+
 	@GetMapping("/all")
-	public ResponseEntity<HashMap<String,List<Rent>>> getAllRents(){
-		return new ResponseEntity<HashMap<String,List<Rent>>>(service.getAllRents(),HttpStatus.OK);
+	public Map<String,Page<Rent>> getAllRents(@RequestParam(defaultValue = "0") int page,
+											  @RequestParam(defaultValue = "6") int size,
+											  @RequestParam(defaultValue = "") String query){
+		return service.getAllRents(PageRequest.of(page, size),query);
 	}
+
 	@GetMapping("/map")
 	public ResponseEntity<HashMap<String, List<RentMapModel>>> getMapModels()
 	{

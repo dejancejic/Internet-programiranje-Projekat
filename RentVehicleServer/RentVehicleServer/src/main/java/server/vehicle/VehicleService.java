@@ -1,13 +1,12 @@
 package server.vehicle;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import server.exceptions.UniqueIdException;
@@ -43,60 +42,107 @@ public class VehicleService {
 		this.rpScooter=rpScooter;
 		this.rpManufacturer=rpManufacturer;
 	}
-	
-	
-	public List<Car> getCars()
-	{
-		List<Car> cars=rpCar.findAll();
-		List<Car> toReturn=new ArrayList<Car>();
-		
-		for(Car c:cars)
-		{
-			if(c.getDeleted()==false) {
-				Manufacturer manu=rpManufacturer.findById(c.getManufacturerId()).get();
-				if(manu.getDeleted()==false) {
+
+
+	public Page<Car> getCars(Pageable pageable,String query) {
+		List<Car> allCars = rpCar.findAll();
+
+		List<Car> filtered = new ArrayList<>();
+
+		for (Car c : allCars) {
+			if (!c.getDeleted()) {
+				Manufacturer manu = rpManufacturer.findById(c.getManufacturerId()).orElse(null);
+				if (manu != null && !manu.getDeleted()) {
 					c.setManufacturer(manu.getName());
-					toReturn.add(c);
+					filtered.add(c);
 				}
 			}
 		}
-		return toReturn;
+
+		if (query != null && !query.trim().isEmpty()) {
+			String lowerQuery = query.toLowerCase();
+			filtered = filtered.stream()
+					.filter(c ->
+							(c.getCarId() != null && c.getCarId().toLowerCase().contains(lowerQuery)) ||
+									(c.getManufacturer() != null && c.getManufacturer().toLowerCase().contains(lowerQuery))||
+									(c.getModel() !=null && c.getModel().toLowerCase().contains(lowerQuery))||
+									(c.getManufacturer()!=null && c.getModel()!=null && (c.getManufacturer().toLowerCase()+" "+c.getModel().toLowerCase()).toLowerCase().contains(lowerQuery))
+					)
+					.toList();
+		}
+
+		int start = (int) pageable.getOffset();
+		int end = Math.min(start + pageable.getPageSize(), filtered.size());
+
+		List<Car> pageContent = start >= filtered.size() ? Collections.emptyList() : filtered.subList(start, end);
+		return new PageImpl<>(pageContent, pageable, filtered.size());
 	}
-	
-	public List<Bike> getBikes()
-	{
-		List<Bike> bikes=rpBike.findAll();
-		List<Bike> toReturn=new ArrayList<Bike>();
-		
-		for(Bike b:bikes)
-		{
-			if(b.getDeleted()==false) {
-				Manufacturer manu=rpManufacturer.findById(b.getManufacturerId()).get();
-				if(manu.getDeleted()==false) {
-			b.setManufacturer(manu.getName());
-			toReturn.add(b);
+
+
+	public Page<Bike> getBikes(Pageable pageable,String query) {
+		List<Bike> allBikes = rpBike.findAll();
+		List<Bike> filtered = new ArrayList<>();
+
+		for (Bike b : allBikes) {
+			if (!b.getDeleted()) {
+				Manufacturer manu = rpManufacturer.findById(b.getManufacturerId()).orElse(null);
+				if (manu != null && !manu.getDeleted()) {
+					b.setManufacturer(manu.getName());
+					filtered.add(b);
 				}
 			}
 		}
-		return toReturn;
+
+		if (query != null && !query.trim().isEmpty()) {
+			String lowerQuery = query.toLowerCase();
+			filtered = filtered.stream()
+					.filter(b ->
+							(b.getBikeId() != null && b.getBikeId().toLowerCase().contains(lowerQuery)) ||
+									(b.getManufacturer() != null && b.getManufacturer().toLowerCase().contains(lowerQuery))||
+									(b.getModel() !=null && b.getModel().toLowerCase().contains(lowerQuery))||
+									(b.getManufacturer()!=null && b.getModel()!=null && (b.getManufacturer().toLowerCase()+" "+b.getModel().toLowerCase()).toLowerCase().contains(lowerQuery))
+					)
+					.toList();
+		}
+
+		int start = (int) pageable.getOffset();
+		int end = Math.min(start + pageable.getPageSize(), filtered.size());
+
+		List<Bike> pageContent = start >= filtered.size() ? Collections.emptyList() : filtered.subList(start, end);
+		return new PageImpl<>(pageContent, pageable, filtered.size());
 	}
-	
-	public List<Scooter> getScooters()
-	{
-		List<Scooter> scooters=rpScooter.findAll();
-		List<Scooter> toReturn=new ArrayList<Scooter>();
-		
-		for(Scooter s:scooters)
-		{
-			if(s.getDeleted()==false) {
-			Manufacturer manu=rpManufacturer.findById(s.getManufacturerId()).get();
-				if(manu.getDeleted()==false) {
+
+	public Page<Scooter> getScooters(Pageable pageable,String query) {
+		List<Scooter> allScooters = rpScooter.findAll();
+		List<Scooter> filtered = new ArrayList<>();
+
+		for (Scooter s : allScooters) {
+			if (!s.getDeleted()) {
+				Manufacturer manu = rpManufacturer.findById(s.getManufacturerId()).orElse(null);
+				if (manu != null && !manu.getDeleted()) {
 					s.setManufacturer(manu.getName());
-					toReturn.add(s);
+					filtered.add(s);
 				}
 			}
 		}
-		return toReturn;
+
+		if (query != null && !query.trim().isEmpty()) {
+			String lowerQuery = query.toLowerCase();
+			filtered = filtered.stream()
+					.filter(s ->
+							(s.getScooterId() != null && s.getScooterId().toLowerCase().contains(lowerQuery)) ||
+									(s.getManufacturer() != null && s.getManufacturer().toLowerCase().contains(lowerQuery))||
+									(s.getModel() !=null && s.getModel().toLowerCase().contains(lowerQuery))||
+									(s.getManufacturer()!=null && s.getModel()!=null && (s.getManufacturer().toLowerCase()+" "+s.getModel().toLowerCase()).toLowerCase().contains(lowerQuery))
+					)
+					.toList();
+		}
+
+		int start = (int) pageable.getOffset();
+		int end = Math.min(start + pageable.getPageSize(), filtered.size());
+
+		List<Scooter> pageContent = start >= filtered.size() ? Collections.emptyList() : filtered.subList(start, end);
+		return new PageImpl<>(pageContent, pageable, filtered.size());
 	}
 	
 	

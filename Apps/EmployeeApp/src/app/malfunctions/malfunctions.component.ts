@@ -9,6 +9,7 @@ import { BikeService } from '../services/bike/bike.service';
 import { ScootersService } from '../services/scooters/scooters.service';
 import { Scooter } from '../model/scooter';
 import { MalfunctionTableComponent } from "../tables/malfunction-table/malfunction-table.component";
+import { ConstantsService } from '../services/utils/constants.service';
 
 @Component({
   selector: 'app-malfunctions',
@@ -26,14 +27,11 @@ export class MalfunctionsComponent implements OnInit {
 
   @ViewChild("malfunctionTable") malfunctionTable: any;
 
-  vehicleMap: { [key: string]: any[] } = {};
-
-  paginatedVehicles:any[]=[];
   vehicles:any[]=[];
-  allVehicles:any[]=[];
+  
 
   currentPageVehicles = 1;
-  vehiclesPerPage= 6;
+  vehiclesPerPage=  inject(ConstantsService).PAGINATION_NUMBER;
   totalPagesVehicles = 0;
   pagesVehicles: number[] = [];
 
@@ -43,54 +41,62 @@ export class MalfunctionsComponent implements OnInit {
 
   ngOnInit(): void {
     
-    this.initialize();
+    this.loadDataCars();
   }
-  private adjustImageData(type:string,data:any)
+  private adjustImageData(data:any)
   {
-    this.vehicleMap[type]=JSON.parse(JSON.stringify(data));
-    let collection=this.vehicleMap[type];
+    let collection=data.content;
+
       for(let element of collection)
       {
         if(!element.image.startsWith('data:')){
           element.image='data:image/png;base64,'+element.image;
           }
       }
-      this.vehicleMap[type]=collection;
+      this.vehicles=collection;
   }
 
-  async initialize()
+  loadDataBikes(page:number=1,query:string='')
   {
-    this.carsService.getCars().subscribe((data:any)=>{
-      this.adjustImageData('cars',data);
-      this.vehicles=JSON.parse(JSON.stringify(this.vehicleMap['cars']));
+    this.bikeService.getBikes(page - 1, this.vehiclesPerPage,query).subscribe((data:any)=>{
+      this.adjustImageData(data);
 
-      this.updatePaginationVehicles();
-
-    },(error)=>
-    {
-      alert("Error occured while reading data!");
-    });
-
-    this.bikeService.getBikes().subscribe((data:any)=>{
-      this.adjustImageData('bikes',data);
+      this.totalPagesVehicles = data.totalPages;
+    this.pagesVehicles= Array.from({ length: this.totalPagesVehicles }, (_, i) => i + 1);
 
     },(error)=>
     {
       alert("Error occured while reading data!");
     });
-
-
-    this.scooterService.getScooters().subscribe((data:any)=>{
-      this.adjustImageData('scooters',data);
-
-    },(error)=>
-    {
-      alert("Error occured while reading data!");
-    });
-
-
-
   }
+
+  loadDataScooters(page:number=1,query:string='')
+  {
+    this.scooterService.getScooters(page - 1, this.vehiclesPerPage,query).subscribe((data:any)=>{
+      this.adjustImageData(data);
+      this.totalPagesVehicles = data.totalPages;
+    this.pagesVehicles= Array.from({ length: this.totalPagesVehicles }, (_, i) => i + 1);
+
+    },(error)=>
+    {
+      alert("Error occured while reading data!");
+    });
+  }
+
+  loadDataCars(page: number = 1,query:string='')
+  {
+    this.carsService.getCars(page - 1, this.vehiclesPerPage,query).subscribe((data:any)=>{
+      this.adjustImageData(data);
+
+      this.totalPagesVehicles = data.totalPages;
+    this.pagesVehicles= Array.from({ length: this.totalPagesVehicles }, (_, i) => i + 1);
+
+    },(error)=>
+    {
+      alert("Error occured while reading data!");
+    });
+  }
+
 
 
   search(event:any)
@@ -98,29 +104,20 @@ export class MalfunctionsComponent implements OnInit {
     const query = event.toLowerCase();
     this.selectedRowIndex=-1;
     this.malfunctionTable.clearTable();
-    let type='cars';
+    
+    this.currentPageVehicles=1;
+    if(this.selectedType==='E-Car'){
+      this.loadDataCars(this.currentPageVehicles,query);
+    }
     if(this.selectedType==='E-Bike')
     {
-      type='bikes';
+      this.loadDataBikes(this.currentPageVehicles,query);
     }
     else if(this.selectedType==='E-Scooter')
     {
-      type='scooters';
+      this.loadDataScooters(this.currentPageVehicles,query);
     }
-    if(!query.trim() || query==='')
-      {
-        this.vehicles=JSON.parse(JSON.stringify(this.vehicleMap[type]));
-        this.updatePaginationVehicles();
-        return;
-      }
-      this.vehicles=this.vehicleMap[type].filter(v=>v.manufacturer.toString().toLowerCase().includes(query)||
-      v.model.toString().toLowerCase().includes(query) ||
-      (v.manufacturer+" "+v.model).toLowerCase().includes(query)||
-      (this.selectedType==='E-Car' && v.carId.toString().toLowerCase().includes(query))||
-      (this.selectedType==='E-Bike' && v.bikeId.toString().toLowerCase().includes(query)) ||
-      (this.selectedType==='E-Scooter' && v.scooterId.toString().toLowerCase().includes(query))
-    );
-      this.updatePaginationVehicles();
+   
   }
 
   changeType(event:any)
@@ -128,25 +125,24 @@ export class MalfunctionsComponent implements OnInit {
       this.selectedType=event;
       this.selectedRowIndex=-1;
       this.malfunctionTable.clearTable();
-      if(this.selectedType==='E-Car')
-      {
-        this.vehicles=this.vehicleMap['cars'];
-      }
-      else if(this.selectedType==='E-Bike')
-      {
-        this.vehicles=this.vehicleMap['bikes'];
-      }
-      else if(this.selectedType==='E-Scooter')
-      {
-        this.vehicles=this.vehicleMap['scooters'];
-      }
-      this.updatePaginationVehicles();
+      this.currentPageVehicles=1;
+    if(this.selectedType==='E-Car'){
+      this.loadDataCars();
+    }
+    if(this.selectedType==='E-Bike')
+    {
+      this.loadDataBikes();
+    }
+    else if(this.selectedType==='E-Scooter')
+    {
+      this.loadDataScooters();
+    }
   }
 
   setMalfunctionsTable(vehicle:any,index:number)
   {
     this.selectedRowIndex=index;
-    this.malfunctionTable.loadData(vehicle);
+    this.malfunctionTable.setMalfunctions(vehicle);
   }
 
   showAddMalfunctionTab()
@@ -155,21 +151,19 @@ export class MalfunctionsComponent implements OnInit {
   }
 
 
-  updatePaginationVehicles()
-  {
-    const collection = this.vehicles;
-    this.totalPagesVehicles = Math.ceil(collection.length / this.vehiclesPerPage);
-    this.pagesVehicles = Array.from({ length: this.totalPagesVehicles }, (_, i) => i + 1);
-    this.paginatedVehicles = collection.slice(
-      (this.currentPageVehicles - 1) * this.vehiclesPerPage,
-      this.currentPageVehicles * this.vehiclesPerPage
-    );
-    
-  }
   changePageVehicles(page: number) {
     if (page >= 1 && page <= this.totalPagesVehicles) {
-      this.currentPageVehicles = page;
-      this.updatePaginationVehicles();
+      if(this.selectedType==='E-Car'){
+        this.loadDataCars(page);
+      }
+      if(this.selectedType==='E-Bike')
+      {
+        this.loadDataBikes(page);
+      }
+      else if(this.selectedType==='E-Scooter')
+      {
+        this.loadDataScooters(page);
+      }
     }
   }
 

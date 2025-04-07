@@ -47,6 +47,18 @@ export class NavManagerComponent {
       this.selectedTab='details';
       NavManagerComponent.showInfoTab=true;
     }
+    else if(window.location.href.includes('rentals')){
+      this.selectedTab='rentals';
+    }
+    else if(window.location.href.includes('map')){
+      this.selectedTab='map';
+    }
+    else if(window.location.href.includes('clients')){
+      this.selectedTab='clients';
+    }
+    else if(window.location.href.includes('malfunctions')){
+      this.selectedTab='malfunctions';
+    }
     else if(window.location.href.includes('statistics')){
       this.selectedTab='statistics';
     }

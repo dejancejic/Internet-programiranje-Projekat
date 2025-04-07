@@ -14,13 +14,16 @@ export class ScootersService extends BaseService{
     super();
    }
 
-    getScooters()
+    getScooters(page: number = 0, size: number = this.constantsService.PAGINATION_NUMBER,query:string='')
           { 
             let options=this.getStandardOptions();
             options.withCredentials=true;
             options.params=new HttpParams({
               fromObject:{
-                format:'json'
+                format:'json',
+                page: page.toString(),
+            size: size.toString(),
+            query:query,
               },
             });
             options.withCredentials=true;

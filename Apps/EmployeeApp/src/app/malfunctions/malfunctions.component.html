@@ -5,7 +5,7 @@
     (queryChanged)="search($event)"
     (typesChanged)="changeType($event)"
     [toShow]="'vehicles'"
-    [count]="this.paginatedVehicles.length"
+    [count]="this.vehicles.length"
     ></operator-header>
 
     <div *ngIf="loading" class="d-flex justify-content-center spinner noContent">
@@ -33,7 +33,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr *ngFor="let vehicle of paginatedVehicles;let i = index" (click)="setMalfunctionsTable(vehicle,i)"
+                    <tr *ngFor="let vehicle of vehicles;let i = index" (click)="setMalfunctionsTable(vehicle,i)"
                     [ngClass]="{'selectedRow': selectedRowIndex === i}"
                     >
                         <td class="rw" > 
@@ -58,7 +58,7 @@
 
                           </td>
                     </tr>
-                    <tr *ngIf="paginatedVehicles.length === 0">
+                    <tr *ngIf="vehicles.length === 0">
                       <td [attr.colspan]="3" class="text-center nodata">
                         No data to display!
                       </td>

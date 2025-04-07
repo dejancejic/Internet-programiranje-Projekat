@@ -26,7 +26,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let user of paginatedClients">
+            <tr *ngFor="let user of clients">
               <td class="rw"> 
                 <div class="user-badge">
                   <img *ngIf="user.image" [src]="user.image"  />
@@ -48,7 +48,7 @@
                 </button>
               </td>
             </tr>
-            <tr *ngIf="paginatedClients.length === 0">
+            <tr *ngIf="clients.length === 0">
               <td [attr.colspan]="5" class="text-center nodata">
                 No data to display!
               </td>

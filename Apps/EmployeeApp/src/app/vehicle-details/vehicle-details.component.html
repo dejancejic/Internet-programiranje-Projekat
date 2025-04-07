@@ -49,7 +49,7 @@
       <div class="search">
         <input type="text" class="search-bar"
          (input)="searchRentals($event)"
-         placeholder="Search name, date..." />
+         placeholder="Search by name..." />
          
     </div>
 
@@ -64,7 +64,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let rental of paginatedRentals">
+            <tr *ngFor="let rental of rentals">
                 <td class="rw" > 
                   <div class="user-badge">
                     <img *ngIf="rental.client.image" [src]="rental.client.image"  />
@@ -78,7 +78,7 @@
               <td>{{calculateDuration(rental.dateTime,rental.duration)}}</td>
               <td *ngIf="vehicleType==='car'">{{rental.licenceNumber}}</td>
             </tr>
-            <tr *ngIf="paginatedRentals.length === 0">
+            <tr *ngIf="rentals.length === 0">
               <td [attr.colspan]="vehicleType==='car'?4:3" class="text-center nodata">
                 No data to display!
               </td>

@@ -93,7 +93,7 @@ export class VehicleMapComponent implements OnInit,AfterViewInit{
     
         L.Marker.prototype.options.icon = defaultIcon;
     
-        // Initialize map
+        
         if (this.map) {
           this.map.remove();  
           this.map = null;    
@@ -102,7 +102,7 @@ export class VehicleMapComponent implements OnInit,AfterViewInit{
         this.map = L.map('map', {
         }).setView([this.constantsService.MAP_INITIAL_POSITION.x, this.constantsService.MAP_INITIAL_POSITION.y], this.constantsService.MAP_ZOOM);
     
-        // Add OpenStreetMap tiles
+      
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           attribution: '&copy; OpenStreetMap contributors'
         }).addTo(this.map);

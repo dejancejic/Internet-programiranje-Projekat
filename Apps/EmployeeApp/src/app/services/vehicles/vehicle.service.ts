@@ -49,31 +49,39 @@ export class VehicleService extends BaseService{
     }
 
 
-    getVehicleMalfunctions(id:number)
-    {
-      let options=this.getStandardOptions();
-      options.withCredentials=true;
-      options.params=new HttpParams({
-        fromObject:{
-          format:'json',
-          id:id
-        },
-      });
-      options.withCredentials=true;
-
-  return this.http.get(this.constantsService.SERVER_URL+'malfunction/id',options).
-    pipe(catchError(this.handleError));
+    getVehicleMalfunctions(id: number, page: number = 0, size: number = this.constantsService.PAGINATION_NUMBER,query:string='') {
+      const options = {
+        withCredentials: true,
+        params: new HttpParams({
+          fromObject: {
+            id: id.toString(),
+            page: page.toString(),
+            size: size.toString(),
+            query:query,
+            format: 'json',
+          }
+        })
+      };
+    
+      return this.http.get(
+        this.constantsService.SERVER_URL + 'malfunction/id',
+        options
+      ).pipe(catchError(this.handleError));
     }
+    
 
 
-    getVehicleRents(id:number)
+    getVehicleRents(id:number,page: number = 0, size: number = this.constantsService.PAGINATION_NUMBER,query:string='')
     {
       let options=this.getStandardOptions();
       options.withCredentials=true;
       options.params=new HttpParams({
         fromObject:{
           format:'json',
-          id:id
+          id:id,
+          page: page.toString(),
+            size: size.toString(),
+            query:query,
         },
       });
       options.withCredentials=true;

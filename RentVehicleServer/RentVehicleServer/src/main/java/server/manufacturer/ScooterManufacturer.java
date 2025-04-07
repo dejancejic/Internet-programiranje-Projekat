@@ -1,26 +1,13 @@
 package server.manufacturer;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name="scooter_manufacturer")
-public class ScooterManufacturer {
+@PrimaryKeyJoinColumn(name = "id")
+public class ScooterManufacturer extends Manufacturer {
 
-	@Id
-	@Column(name="id")
-	private Integer id;
 
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-	
 	
 	
 

@@ -17,6 +17,7 @@ import { futureDateValidator } from '../services/validators/dateValidator';
 import { MalfunctionTableComponent } from "../tables/malfunction-table/malfunction-table.component";
 import { NavAdminComponent } from '../navbars/nav-admin/nav-admin.component';
 import { NavManagerComponent } from '../navbars/nav-manager/nav-manager.component';
+import { ConstantsService } from '../services/utils/constants.service';
 
 declare var bootstrap:any;
 
@@ -43,21 +44,11 @@ export class VehicleDetailsComponent implements OnInit,AfterViewInit{
 
   loading:boolean=false;
 
-  malfunctions:Malfunction[]=[];
   rentals:any[]=[];
-  malfunctionsAll:Malfunction[]=[];
-  rentalsAll:any[]=[];
-
-  paginatedMalfunctions: any[] = [];
-  currentPageMalfunctions = 1;
-  malfunctionsPerPage = 6;
-  totalPagesMalfunctions = 0;
-  pagesMalfunctions: number[] = [];
 
 
-  paginatedRentals: any[] = [];
   currentPageRentals = 1;
-  rentalsPerPage = 6;
+  rentalsPerPage = inject(ConstantsService).PAGINATION_NUMBER;
   totalPagesRentals = 0;
   pagesRentals: number[] = [];
 
@@ -122,18 +113,12 @@ export class VehicleDetailsComponent implements OnInit,AfterViewInit{
 
   ngAfterViewInit(): void {
     
-    this.vehicleService.getVehicleMalfunctions(this.vehicleId).subscribe((data:any)=>{
-      
-      setTimeout(()=>{
-        this.malfunctionsTable.setMalfunctions(data,this.vehicle);
-
-      },100);
-      this.loading=false;
-    },(error)=>{
-      this.loading=false;
-      this.error=true;
-    }
-    );
+    setTimeout(()=>{
+      this.malfunctionsTable.setMalfunctions(this.vehicle);
+    },200);
+    
+  
+    
   }
 
 
@@ -156,20 +141,23 @@ export class VehicleDetailsComponent implements OnInit,AfterViewInit{
     this.loading=true;
 
 
+    this.loadData();
+  }
 
-    this.loading=true;
-
-    this.vehicleService.getVehicleRents(this.vehicleId).subscribe((data:any)=>{
-      this.rentalsAll = JSON.parse(JSON.stringify(data));
-  for(let rental of this.rentalsAll)
+  loadData(page: number = 1,query:string='')
+  {
+    this.currentPageRentals = page;
+    this.vehicleService.getVehicleRents(this.vehicleId, page - 1, this.rentalsPerPage,query).subscribe((data:any)=>{
+      this.rentals = data.content;
+  for(let rental of this.rentals)
     {
       if(!rental.client.image.startsWith('data:')){
         rental.client.image='data:image/png;base64,'+rental.client.image;
         }
     }
-    this.rentals = JSON.parse(JSON.stringify(this.rentalsAll));
-
-      this.updatePaginationRentals();
+    this.totalPagesRentals = data.totalPages;
+    this.pagesRentals = Array.from({ length: this.totalPagesRentals }, (_, i) => i + 1);
+      
       this.loading=false;
     },(error)=>{
       this.loading=false;
@@ -177,24 +165,12 @@ export class VehicleDetailsComponent implements OnInit,AfterViewInit{
     }
     );
 
-
   }
 
-  
-  updatePaginationRentals()
-  {
-    const collection = this.rentals;
-    this.totalPagesRentals = Math.ceil(collection.length / this.rentalsPerPage);
-    this.pagesRentals = Array.from({ length: this.totalPagesRentals }, (_, i) => i + 1);
-    this.paginatedRentals = collection.slice(
-      (this.currentPageRentals - 1) * this.rentalsPerPage,
-      this.currentPageRentals * this.rentalsPerPage
-    );
-  }
+
   changePageRentals(page: number) {
     if (page >= 1 && page <= this.totalPagesRentals) {
-      this.currentPageRentals = page;
-      this.updatePaginationRentals();
+      this.loadData(page);
     }
   }
 
@@ -205,16 +181,10 @@ export class VehicleDetailsComponent implements OnInit,AfterViewInit{
   searchRentals(event:any)
   {
     const query = event.target.value.toLowerCase();
+    this.currentPageRentals=1;
 
-    if(!query.trim() || query==='')
-    {
-      this.rentals=JSON.parse(JSON.stringify(this.rentalsAll));
-      this.updatePaginationRentals();
-      return;
-    }
-    this.rentals=this.rentalsAll.filter(r=>r.clientName.toString().toLowerCase().includes(query)||
-    r.dateTime.toString().toLowerCase().includes(query) );
-    this.updatePaginationRentals();
+
+    this.loadData(this.currentPageRentals, query);
   }
 
 

@@ -27,7 +27,7 @@ export class MalfunctionTableComponent implements AfterViewInit {
   malfunctions:Malfunction[]=[];
   malfunctionsAll:Malfunction[]=[];
 
-  paginatedMalfunctions: any[] = [];
+  
   currentPageMalfunctions = 1;
   malfunctionsPerPage = 6;
   totalPagesMalfunctions = 0;
@@ -63,35 +63,36 @@ export class MalfunctionTableComponent implements AfterViewInit {
       solved:[false]
     });
 
-    setMalfunctions(malfunctions:Malfunction[],vehicle:any)
+    setMalfunctions(vehicle:any)
     {
       this.vehicle=vehicle;
-      this.malfunctionsAll=malfunctions;
-      this.malfunctions = JSON.parse(JSON.stringify(this.malfunctionsAll));
-      this.updatePaginationMalfunctions();
+  
+      this.loadData();
+      
     }
 
 
-    loadData(vehicle:any): void {
-      if(vehicle.id!=0)
-      {
-        this.vehicle=vehicle;
-        this.vehicleService.getVehicleMalfunctions(vehicle.id).subscribe((data:any)=>{
-          this.malfunctionsAll = JSON.parse(JSON.stringify(data));
-      this.malfunctions = JSON.parse(JSON.stringify(data));
-          
-          this.updatePaginationMalfunctions();
-        },(error)=>{
-          alert("Error loading data!");
-        }
+    loadData( page: number = 1,query:string=''): void {
+        this.currentPageMalfunctions = page;
+    
+        this.vehicleService.getVehicleMalfunctions(this.vehicle.id, page - 1, this.malfunctionsPerPage,query).subscribe((response: any) => {
+            this.malfunctions = response.content;
+            this.malfunctionsAll=JSON.parse(JSON.stringify(response.content));
+            
+            this.totalPagesMalfunctions = response.totalPages;
+            this.pagesMalfunctions = Array.from({ length: this.totalPagesMalfunctions }, (_, i) => i + 1);
+          },
+          (error) => {
+            alert(error);
+          }
         );
-      }
     }
+    
     clearTable()
     {
+      this.totalPagesMalfunctions=0;
+      this.pagesMalfunctions=[];
       this.malfunctions=[];
-      this.malfunctionsAll=[];
-      this.updatePaginationMalfunctions();
     }
 
     ngAfterViewInit(): void {
@@ -113,23 +114,16 @@ export class MalfunctionTableComponent implements AfterViewInit {
       return this.durationService.calculateDuration(start,end);
     }
 
-    updatePaginationMalfunctions()
-  {
-    const collection = this.malfunctions;
-    this.totalPagesMalfunctions = Math.ceil(collection.length / this.malfunctionsPerPage);
-    this.pagesMalfunctions = Array.from({ length: this.totalPagesMalfunctions }, (_, i) => i + 1);
-    this.paginatedMalfunctions = collection.slice(
-      (this.currentPageMalfunctions - 1) * this.malfunctionsPerPage,
-      this.currentPageMalfunctions * this.malfunctionsPerPage
-    );
-  }
+   
+
+
 
   changePageMalfunctions(page: number) {
     if (page >= 1 && page <= this.totalPagesMalfunctions) {
-      this.currentPageMalfunctions = page;
-      this.updatePaginationMalfunctions();
+      this.loadData(page);
     }
   }
+  
 
   showAddMalfunctionModal()
   {
@@ -155,33 +149,25 @@ export class MalfunctionTableComponent implements AfterViewInit {
   {
     if(this.selectedMalfunction!==null)
     {
-        this.vehicleService.solveMalfunction(this.selectedMalfunction!.id).subscribe((data)=>{
+        this.vehicleService.solveMalfunction(this.selectedMalfunction!.id).subscribe((data:any)=>{
           
           this.selectedMalfunction!.solved=true;
           
 
           this.modalInstanceRemove.hide();
           this.modalInstanceSuccess.show();
-          let found=false;
-
-          for(let m of this.malfunctionsAll)
-            {
-              if(m.id===this.selectedMalfunction!.id)
-              {
-                m.solved=true;
-              }
-              if(m.solved===false)
-              {
-                found=true;
-                break;
-              }
-            }
-            if(found==false)
-            {
-              this.vehicle.status='free';
-            }
       
-          this.updatePaginationMalfunctions();
+          for(let m of this.malfunctions){
+            if(m.id===this.selectedMalfunction!.id){
+          m.solved=true;
+          break;
+            }
+          }
+              if(data===false)
+              {     
+                this.vehicle.status='free';  
+              }
+                  
         },(error)=>{
           this.networkError=true;
         });
@@ -202,7 +188,9 @@ export class MalfunctionTableComponent implements AfterViewInit {
       this.closeModal();
     this.modalInstance.hide();
     this.modalInstanceSuccess.show();
-      this.updatePaginationMalfunctions();
+
+   
+
      },
     (error)=>{
       
@@ -213,15 +201,11 @@ export class MalfunctionTableComponent implements AfterViewInit {
   searchMalfunctions(event:any)
   {
     const query = event.target.value.toLowerCase();
+    this.currentPageMalfunctions=1;
 
-    if(!query.trim() || query==='')
-    {
-      this.malfunctions = JSON.parse(JSON.stringify(this.malfunctionsAll));
-      this.updatePaginationMalfunctions();
-      return;
-    }
-    this.malfunctions=this.malfunctionsAll.filter(m=>m.dateTime.toString().toLowerCase().includes(query));
-    this.updatePaginationMalfunctions();
+
+    this.loadData(this.currentPageMalfunctions, query);
+
   }
 
 

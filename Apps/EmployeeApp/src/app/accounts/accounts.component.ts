@@ -6,6 +6,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { Client } from '../model/client';
 import { Employee } from '../model/employee';
 import { EmployeeComponent } from "../modals/employee/employee.component";
+import { ConstantsService } from '../services/utils/constants.service';
 
 declare var bootstrap:any;
 
@@ -20,7 +21,7 @@ declare var bootstrap:any;
 export class AccountsComponent implements OnInit,AfterViewInit {
 
   currentPage = 1;
-  usersPerPage = 6;
+  usersPerPage = inject(ConstantsService).PAGINATION_NUMBER;
   totalPages = 0;
   pages: number[] = [];
   statusFailed=false;
@@ -39,13 +40,8 @@ export class AccountsComponent implements OnInit,AfterViewInit {
   update=false;
 
 
-  allClients:Client[]=[];
-  allEmployees:Employee[]=[];
-
-  clients:Client[]=[];
-  employees:Employee[]=[];
-
-  paginatedUsers: any[] = [];
+  allEmployees:any[]=[];
+  users: any[] = [];
 
   selectedType='All types';
 
@@ -90,15 +86,7 @@ export class AccountsComponent implements OnInit,AfterViewInit {
     }, 0); 
   }
 
-  updatePagination() {
-    const collection = this.adminsSelected ? this.employees : this.clients;
-    this.totalPages = Math.ceil(collection.length / this.usersPerPage);
-    this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
-    this.paginatedUsers = collection.slice(
-      (this.currentPage - 1) * this.usersPerPage,
-      this.currentPage * this.usersPerPage
-    );
-  }
+  
 
   ngAfterViewInit(): void {
     const modalElementStatus = this.successStatusModal.nativeElement;
@@ -120,19 +108,22 @@ export class AccountsComponent implements OnInit,AfterViewInit {
 
 
   ngOnInit(): void {
-    this.initialize();
+   this.loadDataClients();
   }
 
   switchTab(tab: string) {
+    this.users=[];
+    this.currentPage = 1;
     if (tab === 'employees')
        { this.adminsSelected = true;
-        
+          this.loadDataEmployees(this.currentPage);    
         }
         else {
-           this.adminsSelected = false; }
+           this.adminsSelected = false;
+           this.loadDataClients(this.currentPage);  
+          }
            
-    this.currentPage = 1;
-    this.updatePagination();
+    
     document.querySelectorAll('.tab').forEach(tab => {
         tab.classList.remove('active-tab');
     });
@@ -141,39 +132,47 @@ export class AccountsComponent implements OnInit,AfterViewInit {
     el?.classList.add('active-tab');
 }
 
-private async initialize(): Promise<void> {
-  try {
-    this.loading = true;
-
-    this.switchTab('clients');
-
-    await Promise.all([
-      this.accountsService.getClients().toPromise().then((data: any) => {
-        this.clients = data;
-        for(let cl of this.clients)
-        {
-          if(!cl.image.startsWith('data:')){
-            cl.image='data:image/png;base64,'+cl.image;
-            }
-        }
-        this.allClients = data;
-
-
-        this.currentPage = 1;
-        this.updatePagination();
-      }),
-      this.accountsService.getEmployees().toPromise().then((data: any) => {
-        this.employees = data;
-        this.allEmployees = data;
-        
-      }),
-    ]);
-  } catch (error:any) {
-    alert(error.message || 'An error occurred');
-  } finally {
-    this.loading = false;
-  }
+loadDataEmployees(page: number = 1,query:string='')
+{
+  this.loading=true;
+  this.currentPage = page;
+  this.accountsService.getEmployees(page - 1, this.usersPerPage,query).toPromise().then((data: any) => {
+    this.users=data.content;
+    this.allEmployees=JSON.parse(JSON.stringify(data.content));
+    this.totalPages = data.totalPages;
+      this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
+    this.loading=false;
+  },(error)=>{
+    alert("Error reading data!");
+    this.loading=false;
+  });
 }
+
+
+loadDataClients(page: number = 1,query:string='')
+{
+  this.loading = true;
+  this.currentPage = page;
+
+  this.accountsService.getClients(page - 1, this.usersPerPage,query).subscribe((data: any) => {
+    this.users=data.content;
+    for(let cl of this.users)
+    {
+      if(!cl.image.startsWith('data:')){
+        cl.image='data:image/png;base64,'+cl.image;
+        }
+    }
+    this.totalPages = data.totalPages;
+      this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
+    this.loading=false;
+  },(error)=>{
+    alert("Error reading data!");
+    this.loading=false;
+  });
+
+}
+
+
 
 
 
@@ -182,66 +181,38 @@ private async initialize(): Promise<void> {
   {
     const query = event.target.value.toLowerCase();
 
-    if(!query.trim() || query==='')
-    {
-      if(this.adminsSelected){
-        if(this.selectedType!=='All types'){
-      this.employees=this.allEmployees.filter(e=>e.role===this.selectedType);
-        }
-        else 
-        {
-          this.employees=this.allEmployees;
-        }
-      }
-      else{
-        this.clients=this.allClients;
-      }
-      this.updatePagination();
-      return;
-    }
-
+    this.currentPage=1;
     if(this.adminsSelected)
     {
-      if(this.selectedType!=='All types'){
-    this.employees=this.allEmployees.filter(e=>e.role===this.selectedType &&(e.name.toLowerCase().includes(query)||
-    e.surname.toLowerCase().includes(query)||
-    e.username.toLowerCase().includes(query)));
-      }
-      else{
-        this.employees=this.allEmployees.filter(e=>e.name.toLowerCase().includes(query)||
-        e.surname.toLowerCase().includes(query)||
-        e.username.toLowerCase().includes(query));
-      }
+      this.loadDataEmployees(this.currentPage,query);
     }
-    else{
-     this.clients= this.allClients.filter(c=>c.name.toLowerCase().includes(query)||
-    c.surname.toLowerCase().includes(query)||c.email.toLowerCase().includes(query) ||
-     c.username.toLowerCase().includes(query));
+    else
+    {
+      this.loadDataClients(this.currentPage,query);
     }
 
-    this.updatePagination();
   }
 
   onSelectionChange(event: Event) { 
 
-    this.employees=this.allEmployees;
+    this.users=this.allEmployees;
     const target=event.target as HTMLSelectElement;
 
     this.selectedType=target.value;
 
     if(target.value==='Admins')
     {
-      this.employees = this.allEmployees.filter(emp => emp.role === 'admin');
+      this.users = this.allEmployees.filter(emp => emp.role === 'admin');
     }
     else if(target.value==='Operators')
     {
-      this.employees = this.allEmployees.filter(emp => emp.role === 'operator');
+      this.users = this.allEmployees.filter(emp => emp.role === 'operator');
     }
     else if(target.value==='Managers')
     {
-      this.employees = this.allEmployees.filter(emp => emp.role === 'manager');
+      this.users = this.allEmployees.filter(emp => emp.role === 'manager');
     }
-    this.updatePagination();
+
   }
 
 
@@ -251,13 +222,10 @@ private async initialize(): Promise<void> {
     this.accountsService.addEmployee(employee).subscribe((data:any)=>{
       employee.id=data.id;
     this.allEmployees.push(employee);
-    if(this.selectedType===employee.role){
-    this.employees.push(employee);
-    }
-
+    
+    this.users.push(employee);
+    
     this.update=false;
-    this.updatePagination();
-   
     this.modalInstanceSuccessEmployee.show();
   },(error:any)=>{
     this.employeeFailed=true;
@@ -285,7 +253,7 @@ private async initialize(): Promise<void> {
         break;
       }
     }
-    for(let emp of this.employees)
+    for(let emp of this.users)
       {
         if(emp.id===employee.id)
         {
@@ -298,7 +266,6 @@ private async initialize(): Promise<void> {
         }
       }
 
-    this.updatePagination();
     
   this.modalInstanceSuccessEmployee.show();
      } ,(error)=>{
@@ -325,7 +292,7 @@ private async initialize(): Promise<void> {
     this.accountsService.setClientStatus(user.id, user.blocked).subscribe(
       (data:any)=>{ 
         this.modalInstanceSuccessStatus.show();
-        this.updatePagination();
+        
       },
       (error) =>{
         this.statusFailed=true;
@@ -337,8 +304,15 @@ private async initialize(): Promise<void> {
 
   changePage(page: number) {
     if (page >= 1 && page <= this.totalPages) {
-      this.currentPage = page;
-      this.updatePagination();
+      if(this.adminsSelected)
+      {
+        this.loadDataEmployees(page);
+      }
+      else
+      {
+        this.loadDataEmployees(page);
+      }
+   
     }
   }
 
@@ -364,27 +338,7 @@ private async initialize(): Promise<void> {
 
      this.accountsService.deleteEmployee(this.selectedEmployee!.id).subscribe((data:any)=>{
       this.deleteError=false;
-     let index=0;
-        for(let emp of this.allEmployees)
-        {
-          if(emp.id===this.selectedEmployee?.id)
-          {
-            this.employees.splice(index,1);
-            break;
-          }
-          index++;
-        }
-        index=0;
-        for(let emp of this.employees)
-          {
-            if(emp.id===this.selectedEmployee?.id)
-            {
-              this.employees.splice(index,1);
-              break;
-            }
-            index++;
-          }
-          this.updatePagination();
+            this.loadDataEmployees(this.currentPage);
           this.modalInstancDeleteSuccessModal.show();
         },(error)=>{
             this.deleteError=true;

@@ -11,6 +11,7 @@ import { CarDetailsTabComponent } from "../tabs/car-details-tab/car-details-tab.
 import { BikeTabComponent } from "../tabs/bike-tab/bike-tab.component";
 import { ScooterTabComponent } from "../tabs/scooter-tab/scooter-tab.component";
 import { UpdatePriceComponent } from "../modals/update-price/update-price.component";
+import { ConstantsService } from '../services/utils/constants.service';
 
 @Component({
   selector: 'app-rent-price',
@@ -24,15 +25,21 @@ export class RentPriceComponent implements OnInit,AfterViewInit {
   selectedType='E-Car';
   selectedVehicle:any=null;
   vehicles:any[]=[];
-  vehicleMap: { [key: string]: any[] } = {};
+  allVehicles:any[]=[];
 
   @ViewChild("updatePriceModal") updatePriceModal:UpdatePriceComponent=null!;
 
 
   visibleRows: any[] = [];
     constructor(private cdr: ChangeDetectorRef){}
-    itemsPerRow = 1;
+    itemsPerRow = 6;
     rowHeight = 150;
+    vehiclesPerPage = inject(ConstantsService).PAGINATION_NUMBER;
+    currentPageVehicles = 1;
+    totalPagesVehicles = 0;      
+    pagesVehicles: number[] = [];
+    endReached = false;
+
   
     @HostListener('window:resize')
     onResize() {
@@ -66,55 +73,71 @@ export class RentPriceComponent implements OnInit,AfterViewInit {
 
     ngOnInit(): void {
     
-      this.initialize();
+      this.loadDataCars();
     }
-    private adjustImageData(type:string,data:any)
+    private adjustImageData(data:any)
     {
-      this.vehicleMap[type]=JSON.parse(JSON.stringify(data));
-      let collection=this.vehicleMap[type];
-        for(let element of collection)
+        for(let element of data)
         {
           if(!element.image.startsWith('data:')){
             element.image='data:image/png;base64,'+element.image;
             }
         }
-        this.vehicleMap[type]=collection;
     }
-  
-    async initialize()
+
+
+
+    loadDataBikes(page: number = this.currentPageVehicles, query: string = '') {
+      this.loading = true;
+      
+      this.bikeService.getBikes(page - 1, this.itemsPerRow, query).subscribe((data: any) => {
+        this.assignData(page,data);
+      }, (error) => {
+        alert("Error occurred while reading data!");
+        this.loading = false;
+      });
+    }
+    loadDataCars(page: number = this.currentPageVehicles, query: string = '') {
+      this.loading = true;
+      
+      this.carsService.getCars(page - 1, this.itemsPerRow, query).subscribe((data: any) => {
+        this.assignData(page,data);
+      }, (error) => {
+        alert("Error occurred while reading data!");
+        this.loading = false;
+      });
+    }
+    loadDataScooters(page: number = this.currentPageVehicles, query: string = '') {
+      this.loading = true;
+      
+      this.scooterService.getScooters(page - 1, this.itemsPerRow, query).subscribe((data: any) => {
+        this.assignData(page,data);
+      }, (error) => {
+        alert("Error occurred while reading data!");
+        this.loading = false;
+      });
+    }
+
+    private assignData(page:number,data:any)
     {
-      this.carsService.getCars().subscribe((data:any)=>{
-        this.adjustImageData('E-Car',data);
-        this.vehicles=JSON.parse(JSON.stringify(this.vehicleMap['E-Car']));
+      this.adjustImageData(data.content);
+      const newVehicles = data.content;
+        this.totalPagesVehicles = data.totalPages;
+    
+        if (newVehicles.length === 0 || page >= this.totalPagesVehicles) {
+          this.endReached = true;
+        }
+        
   
-        this.calculateItemsPerRow();
-      this.formatCarsIntoRows();
-      this.cdr.detectChanges();
-      },(error)=>
-      {
-        alert("Error occured while reading data!");
-      });
-  
-      this.bikeService.getBikes().subscribe((data:any)=>{
-        this.adjustImageData('E-Bike',data);
-  
-      },(error)=>
-      {
-        alert("Error occured while reading data!");
-      });
-  
-  
-      this.scooterService.getScooters().subscribe((data:any)=>{
-        this.adjustImageData('E-Scooter',data);
-  
-      },(error)=>
-      {
-        alert("Error occured while reading data!");
-      });
-  
-  
-  
+        this.allVehicles = [...this.allVehicles, ...newVehicles];
+        this.vehicles=JSON.parse(JSON.stringify(this.allVehicles));
+        this.visibleRows = this.chunkArray(this.allVehicles, this.itemsPerRow);
+    
+        this.currentPageVehicles++; 
+        this.loading = false;
     }
+
+
 
   ngAfterViewInit(): void {
     
@@ -127,14 +150,14 @@ export class RentPriceComponent implements OnInit,AfterViewInit {
    
     if(!query.trim() || query==='')
       {
-        this.vehicles=this.vehicleMap[this.selectedType];
+        this.vehicles=JSON.parse(JSON.stringify(this.allVehicles));
         
         this.calculateItemsPerRow();
         this.formatCarsIntoRows();
         this.cdr.detectChanges();
         return;
       }
-      this.vehicles=this.vehicleMap[this.selectedType].filter(v=>v.model.toString().toLowerCase().includes(query)||
+      this.vehicles=this.allVehicles.filter(v=>v.model.toString().toLowerCase().includes(query)||
       v.manufacturer.toString().toLowerCase().includes(query)||
       (v.model.toString().toLowerCase()+" "+v.manufacturer.toString().toLowerCase()).includes(query)||
       (this.selectedType==='E-Car' && v.carId.toString().toLowerCase().includes(query))||
@@ -148,8 +171,22 @@ export class RentPriceComponent implements OnInit,AfterViewInit {
   changeType(event:any)
   { 
     this.selectedType=event;
-
-    this.vehicles=this.vehicleMap[this.selectedType];
+    this.vehicles=[];
+    this.allVehicles=[];
+    this.visibleRows = [];
+    this.currentPageVehicles=1;
+    this.totalPagesVehicles=0;
+    this.endReached=false;
+    if(this.selectedType==='E-Car'){
+      this.loadDataCars(this.currentPageVehicles);
+      }
+      else if(this.selectedType==='E-Bike'){
+        this.loadDataBikes(this.currentPageVehicles);
+        }
+        else if(this.selectedType==='E-Scooter'){
+          this.loadDataScooters(this.currentPageVehicles);
+          }
+    
     this.calculateItemsPerRow();
       this.formatCarsIntoRows();
       this.cdr.detectChanges();
@@ -164,6 +201,31 @@ export class RentPriceComponent implements OnInit,AfterViewInit {
     this.updatePriceModal.showModal();
 
 
+  }
+
+  onScroll(index: number) {
+    const buffer = this.vehiclesPerPage;
+    const totalItems = this.visibleRows.length;
+  
+    if (!this.loading && !this.endReached && index + buffer >= totalItems) {
+
+      
+      if(this.selectedType==='E-Car'){
+      this.loadDataCars(this.currentPageVehicles);
+      }
+      else if(this.selectedType==='E-Bike'){
+        this.loadDataBikes(this.currentPageVehicles);
+        }
+        else if(this.selectedType==='E-Scooter'){
+          this.loadDataScooters(this.currentPageVehicles);
+          }
+    }
+  }
+
+  chunkArray(arr: any[], size: number): any[][] {
+    return Array.from({ length: Math.ceil(arr.length / size) }, (_, i) =>
+      arr.slice(i * size, i * size + size)
+    );
   }
 
 }

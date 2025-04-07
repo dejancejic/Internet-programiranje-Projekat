@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { Client } from '../model/client';
 import { AccountsService } from '../services/accounts/accounts.service';
+import { ConstantsService } from '../services/utils/constants.service';
 
 declare var bootstrap:any;
 
@@ -19,14 +20,12 @@ export class ClientsComponent implements OnInit,AfterViewInit{
   accountsService=inject(AccountsService);
 
   clients:Client[]=[];
-  allClients:Client[]=[];
-  paginatedClients:Client[]=[];
   loading:boolean=false;
 
   statusFailed=false;
 
   currentPage = 1;
-  usersPerPage = 6;
+  usersPerPage = inject(ConstantsService).PAGINATION_NUMBER;
   totalPages = 0;
   pages: number[] = [];
 
@@ -35,24 +34,30 @@ export class ClientsComponent implements OnInit,AfterViewInit{
 
   ngOnInit(): void {
     this.loading=true;
-    this.accountsService.getClients().subscribe((data: any) => {
-      this.clients = data;
+    this.loadData();
+    
+  }
+
+
+  loadData(page: number = 1,query:string='')
+  {
+    this.currentPage = page;
+    this.accountsService.getClients(page - 1, this.usersPerPage,query).subscribe((data: any) => {
+      this.clients = data.content;
       for(let cl of this.clients)
       {
         if(!cl.image.startsWith('data:')){
           cl.image='data:image/png;base64,'+cl.image;
           }
       }
-      this.allClients = JSON.parse(JSON.stringify(this.clients));
-
+      this.totalPages = data.totalPages;
+      this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
       this.loading=false;
-      this.currentPage = 1;
-      this.updatePagination();
     },(error)=>{
       alert("Error reading data!");
       this.loading=false;
     })
-    
+
   }
 
   ngAfterViewInit(): void {
@@ -65,32 +70,12 @@ export class ClientsComponent implements OnInit,AfterViewInit{
   {
     const query = event.toLowerCase();
 
-    if(!query.trim() || query==='')
-    {
-      this.clients=this.allClients;
-      
-      this.updatePagination();
-      return;
-    }
+    this.currentPage=1;
 
-    this.clients= this.allClients.filter(c=>c.name.toLowerCase().includes(query)||
-    c.surname.toLowerCase().includes(query)||c.email.toLowerCase().includes(query) ||
-    (c.name.toLowerCase()+" "+c.surname.toLowerCase()).includes(query)||
-     c.username.toLowerCase().includes(query));
-
-     this.updatePagination();
+    this.loadData(this.currentPage, query);
 
   }
 
-  updatePagination() {
-    const collection =this.clients;
-    this.totalPages = Math.ceil(collection.length / this.usersPerPage);
-    this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
-    this.paginatedClients = collection.slice(
-      (this.currentPage - 1) * this.usersPerPage,
-      this.currentPage * this.usersPerPage
-    );
-  }
 
 
   setStatus(user: Client) {
@@ -100,7 +85,7 @@ export class ClientsComponent implements OnInit,AfterViewInit{
     this.accountsService.setClientStatus(user.id, user.blocked).subscribe(
       (data:any)=>{ 
         this.modalInstanceSuccessStatus.show();
-        this.updatePagination();
+        //this.loadData(this.currentPage);
       },
       (error) =>{
         this.statusFailed=true;
@@ -113,8 +98,7 @@ export class ClientsComponent implements OnInit,AfterViewInit{
 
   changePage(page: number) {
     if (page >= 1 && page <= this.totalPages) {
-      this.currentPage = page;
-      this.updatePagination();
+      this.loadData(page);
     }
   }
 

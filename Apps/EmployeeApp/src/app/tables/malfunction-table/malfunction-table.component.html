@@ -24,7 +24,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let malfunction of paginatedMalfunctions">
+        <tr *ngFor="let malfunction of malfunctions">
           <td > 
             {{ malfunction.dateTime | date:'dd.MM.yyyy.' }}
           </td>
@@ -77,7 +77,7 @@
 
 
         </tr>
-        <tr *ngIf="paginatedMalfunctions.length === 0">
+        <tr *ngIf="malfunctions.length === 0">
           <td [attr.colspan]="4" class="text-center nodata">
             No data to display!
           </td>

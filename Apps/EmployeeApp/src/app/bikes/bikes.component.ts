@@ -8,6 +8,7 @@ import { VehicleService } from '../services/vehicles/vehicle.service';
 import { Vehicle } from '../model/vehicle';
 import { BikeTabComponent } from "../tabs/bike-tab/bike-tab.component";
 import { BikeService } from '../services/bike/bike.service';
+import { ConstantsService } from '../services/utils/constants.service';
 
 declare var bootstrap: any;
 
@@ -23,6 +24,7 @@ export class BikesComponent implements OnInit,AfterViewInit {
   bikes:Bike[]=[];
   allBikes:Bike[]=[];
 
+
   query:string='';
 
   vehicleService=inject(VehicleService);
@@ -31,8 +33,14 @@ export class BikesComponent implements OnInit,AfterViewInit {
 
   visibleRows: any[] = [];
     constructor(private cdr: ChangeDetectorRef){}
-    itemsPerRow = 1;
-    rowHeight = 150;
+    itemsPerRow = 6;
+      rowHeight = 150;
+      bikesPerPage = inject(ConstantsService).PAGINATION_NUMBER;
+      currentPageBikes = 1;
+      totalPagesBikes = 0;
+      
+      pagesBikes: number[] = [];
+      endReached = false;
 
 
       @ViewChild('removeVehicleModal') removeVehicleModal: any; 
@@ -68,9 +76,33 @@ export class BikesComponent implements OnInit,AfterViewInit {
       }
 
       ngOnInit(): void {
-        this.getBikes();
-      }
-
+    
+        this.loadData();
+       }
+     
+       loadData(page: number = this.currentPageBikes, query: string = '') {
+         this.loading = true;
+         
+         this.bikeService.getBikes(page - 1, this.itemsPerRow, query).subscribe((data: any) => {
+           const newBikes = data.content;
+           this.totalPagesBikes = data.totalPages;
+       
+           if (newBikes.length === 0 || page >= this.totalPagesBikes) {
+             this.endReached = true;
+           }
+           
+     
+           this.allBikes = [...this.allBikes, ...newBikes];
+           this.bikes=JSON.parse(JSON.stringify(this.allBikes));
+           this.visibleRows = this.chunkArray(this.allBikes, this.itemsPerRow);
+       
+           this.currentPageBikes++; 
+           this.loading = false;
+         }, (error) => {
+           alert("Error occurred while reading data!");
+           this.loading = false;
+         });
+       }
 
       ngAfterViewInit(): void {
         
@@ -82,26 +114,6 @@ export class BikesComponent implements OnInit,AfterViewInit {
       }
 
 
-
-
-
-      getBikes()
-      {
-        this.bikeService.getBikes().subscribe((data:any)=>{
-          this.bikes=data;
-          this.allBikes=data;
-
-          this.calculateItemsPerRow();
-          this.formatCarsIntoRows();
-          this.cdr.detectChanges();
-       
-         this.loading=false;
-      },(error)=>{
-        this.error=true;
-        this.loading=false;
-        });
-        
-      }
 
 
       search(query: any) {
@@ -178,6 +190,19 @@ export class BikesComponent implements OnInit,AfterViewInit {
     this.error=false;
   }
 
+  onScroll(index: number) {
+    const buffer = this.bikesPerPage;
+    const totalItems = this.visibleRows.length;
+  
+    if (!this.loading && !this.endReached && index + buffer >= totalItems) {
+      this.loadData(this.currentPageBikes);
+    }
+  }
 
+  chunkArray(arr: any[], size: number): any[][] {
+    return Array.from({ length: Math.ceil(arr.length / size) }, (_, i) =>
+      arr.slice(i * size, i * size + size)
+    );
+  }
 
 }

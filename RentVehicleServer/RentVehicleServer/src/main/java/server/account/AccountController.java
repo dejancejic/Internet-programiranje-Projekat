@@ -3,6 +3,8 @@ package server.account;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,15 +28,19 @@ public class AccountController {
 	
 	
 	@GetMapping("/clients")
-	public ResponseEntity<List<Client>> getClients()
+	public Page<Client> getClients(@RequestParam(defaultValue = "0") int page,
+									@RequestParam(defaultValue = "6") int size,
+									@RequestParam(defaultValue = "") String query)
 	{
-		return new ResponseEntity<List<Client>>(service.getClients(),HttpStatus.OK);
+		return service.getClients(PageRequest.of(page, size), query);
 	}
 	
 	@GetMapping("/employees")
-	public ResponseEntity<List<Employee>> getEmployees()
+	public Page<Employee> getEmployees(@RequestParam(defaultValue = "0") int page,
+													   @RequestParam(defaultValue = "6") int size,
+													   @RequestParam(defaultValue = "") String query)
 	{
-		return new ResponseEntity<List<Employee>>(service.getEmployees(),HttpStatus.OK);
+		return service.getEmployees(PageRequest.of(page, size), query);
 	}
 	
 	@PutMapping("/client/status")

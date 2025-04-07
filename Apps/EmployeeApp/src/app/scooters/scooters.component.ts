@@ -7,6 +7,7 @@ import { VehicleService } from '../services/vehicles/vehicle.service';
 import { ScootersService } from '../services/scooters/scooters.service';
 import { Scooter } from '../model/scooter';
 import { ScooterTabComponent } from "../tabs/scooter-tab/scooter-tab.component";
+import { ConstantsService } from '../services/utils/constants.service';
 
 declare var bootstrap: any;
 @Component({
@@ -30,8 +31,13 @@ export class ScootersComponent implements OnInit,AfterViewInit{
 
     visibleRows: any[] = [];
     constructor(private cdr: ChangeDetectorRef){}
-    itemsPerRow = 1;
+    itemsPerRow = 6;
     rowHeight = 150;
+    scootersPerPage = inject(ConstantsService).PAGINATION_NUMBER;
+    currentPageScooters = 1;
+    totalPagesScooters = 0;
+    pagesScooters: number[] = [];
+    endReached = false;
     
     
     @ViewChild('removeVehicleModal') removeVehicleModal: any; 
@@ -64,11 +70,7 @@ export class ScootersComponent implements OnInit,AfterViewInit{
               this.visibleRows.push(this.scooters.slice(i, i + this.itemsPerRow));
             }
           }
-    
-          ngOnInit(): void {
-            this.getScooters();
-          }
-
+  
           ngAfterViewInit(): void {
         
             const modalElement = this.removeVehicleModal.nativeElement;
@@ -80,24 +82,34 @@ export class ScootersComponent implements OnInit,AfterViewInit{
 
 
 
-        getScooters()
-      {
-        this.scootersService.getScooters().subscribe((data:any)=>{
-          this.scooters=data;
-          this.allScooters=data;
-          
-
-          this.calculateItemsPerRow();
-          this.formatCarsIntoRows();
-          this.cdr.detectChanges();
-       
-         this.loading=false;
-      },(error)=>{
-        alert(error);
-        this.loading=false;
-        });
-        
-      }
+          ngOnInit(): void {
+    
+            this.loadData();
+           }
+         
+           loadData(page: number = this.currentPageScooters, query: string = '') {
+             this.loading = true;
+             
+             this.scootersService.getScooters(page - 1, this.itemsPerRow, query).subscribe((data: any) => {
+               const newBikes = data.content;
+               this.totalPagesScooters = data.totalPages;
+           
+               if (newBikes.length === 0 || page >= this.totalPagesScooters) {
+                 this.endReached = true;
+               }
+               
+         
+               this.allScooters = [...this.allScooters, ...newBikes];
+               this.scooters=JSON.parse(JSON.stringify(this.allScooters));
+               this.visibleRows = this.chunkArray(this.allScooters, this.itemsPerRow);
+           
+               this.currentPageScooters++; 
+               this.loading = false;
+             }, (error) => {
+               alert("Error occurred while reading data!");
+               this.loading = false;
+             });
+           }
 
       search(query: any) {
         this.query = query;
@@ -173,6 +185,21 @@ export class ScootersComponent implements OnInit,AfterViewInit{
       dismiss()
       {
         this.error=false;
+      }
+
+      onScroll(index: number) {
+        const buffer = this.scootersPerPage;
+        const totalItems = this.visibleRows.length;
+      
+        if (!this.loading && !this.endReached && index + buffer >= totalItems) {
+          this.loadData(this.currentPageScooters);
+        }
+      }
+    
+      chunkArray(arr: any[], size: number): any[][] {
+        return Array.from({ length: Math.ceil(arr.length / size) }, (_, i) =>
+          arr.slice(i * size, i * size + size)
+        );
       }
 
 

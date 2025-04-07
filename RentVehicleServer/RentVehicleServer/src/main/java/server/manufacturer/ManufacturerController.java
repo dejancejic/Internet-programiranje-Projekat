@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -43,10 +45,18 @@ public class ManufacturerController {
 	
 	
 	
+//	@GetMapping("/all")
+//	public ResponseEntity<HashMap<String,ArrayList<Manufacturer>>> getAllManufacturers()
+//	{
+//		return new ResponseEntity<HashMap<String,ArrayList<Manufacturer>>>(service.getAllManufacturers(),HttpStatus.OK);
+//	}
+
 	@GetMapping("/all")
-	public ResponseEntity<HashMap<String,ArrayList<Manufacturer>>> getAllManufacturers()
+	public HashMap<String, Page<Manufacturer>> getAllManufacturers(@RequestParam(defaultValue = "0") int page,
+																   @RequestParam(defaultValue = "6") int size,
+																   @RequestParam(defaultValue = "") String query)
 	{
-		return new ResponseEntity<HashMap<String,ArrayList<Manufacturer>>>(service.getAllManufacturers(),HttpStatus.OK);
+		return service.getAllManufacturers(PageRequest.of(page, size), query);
 	}
 	
 	@DeleteMapping("/delete")

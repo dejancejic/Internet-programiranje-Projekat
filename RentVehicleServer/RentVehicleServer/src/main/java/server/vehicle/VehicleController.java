@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Base64;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -45,16 +47,24 @@ public class VehicleController {
 	}
 
 	@GetMapping("/cars")
-	public ResponseEntity<List<Car>> getCars(){
-		return new ResponseEntity<List<Car>>(service.getCars(),HttpStatus.OK);
+	public Page<Car> getCars(@RequestParam(defaultValue = "0") int page,
+							 @RequestParam(defaultValue = "6") int size,
+							 @RequestParam(defaultValue = "") String query){
+		return service.getCars(PageRequest.of(page,size),query);
 	}
 	@GetMapping("/bikes")
-	public ResponseEntity<List<Bike>> getBikes(){
-		return new ResponseEntity<List<Bike>>(service.getBikes(),HttpStatus.OK);
+	public Page<Bike> getBikes(
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "6") int size,
+		@RequestParam(defaultValue = "") String query){
+			return service.getBikes(PageRequest.of(page,size),query);
 	}
 	@GetMapping("/scooters")
-	public ResponseEntity<List<Scooter>> getScooters(){
-		return new ResponseEntity<List<Scooter>>(service.getScooters(),HttpStatus.OK);
+	public Page<Scooter> getScooters(
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "6") int size,
+			@RequestParam(defaultValue = "") String query){
+		return service.getScooters(PageRequest.of(page,size),query);
 	}
 	
 	@PostMapping("/cars/add")

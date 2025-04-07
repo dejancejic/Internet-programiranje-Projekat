@@ -8,6 +8,7 @@ import { CarsService } from '../services/cars/cars.service';
 import { HttpClientModule } from '@angular/common/http';
 import { VehicleService } from '../services/vehicles/vehicle.service';
 import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling';
+import { ConstantsService } from '../services/utils/constants.service';
 
 declare var bootstrap: any;
 
@@ -22,8 +23,14 @@ export class VehiclesComponent implements OnInit,AfterViewInit{
 
   visibleRows: any[] = [];
   constructor(private cdr: ChangeDetectorRef){}
-  itemsPerRow = 1;
+  itemsPerRow = 6;
   rowHeight = 150;
+  carsPerPage = inject(ConstantsService).PAGINATION_NUMBER;
+  currentPageCars = 1;
+  totalPagesCars = 0;
+  
+  pagesCars: number[] = [];
+  endReached = false;
 
   @HostListener('window:resize')
   onResize() {
@@ -68,27 +75,41 @@ export class VehiclesComponent implements OnInit,AfterViewInit{
 
   ngOnInit(): void {
     
-   this.getCars(); 
-   
-
+   this.loadData();
   }
 
-  private getCars()
-  {
-    this.carsService.getCars().subscribe((data:any)=>{
-      this.cars=data;
-      this.allCars=data;
+  loadData(page: number = this.currentPageCars, query: string = '') {
+    this.loading = true;
+    
+    this.carsService.getCars(page - 1, this.itemsPerRow, query).subscribe((data: any) => {
+      const newCars = data.content;
+      this.totalPagesCars = data.totalPages;
+  
+      if (newCars.length === 0 || page >= this.totalPagesCars) {
+        this.endReached = true;
+      }
+      
 
-      this.calculateItemsPerRow();
-      this.formatCarsIntoRows();
-      this.cdr.detectChanges();
-   
-     this.loading=false;
-  },(error)=>{
-    alert(error);
-    this.loading=false;
+      this.allCars = [...this.allCars, ...newCars];
+      this.cars=JSON.parse(JSON.stringify(this.allCars));
+      this.visibleRows = this.chunkArray(this.allCars, this.itemsPerRow);
+  
+      this.currentPageCars++; // move to next page
+      this.loading = false;
+    }, (error) => {
+      alert("Error occurred while reading data!");
+      this.loading = false;
     });
   }
+  
+
+  chunkArray(arr: any[], size: number): any[][] {
+    return Array.from({ length: Math.ceil(arr.length / size) }, (_, i) =>
+      arr.slice(i * size, i * size + size)
+    );
+  }
+
+
 
   ngAfterViewInit() {
   
@@ -175,6 +196,16 @@ export class VehiclesComponent implements OnInit,AfterViewInit{
   dismiss()
   {
     this.error=false;
+  }
+
+
+  onScroll(index: number) {
+    const buffer = this.carsPerPage;
+    const totalItems = this.visibleRows.length;
+  
+    if (!this.loading && !this.endReached && index + buffer >= totalItems) {
+      this.loadData(this.currentPageCars);
+    }
   }
 
 }

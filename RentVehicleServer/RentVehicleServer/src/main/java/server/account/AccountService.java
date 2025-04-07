@@ -1,9 +1,12 @@
 package server.account;
-
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import server.client.Client;
@@ -26,16 +29,62 @@ public class AccountService {
 	
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-	
-	
-	public List<Employee> getEmployees()
+
+
+	public Page<Employee> getEmployees(Pageable pageable, String query)
 	{
-		return rpEmployee.findAll();
+		List<Employee> allEmployees = rpEmployee.findAll();
+
+		if (query != null && !query.trim().isEmpty()) {
+			String lowerQuery = query.toLowerCase();
+			allEmployees = allEmployees.stream()
+					.filter(c -> {
+						String name = c.getName().toLowerCase();
+						String surname = c.getSurname().toLowerCase();
+						String fullName = name + " " + surname;
+						return name.contains(lowerQuery) ||
+								surname.contains(lowerQuery) ||
+								fullName.contains(lowerQuery);
+					})
+					.toList();
+		}
+		int start = (int) pageable.getOffset();
+		int end = Math.min(start + pageable.getPageSize(), allEmployees.size());
+
+		List<Employee> pageContent = start >= allEmployees.size()
+				? Collections.emptyList()
+				: allEmployees.subList(start, end);
+
+		return new PageImpl<>(pageContent, pageable, allEmployees.size());
 	}
 	
-	public List<Client> getClients()
+	public Page<Client> getClients(Pageable pageable, String query)
 	{
-		return rpClient.findAll();
+		List<Client> allClients = rpClient.findAll();
+
+		if (query != null && !query.trim().isEmpty()) {
+			String lowerQuery = query.toLowerCase();
+			allClients = allClients.stream()
+					.filter(c -> {
+						String name = c.getName().toLowerCase();
+						String surname = c.getSurname().toLowerCase();
+						String fullName = name + " " + surname;
+						String email = c.getEmail().toLowerCase();
+						return name.contains(lowerQuery) ||
+								surname.contains(lowerQuery) ||
+								fullName.contains(lowerQuery) ||
+								email.contains(lowerQuery);
+					})
+					.toList();
+		}
+		int start = (int) pageable.getOffset();
+		int end = Math.min(start + pageable.getPageSize(), allClients.size());
+
+		List<Client> pageContent = start >= allClients.size()
+				? Collections.emptyList()
+				: allClients.subList(start, end);
+
+		return new PageImpl<>(pageContent, pageable, allClients.size());
 	}
 	
 	public Client setStatus(Integer id,Boolean status)
