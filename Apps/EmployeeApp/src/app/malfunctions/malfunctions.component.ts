@@ -10,10 +10,11 @@ import { ScootersService } from '../services/scooters/scooters.service';
 import { Scooter } from '../model/scooter';
 import { MalfunctionTableComponent } from "../tables/malfunction-table/malfunction-table.component";
 import { ConstantsService } from '../services/utils/constants.service';
+import { ErrorComponent } from "../modals/error/error.component";
 
 @Component({
   selector: 'app-malfunctions',
-  imports: [CommonModule, HttpClientModule, OperatorHeaderComponent, MalfunctionTableComponent],
+  imports: [CommonModule, HttpClientModule, OperatorHeaderComponent, MalfunctionTableComponent, ErrorComponent],
   templateUrl: './malfunctions.component.html',
   styleUrl: './malfunctions.component.css',
   providers:[CarsService,BikeService,ScootersService]
@@ -26,6 +27,8 @@ export class MalfunctionsComponent implements OnInit {
   loading:boolean=false;
 
   @ViewChild("malfunctionTable") malfunctionTable: any;
+
+  @ViewChild("errorModal") errorModal:any;
 
   vehicles:any[]=[];
   
@@ -66,7 +69,11 @@ export class MalfunctionsComponent implements OnInit {
 
     },(error)=>
     {
-      alert("Error occured while reading data!");
+      let msg=error.message;
+      if(msg.includes("Progress")){
+        msg="Server failed to respond!";
+      }
+      this.errorModal.showModal('Failed to load bikes',msg);
     });
   }
 
@@ -79,7 +86,11 @@ export class MalfunctionsComponent implements OnInit {
 
     },(error)=>
     {
-      alert("Error occured while reading data!");
+      let msg=error.message;
+      if(msg.includes("Progress")){
+        msg="Server failed to respond!";
+      }
+      this.errorModal.showModal('Failed to load scooters',msg);
     });
   }
 
@@ -93,7 +104,11 @@ export class MalfunctionsComponent implements OnInit {
 
     },(error)=>
     {
-      alert("Error occured while reading data!");
+      let msg=error.message;
+      if(msg.includes("Progress")){
+        msg="Server failed to respond!";
+      }
+      this.errorModal.showModal('Failed to load cars',msg);
     });
   }
 

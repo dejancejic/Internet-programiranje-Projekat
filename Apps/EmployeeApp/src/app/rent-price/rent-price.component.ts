@@ -12,10 +12,11 @@ import { BikeTabComponent } from "../tabs/bike-tab/bike-tab.component";
 import { ScooterTabComponent } from "../tabs/scooter-tab/scooter-tab.component";
 import { UpdatePriceComponent } from "../modals/update-price/update-price.component";
 import { ConstantsService } from '../services/utils/constants.service';
+import { ErrorComponent } from "../modals/error/error.component";
 
 @Component({
   selector: 'app-rent-price',
-  imports: [CommonModule, OperatorHeaderComponent, HttpClientModule, CdkVirtualScrollViewport, ScrollingModule, CarTabComponent, BikeTabComponent, ScooterTabComponent, UpdatePriceComponent],
+  imports: [CommonModule, OperatorHeaderComponent, HttpClientModule, CdkVirtualScrollViewport, ScrollingModule, CarTabComponent, BikeTabComponent, ScooterTabComponent, UpdatePriceComponent, ErrorComponent],
   templateUrl: './rent-price.component.html',
   styleUrl: './rent-price.component.css',
   providers:[CarsService,BikeService,ScootersService]
@@ -40,7 +41,8 @@ export class RentPriceComponent implements OnInit,AfterViewInit {
     pagesVehicles: number[] = [];
     endReached = false;
 
-  
+    @ViewChild("errorModal") errorModal:any;
+
     @HostListener('window:resize')
     onResize() {
       this.calculateItemsPerRow();
@@ -93,7 +95,11 @@ export class RentPriceComponent implements OnInit,AfterViewInit {
       this.bikeService.getBikes(page - 1, this.itemsPerRow, query).subscribe((data: any) => {
         this.assignData(page,data);
       }, (error) => {
-        alert("Error occurred while reading data!");
+        let msg=error.message;
+        if(msg.includes("Progress")){
+          msg="Server failed to respond!";
+        }
+        this.errorModal.showModal('Failed to load bikes',msg);
         this.loading = false;
       });
     }
@@ -103,7 +109,11 @@ export class RentPriceComponent implements OnInit,AfterViewInit {
       this.carsService.getCars(page - 1, this.itemsPerRow, query).subscribe((data: any) => {
         this.assignData(page,data);
       }, (error) => {
-        alert("Error occurred while reading data!");
+        let msg=error.message;
+        if(msg.includes("Progress")){
+          msg="Server failed to respond!";
+        }
+        this.errorModal.showModal('Failed to load cars',msg);
         this.loading = false;
       });
     }
@@ -113,7 +123,11 @@ export class RentPriceComponent implements OnInit,AfterViewInit {
       this.scooterService.getScooters(page - 1, this.itemsPerRow, query).subscribe((data: any) => {
         this.assignData(page,data);
       }, (error) => {
-        alert("Error occurred while reading data!");
+        let msg=error.message;
+        if(msg.includes("Progress")){
+          msg="Server failed to respond!";
+        }
+        this.errorModal.showModal('Failed to load scooters',msg);
         this.loading = false;
       });
     }

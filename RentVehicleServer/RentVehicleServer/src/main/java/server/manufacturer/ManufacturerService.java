@@ -207,7 +207,39 @@ public class ManufacturerService {
 	}
 
 
+	public HashMap<String,ArrayList<Manufacturer>> getAllManufacturers()
+	{
+		HashMap<String,ArrayList<Manufacturer>> map=new HashMap<String,ArrayList<Manufacturer>>();
 
+		List<CarManufacturer> cars=rpCar.findAll();
+		List<BikeManufacturer> bikes=rpBike.findAll();
+		List<ScooterManufacturer> scooters=rpScooter.findAll();
+
+
+		map.put("E-Car", new ArrayList<Manufacturer>());
+		map.put("E-Bike", new ArrayList<Manufacturer>());
+		map.put("E-Scooter", new ArrayList<Manufacturer>());
+
+
+		for(CarManufacturer car:cars)
+		{
+			addToMap(map,car.getId(),"E-Car");
+		}
+
+		for(BikeManufacturer bike:bikes)
+		{
+			addToMap(map,bike.getId(),"E-Bike");
+		}
+
+		for(ScooterManufacturer scooter:scooters)
+		{
+			addToMap(map,scooter.getId(),"E-Scooter");
+		}
+
+
+
+		return map;
+	}
 
 	private void addToMap(HashMap<String,ArrayList<Manufacturer>> map,Integer id,String type)
 	{

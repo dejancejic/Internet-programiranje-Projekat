@@ -75,7 +75,7 @@ export class HeaderComponent implements AfterViewInit,OnInit{
 
   private getManufacturers()
   {
-    this.manufacturerService.getManufacturers().subscribe((data:any)=>{
+    this.manufacturerService.getAllManufacturers().subscribe((data:any)=>{
     
       if(this.type==='cars')
       {

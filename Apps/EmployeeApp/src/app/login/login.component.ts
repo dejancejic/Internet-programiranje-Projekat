@@ -71,7 +71,11 @@ export class LoginComponent implements OnInit{
         });
       }
     },(error:any)=>{
-      this.errorModal.showModal('Failed to login',error.message);
+      let msg=error.message;
+      if(msg.includes("Progress")){
+        msg="Server failed to respond!";
+      }
+      this.errorModal.showModal('Failed to login',msg);
       
       this.loading=false;
     });

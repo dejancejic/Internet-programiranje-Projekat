@@ -7,10 +7,11 @@ import { HttpClientModule } from '@angular/common/http';
 import * as L from 'leaflet';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { ConstantsService } from '../services/utils/constants.service';
+import { ErrorComponent } from "../modals/error/error.component";
 
 @Component({
   selector: 'app-rentals',
-  imports: [CommonModule,OperatorHeaderComponent,HttpClientModule,LeafletModule],
+  imports: [CommonModule, OperatorHeaderComponent, HttpClientModule, LeafletModule, ErrorComponent],
   templateUrl: './rentals.component.html',
   styleUrl: './rentals.component.css',
   providers:[DurationService,RentalsService,ConstantsService]
@@ -25,7 +26,8 @@ export class RentalsComponent implements OnInit,AfterViewInit {
   carsSelected:boolean=true;
 
 
- 
+  @ViewChild("errorModal") errorModal:any;
+
   currentPageRentals = 1;
   rentalsPerPage = 6;
   totalPagesRentals = 0;
@@ -130,7 +132,11 @@ export class RentalsComponent implements OnInit,AfterViewInit {
 
     },(error)=>{
 
-      alert("Error reading data!");
+      let msg=error.message;
+      if(msg.includes("Progress")){
+        msg="Server failed to respond!";
+      }
+      this.errorModal.showModal('Failed to load data',msg);
       this.loading=false;
     }
     );

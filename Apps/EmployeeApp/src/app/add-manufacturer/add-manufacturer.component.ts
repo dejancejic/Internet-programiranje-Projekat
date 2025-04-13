@@ -9,6 +9,7 @@ import { ManufacturerService } from '../services/manufacturers/manufacturer.serv
 import { HttpClientModule } from '@angular/common/http';
 import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling';
 import { ConstantsService } from '../services/utils/constants.service';
+import { ErrorComponent } from "../modals/error/error.component";
 
 
 
@@ -16,7 +17,7 @@ declare var bootstrap: any;
 
 @Component({
   selector: 'app-add-manufacturer',
-  imports: [HeaderManufacturerComponent, CommonModule, ManufacturerTabComponent,HttpClientModule,CdkVirtualScrollViewport,ScrollingModule],
+  imports: [HeaderManufacturerComponent, CommonModule, ManufacturerTabComponent, HttpClientModule, CdkVirtualScrollViewport, ScrollingModule, ErrorComponent],
   templateUrl: './add-manufacturer.component.html',
   styleUrl: './add-manufacturer.component.css',
   providers:[ManufacturerService]
@@ -78,7 +79,7 @@ selectedManufacturer!:Manufacturer;
 
   selectedVehicleType='E-Car';
 
-
+  @ViewChild("errorModal") errorModal:any;
 
   modalInstance: any;
   @ViewChild('removeManufacturerModal') removeVehicleModal: any; 
@@ -130,7 +131,13 @@ selectedManufacturer!:Manufacturer;
       this.currentPageManufacturers++; 
       this.loading = false;
     }, (error) => {
-      alert("Error occurred while reading data!");
+      let msg=error.message;
+      if(msg.includes("Progress")){
+        msg="Server failed to respond!";
+      }
+    
+      this.errorModal.showModal('Failed to load manufacturers',msg);
+
       this.loading = false;
     });
   }

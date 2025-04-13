@@ -8,11 +8,12 @@ import { ScootersService } from '../services/scooters/scooters.service';
 import { Scooter } from '../model/scooter';
 import { ScooterTabComponent } from "../tabs/scooter-tab/scooter-tab.component";
 import { ConstantsService } from '../services/utils/constants.service';
+import { ErrorComponent } from "../modals/error/error.component";
 
 declare var bootstrap: any;
 @Component({
   selector: 'app-scooters',
-  imports: [HeaderComponent, HttpClientModule, CommonModule, CdkVirtualScrollViewport, ScrollingModule, ScooterTabComponent],
+  imports: [HeaderComponent, HttpClientModule, CommonModule, CdkVirtualScrollViewport, ScrollingModule, ScooterTabComponent, ErrorComponent],
   templateUrl: './scooters.component.html',
   styleUrl: './scooters.component.css',
   providers:[VehicleService,ScootersService]
@@ -39,6 +40,7 @@ export class ScootersComponent implements OnInit,AfterViewInit{
     pagesScooters: number[] = [];
     endReached = false;
     
+    @ViewChild("errorModal") errorModal:any;
     
     @ViewChild('removeVehicleModal') removeVehicleModal: any; 
     @ViewChild('successModal') successModal: any; 
@@ -106,7 +108,11 @@ export class ScootersComponent implements OnInit,AfterViewInit{
                this.currentPageScooters++; 
                this.loading = false;
              }, (error) => {
-               alert("Error occurred while reading data!");
+              let msg=error.message;
+              if(msg.includes("Progress")){
+                msg="Server failed to respond!";
+              }
+              this.errorModal.showModal('Failed to load scooters',msg);
                this.loading = false;
              });
            }

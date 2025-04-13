@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { LogoutService } from '../services/logout/logout.service';
 
 import { NavAdminComponent } from "../navbars/nav-admin/nav-admin.component";
-import { VehiclesComponent } from "../vehicles/vehicles.component";
+import { VehiclesComponent } from "../cars/vehicles.component";
 import { RouterOutlet } from '@angular/router';
 import { AuthService } from '../services/utils/auth.service';
 

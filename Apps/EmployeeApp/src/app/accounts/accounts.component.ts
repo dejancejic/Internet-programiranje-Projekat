@@ -7,12 +7,13 @@ import { Client } from '../model/client';
 import { Employee } from '../model/employee';
 import { EmployeeComponent } from "../modals/employee/employee.component";
 import { ConstantsService } from '../services/utils/constants.service';
+import { ErrorComponent } from "../modals/error/error.component";
 
 declare var bootstrap:any;
 
 @Component({
   selector: 'app-accounts',
-  imports: [CommonModule, FormsModule, HttpClientModule, EmployeeComponent],
+  imports: [CommonModule, FormsModule, HttpClientModule, EmployeeComponent, ErrorComponent],
   templateUrl: './accounts.component.html',
   styleUrl: './accounts.component.css',
   providers:[AccountsService],
@@ -28,6 +29,8 @@ export class AccountsComponent implements OnInit,AfterViewInit {
   employeeFailed=false;
   sameEmployeeError=false;
   deleteError=false;
+
+  @ViewChild("errorModal") errorModal:any;
 
   @Input() query:string='';
   adminsSelected=false;
@@ -143,7 +146,11 @@ loadDataEmployees(page: number = 1,query:string='')
       this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
     this.loading=false;
   },(error)=>{
-    alert("Error reading data!");
+    let msg=error.message;
+      if(msg.includes("Progress")){
+        msg="Server failed to respond!";
+      }
+      this.errorModal.showModal('Failed to load employees',msg);
     this.loading=false;
   });
 }
@@ -166,7 +173,11 @@ loadDataClients(page: number = 1,query:string='')
       this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
     this.loading=false;
   },(error)=>{
-    alert("Error reading data!");
+    let msg=error.message;
+    if(msg.includes("Progress")){
+      msg="Server failed to respond!";
+    }
+    this.errorModal.showModal('Failed to load clients',msg);
     this.loading=false;
   });
 

@@ -70,6 +70,22 @@ export class ManufacturerService extends BaseService{
       }
 
 
+      getAllManufacturers()
+      { 
+        let options=this.getStandardOptions();
+        options.withCredentials=true;
+        options.params=new HttpParams({
+          fromObject:{
+            format:'json'
+          },
+        });
+        options.withCredentials=true;
+
+        return this.http.get(this.constantsService.SERVER_URL+'manufacturer/allmanufacturers',options).
+        pipe(catchError(this.handleError));
+      }
+
+
       deleteManufacturer(id:number)
       { 
         let options=this.getStandardOptions();

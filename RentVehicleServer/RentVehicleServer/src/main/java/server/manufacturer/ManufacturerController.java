@@ -58,6 +58,14 @@ public class ManufacturerController {
 	{
 		return service.getAllManufacturers(PageRequest.of(page, size), query);
 	}
+
+
+	@GetMapping("/allmanufacturers")
+	public ResponseEntity<HashMap<String,ArrayList<Manufacturer>>> getAllManufacturers()
+	{
+		return new ResponseEntity<HashMap<String,ArrayList<Manufacturer>>>(service.getAllManufacturers(),HttpStatus.OK);
+	}
+
 	
 	@DeleteMapping("/delete")
 	public ResponseEntity<Manufacturer> deleteManufacturer(@RequestParam Integer id)

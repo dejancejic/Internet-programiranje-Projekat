@@ -8,12 +8,13 @@ import * as L from 'leaflet';
 import { CarDetailsTabComponent } from "../tabs/car-details-tab/car-details-tab.component";
 import { BikeDetailsTabComponent } from "../tabs/bike-details-tab/bike-details-tab.component";
 import { ScooterDetailsTabComponent } from "../tabs/scooter-details-tab/scooter-details-tab.component";
+import { ErrorComponent } from "../modals/error/error.component";
 
 
 declare var bootstrap:any;
 @Component({
   selector: 'app-vehicle-map',
-  imports: [OperatorHeaderComponent, CommonModule, HttpClientModule, CarDetailsTabComponent, BikeDetailsTabComponent, ScooterDetailsTabComponent],
+  imports: [OperatorHeaderComponent, CommonModule, HttpClientModule, CarDetailsTabComponent, BikeDetailsTabComponent, ScooterDetailsTabComponent, ErrorComponent],
   templateUrl: './vehicle-map.component.html',
   styleUrl: './vehicle-map.component.css',
   providers:[RentalsService,ConstantsService],
@@ -37,6 +38,7 @@ export class VehicleMapComponent implements OnInit,AfterViewInit{
   private map: any;
 
   
+  @ViewChild("errorModal") errorModal:any;
 
   modalInstanceVehicleInfo: any;
   @ViewChild('vehicleInfoModal') vehicleInfoModal: any;
@@ -68,7 +70,11 @@ export class VehicleMapComponent implements OnInit,AfterViewInit{
       this.setMap();
 
     },(error)=>{
-      alert("Error reading data!");
+       let msg=error.message;
+      if(msg.includes("Progress")){
+        msg="Server failed to respond!";
+      }
+      this.errorModal.showModal('Failed to load map data',msg);
     }
     );
   }

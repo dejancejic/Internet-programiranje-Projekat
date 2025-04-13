@@ -9,12 +9,13 @@ import { HttpClientModule } from '@angular/common/http';
 import { VehicleService } from '../services/vehicles/vehicle.service';
 import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling';
 import { ConstantsService } from '../services/utils/constants.service';
+import { ErrorComponent } from "../modals/error/error.component";
 
 declare var bootstrap: any;
 
 @Component({
   selector: 'vehicles',
-  imports: [CarTabComponent, MatButtonModule, HeaderComponent,CommonModule,HttpClientModule,CdkVirtualScrollViewport,ScrollingModule],
+  imports: [CarTabComponent, MatButtonModule, HeaderComponent, CommonModule, HttpClientModule, CdkVirtualScrollViewport, ScrollingModule, ErrorComponent],
   templateUrl: './vehicles.component.html',
   styleUrl: './vehicles.component.css',
   providers:[CarsService,VehicleService]
@@ -70,6 +71,8 @@ export class VehiclesComponent implements OnInit,AfterViewInit{
   carsService=inject(CarsService);
   vehicleService=inject(VehicleService);
 
+  @ViewChild("errorModal") errorModal:any;
+
   @ViewChild('removeVehicleModal') removeVehicleModal: any; 
   @ViewChild('successModal') successModal: any; 
 
@@ -94,10 +97,14 @@ export class VehiclesComponent implements OnInit,AfterViewInit{
       this.cars=JSON.parse(JSON.stringify(this.allCars));
       this.visibleRows = this.chunkArray(this.allCars, this.itemsPerRow);
   
-      this.currentPageCars++; // move to next page
+      this.currentPageCars++; 
       this.loading = false;
     }, (error) => {
-      alert("Error occurred while reading data!");
+      let msg=error.message;
+      if(msg.includes("Progress")){
+        msg="Server failed to respond!";
+      }
+      this.errorModal.showModal('Failed to load cars',msg);
       this.loading = false;
     });
   }
@@ -177,7 +184,11 @@ export class VehiclesComponent implements OnInit,AfterViewInit{
       },
     (error)=>{
       this.loading=false;
-      alert(error);
+      let msg=error.message;
+      if(msg.includes("Progress")){
+        msg="Server failed to respond!";
+      }
+      this.errorModal.showModal('Failed to remove vehicle',msg);
       this.selectedId=-1;
     });
 

@@ -9,12 +9,13 @@ import { Vehicle } from '../model/vehicle';
 import { BikeTabComponent } from "../tabs/bike-tab/bike-tab.component";
 import { BikeService } from '../services/bike/bike.service';
 import { ConstantsService } from '../services/utils/constants.service';
+import { ErrorComponent } from "../modals/error/error.component";
 
 declare var bootstrap: any;
 
 @Component({
   selector: 'app-bikes',
-  imports: [HeaderComponent, HttpClientModule, CommonModule, CdkVirtualScrollViewport, ScrollingModule, BikeTabComponent],
+  imports: [HeaderComponent, HttpClientModule, CommonModule, CdkVirtualScrollViewport, ScrollingModule, BikeTabComponent, ErrorComponent],
   templateUrl: './bikes.component.html',
   styleUrl: './bikes.component.css',
   providers:[VehicleService,BikeService]
@@ -53,6 +54,7 @@ export class BikesComponent implements OnInit,AfterViewInit {
   loading:boolean=true;
   error:boolean=false;
 
+  @ViewChild("errorModal") errorModal:any;
 
     @HostListener('window:resize')
       onResize() {
@@ -99,7 +101,11 @@ export class BikesComponent implements OnInit,AfterViewInit {
            this.currentPageBikes++; 
            this.loading = false;
          }, (error) => {
-           alert("Error occurred while reading data!");
+            let msg=error.message;
+      if(msg.includes("Progress")){
+        msg="Server failed to respond!";
+      }
+      this.errorModal.showModal('Failed to load bikes',msg);
            this.loading = false;
          });
        }
@@ -168,7 +174,11 @@ export class BikesComponent implements OnInit,AfterViewInit {
       },
     (error)=>{
       this.loading=false;
-      alert(error);
+      let msg=error.message;
+      if(msg.includes("Progress")){
+        msg="Server failed to respond!";
+      }
+      this.errorModal.showModal('Failed to delete vehicle',msg);
       this.selectedId=-1;
     });
 

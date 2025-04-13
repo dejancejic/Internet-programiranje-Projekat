@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './login/login.component';
 import { TransportComponent } from './transport/transport.component';
-import { VehiclesComponent } from './vehicles/vehicles.component';
+import { VehiclesComponent } from './cars/vehicles.component';
 import { BikesComponent } from './bikes/bikes.component';
 import { ScootersComponent } from './scooters/scooters.component';
 import { AddManufacturerComponent } from './add-manufacturer/add-manufacturer.component';

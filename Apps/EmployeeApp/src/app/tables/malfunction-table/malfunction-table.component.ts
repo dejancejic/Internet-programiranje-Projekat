@@ -6,11 +6,12 @@ import { futureDateValidator } from '../../services/validators/dateValidator';
 import { HttpClientModule } from '@angular/common/http';
 import { DurationService } from '../../services/utils/duration.service';
 import { VehicleService } from '../../services/vehicles/vehicle.service';
+import { ErrorComponent } from "../../modals/error/error.component";
 
 declare var bootstrap:any;
 @Component({
   selector: 'malfunction-table',
-  imports: [CommonModule,HttpClientModule,FormsModule,ReactiveFormsModule],
+  imports: [CommonModule, HttpClientModule, FormsModule, ReactiveFormsModule, ErrorComponent],
   templateUrl: './malfunction-table.component.html',
   styleUrl: './malfunction-table.component.css',
   providers:[VehicleService,DurationService]
@@ -42,7 +43,8 @@ export class MalfunctionTableComponent implements AfterViewInit {
   networkError:boolean=false;
   vehicle:any;
 
-
+  @ViewChild("errorModal") errorModal:any;
+  
      modalInstance: any;
     @ViewChild('addMalfunctionModal') addMalfunctionModal: any; 
     modalInstanceRemove: any;
@@ -83,7 +85,11 @@ export class MalfunctionTableComponent implements AfterViewInit {
             this.pagesMalfunctions = Array.from({ length: this.totalPagesMalfunctions }, (_, i) => i + 1);
           },
           (error) => {
-            alert(error);
+            let msg=error.message;
+      if(msg.includes("Progress")){
+        msg="Server failed to respond!";
+      }
+      this.errorModal.showModal('Failed to load vehicle malfunctions',msg);
           }
         );
     }

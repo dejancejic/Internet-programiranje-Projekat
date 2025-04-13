@@ -5,12 +5,13 @@ import { HttpClientModule } from '@angular/common/http';
 import { Client } from '../model/client';
 import { AccountsService } from '../services/accounts/accounts.service';
 import { ConstantsService } from '../services/utils/constants.service';
+import { ErrorComponent } from "../modals/error/error.component";
 
 declare var bootstrap:any;
 
 @Component({
   selector: 'app-clients',
-  imports: [OperatorHeaderComponent,CommonModule,HttpClientModule],
+  imports: [OperatorHeaderComponent, CommonModule, HttpClientModule, ErrorComponent],
   templateUrl: './clients.component.html',
   styleUrl: './clients.component.css',
   providers:[AccountsService]
@@ -31,6 +32,8 @@ export class ClientsComponent implements OnInit,AfterViewInit{
 
   modalInstanceSuccessStatus: any;
   @ViewChild('successStatusModal') successStatusModal: any;
+
+  @ViewChild("errorModal") errorModal:any;
 
   ngOnInit(): void {
     this.loading=true;
@@ -54,7 +57,11 @@ export class ClientsComponent implements OnInit,AfterViewInit{
       this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
       this.loading=false;
     },(error)=>{
-      alert("Error reading data!");
+      let msg=error.message;
+      if(msg.includes("Progress")){
+        msg="Server failed to respond!";
+      }
+      this.errorModal.showModal('Failed to load clients',msg);
       this.loading=false;
     })
 

@@ -1,12 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { AfterViewInit, Component, Inject, OnInit } from '@angular/core';
+import { AfterViewInit, Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { StatisticsService } from '../services/statistics/statistics.service';
+import { ErrorComponent } from "../modals/error/error.component";
 
 @Component({
   selector: 'app-statistics',
-  imports: [CommonModule,NgxChartsModule,HttpClientModule],
+  imports: [CommonModule, NgxChartsModule, HttpClientModule, ErrorComponent],
   templateUrl: './statistics.component.html',
   styleUrl: './statistics.component.css',
   providers:[StatisticsService]
@@ -17,6 +18,8 @@ export class StatisticsComponent implements OnInit,AfterViewInit{
 
   selectedMonth:string='1';
   
+  
+  @ViewChild("errorModal") errorModal:any;
 
   revenuePerDay1 = [
     { name: '01', value: 1500 },
@@ -84,7 +87,11 @@ export class StatisticsComponent implements OnInit,AfterViewInit{
       this.revenuePerDay=this.revenuePerMonth['1'];
 
     },(error)=>{
-      alert("Error reading data!");
+      let msg=error.message;
+      if(msg.includes("Progress")){
+        msg="Server failed to respond!";
+      }
+      this.errorModal.showModal('Failed to load monthly revenue data',msg);
     });
 
     this.statisticsService.getVehicleRevenueStatistics().subscribe((data:any)=>{
@@ -92,7 +99,11 @@ export class StatisticsComponent implements OnInit,AfterViewInit{
       this.revenuePerType = data;
 
     },(error)=>{
-      alert("Error reading data!");
+      let msg=error.message;
+      if(msg.includes("Progress")){
+        msg="Server failed to respond!";
+      }
+      this.errorModal.showModal('Failed to load vehicle revenue data',msg);
     });
 
     this.statisticsService.getTotalMalfunctionsPerVehicleStatistics().subscribe((data:any)=>{
@@ -100,7 +111,11 @@ export class StatisticsComponent implements OnInit,AfterViewInit{
       this.groupedBarChartData=data;
       
     },(error)=>{
-      alert("Error reading data!");
+      let msg=error.message;
+      if(msg.includes("Progress")){
+        msg="Server failed to respond!";
+      }
+      this.errorModal.showModal('Failed to load malfunctions per vehicle data',msg);
     });
     
    
