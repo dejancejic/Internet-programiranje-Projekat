@@ -22,7 +22,7 @@ public class LoginService implements Serializable {
             String jsonInput = "{ \"username\": \"" + username + "\", \"password\": \"" + password + "\" }";
 
             disableSSLVerification();
-            // Create HTTP connection
+            
             URL url = new URL(LOGIN_URL);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
@@ -30,20 +30,19 @@ public class LoginService implements Serializable {
             connection.setRequestProperty("Content-Type", "application/json");
             connection.setRequestProperty("Accept", "application/json");
 
-            // Send request body
+            
             try (OutputStream os = connection.getOutputStream()) {
                 byte[] input = jsonInput.getBytes("utf-8");
                 os.write(input, 0, input.length);
             }
 
-            // Read response code
             int responseCode = connection.getResponseCode();
             if (responseCode != 200) {
                 System.out.println("Login failed: HTTP " + responseCode);
                 return null;
             }
 
-            // Read response body
+
             StringBuilder response = new StringBuilder();
             try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "utf-8"))) {
                 String inputLine;
@@ -52,11 +51,11 @@ public class LoginService implements Serializable {
                 }
             }
 
-            // Convert response to string
-            String responseStr = response.toString();
-            System.out.println("Response: " + responseStr); // Debugging
 
-            // Extract role
+            String responseStr = response.toString();
+           
+
+
             String userRole = extractValue(responseStr, "\"role\":\"", "\"");
             String jwtToken = extractValue(responseStr, "\"token\":\"", "\"");
 
@@ -90,7 +89,7 @@ public class LoginService implements Serializable {
     
     public static void disableSSLVerification() {
         try {
-            // Create a trust manager that does not validate certificate chains
+            
             TrustManager[] trustAllCertificates = new TrustManager[]{
                 new X509TrustManager() {
                     public X509Certificate[] getAcceptedIssuers() {
@@ -103,12 +102,11 @@ public class LoginService implements Serializable {
                 }
             };
 
-            // Install the all-trusting trust manager
+            
             SSLContext sc = SSLContext.getInstance("TLS");
             sc.init(null, trustAllCertificates, new java.security.SecureRandom());
             HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
 
-            // Install the all-trusting host name verifier
             HttpsURLConnection.setDefaultHostnameVerifier((hostname, session) -> true);
 
         } catch (Exception e) {

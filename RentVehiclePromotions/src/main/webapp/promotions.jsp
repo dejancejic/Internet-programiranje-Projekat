@@ -89,6 +89,10 @@
             <input type="text" class="form-control" id="promotionTitle" name="promotionTitle" required>
           </div>
           <div class="mb-3">
+            <label for="promotionDate" class="form-label">Valid until</label>
+            <input type="date" class="form-control" id="promotionDate" name="promotionDate" required>
+          </div>
+          <div class="mb-3">
             <label for="promotionDescription" class="form-label">Description</label>
             <textarea class="form-control" id="promotionDescription" name="promotionDescription" rows="3" required></textarea>
           </div>

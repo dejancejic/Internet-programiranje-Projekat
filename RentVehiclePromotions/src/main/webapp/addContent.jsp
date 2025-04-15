@@ -22,7 +22,7 @@ if (request.getMethod().equalsIgnoreCase("POST")) {
     String promotionDateStr = request.getParameter("promotionDate");
 
     if (promotionTitle != null && promotionDescription != null) {
-        LocalDate promotionDate = LocalDate.now(); 
+        LocalDate promotionDate = LocalDate.parse(promotionDateStr); 
         PromotionBean newPromotion = new PromotionBean(null, promotionTitle, promotionDate, promotionDescription);
 
         if (!rss.addPromotion(newPromotion)) {

@@ -65,6 +65,7 @@ export class StatisticsComponent implements OnInit,AfterViewInit{
 
 
   colorScheme ='natural';
+  colorSchemeAir='air';
   colorSchemeFlame ='flame';
   colorSchemeVivid ='vivid';
 
