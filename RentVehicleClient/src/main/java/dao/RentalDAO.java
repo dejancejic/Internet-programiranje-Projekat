@@ -177,7 +177,7 @@ public class RentalDAO {
 			if(rs.next()){
 				String manufacturer=selectManufacturerById(rs.getInt("manufacturer_id"));
 				veh=new Bike(manufacturer,rs.getString("model"),rs.getString("bike_id"),
-						rs.getDouble("price"),rs.getString("range"));
+						rs.getDouble("price"),rs.getString("bike_range"));
 			}
 			pstmt.close();
 		} catch (SQLException exp) {

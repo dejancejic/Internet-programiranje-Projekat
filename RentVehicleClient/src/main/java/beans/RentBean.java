@@ -12,10 +12,13 @@ public class RentBean implements Serializable{
 	
 	private ArrayList<Rental> rents=null;
 	
+	private Integer idClient=-1;
+	
 	public RentBean() {
 	}
 
 	public ArrayList<Rental> getRents() {
+		
 		return rents;
 	}
 
@@ -25,6 +28,7 @@ public class RentBean implements Serializable{
 	
 	public boolean getClientRents(Integer idClient)
 	{
+		this.idClient=idClient;
 		rents=RentalDAO.selectClientRentals(idClient);
 
 		return rents!=null;

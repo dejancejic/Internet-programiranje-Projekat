@@ -25,7 +25,7 @@
 <html lang="sr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Account</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -41,7 +41,8 @@
 
     <div class="row">
 
-        <div class="col-md-4">
+        <div class="col-12 col-md-4 mb-3">
+
             <div class="card text-center p-3">
          
                 <img src="data:image/png;base64,<%= client.getClient().getImage() %>" 
@@ -77,7 +78,8 @@
             </div>
         </div>
 
-       <div class="col-md-8">
+       <div class="col-12 col-md-8">
+
     <div class="card p-3 mb-4">
         <h5 class="text-center">All Rentals</h5>
 
@@ -85,52 +87,44 @@
             <thead>
                 <tr>
                     <th>Image</th>
-                    <th>Type</th>
                     <th>Vehicle</th>
-                    <th>Date</th>
-                    <th>Duration</th>
+                    <th>Date &#38; Duration</th>
                     <th>Cost</th>
                 </tr>
             </thead>
             <tbody>
+            	<% if(rentBean.getRents().size()==0){ %>
+            		<tr>
+            			<td class="noData" colspan="4">No data to show</td>
+            		</tr>
+            	<%} %>
+            	
                 <% 
-                // Define formatter for date display
+            
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"); 
-
+				
                 for (Rental r : rentBean.getRents()) { 
                     LocalDateTime startDate = r.getDate();
-                    LocalDateTime endDate = r.getDuration(); // Assuming this is the return date
+                    LocalDateTime endDate = r.getDuration(); 
 
-                    // Calculate duration difference
+                  
                     Duration duration = Duration.between(startDate, endDate);
                     long days = duration.toDays();
-                    long minutes = duration.toMinutesPart(); // Only Java 9+, otherwise use (duration.toMinutes() % 60)
+                    long minutes = duration.toMinutesPart(); 
                 %>
                 <tr>
                     <td>
                         <img src="data:image/png;base64,<%= r.getVehicle().getImage() %>" 
                             alt="Vehicle" class="vehicle-image mx-auto d-block">
                     </td>
-                    <td class="td1">
-                        <% if (r.getVehicle() instanceof Car) { %>
-                            <span class="badge text-bg-primary">Car</span>
-                        <% } %>
-                        <% if (r.getVehicle() instanceof Bike) { %>
-                            <span class="badge text-bg-warning">Bike</span>
-                        <% } %>
-                        <% if (r.getVehicle() instanceof Scooter) { %>
-                            <span class="badge text-bg-success">Scooter</span>
-                        <% } %>
-                    </td>
+                    
                     <td class="td1">
                         <%= r.getVehicle().getManufacturer() + " " + r.getVehicle().getModel() %>
                     </td>
                     <td class="td1">
-                        <%= startDate.format(formatter) %> 
+                        <%= startDate.format(formatter)+ "    "+days + "d," + minutes + "m" %> 
                     </td>
-                    <td class="td1">
-                        <%= days + " d, " + minutes + " m" %>
-                    </td>
+                  
                     <td class="td1">
                         €<%=r.calculatePrice() %>
                     </td>
@@ -139,10 +133,10 @@
             </tbody>
         </table>
 
-        <!-- Bootstrap Pagination Controls -->
+
         <nav>
             <ul class="pagination justify-content-start" id="pagination">
-                <!-- Pagination items will be added dynamically -->
+               
             </ul>
         </nav>
     </div>
@@ -239,7 +233,7 @@ $(document).ready(function() {
         $("#page" + page).addClass("active");
     }
 
-    // Generate pagination buttons
+
     var pagination = $("#pagination");
     pagination.append('<li class="page-item disabled" id="prevPage"><a class="page-link" href="#">Previous</a></li>');
     for (var i = 1; i <= totalPages; i++) {
