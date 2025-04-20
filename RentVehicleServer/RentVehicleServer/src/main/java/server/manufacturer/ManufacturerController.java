@@ -42,14 +42,7 @@ public class ManufacturerController {
 	{
 		return new ResponseEntity<Manufacturer>(service.updateManufacturer(manufacturer),HttpStatus.OK);
 	}
-	
-	
-	
-//	@GetMapping("/all")
-//	public ResponseEntity<HashMap<String,ArrayList<Manufacturer>>> getAllManufacturers()
-//	{
-//		return new ResponseEntity<HashMap<String,ArrayList<Manufacturer>>>(service.getAllManufacturers(),HttpStatus.OK);
-//	}
+
 
 	@GetMapping("/all")
 	public HashMap<String, Page<Manufacturer>> getAllManufacturers(@RequestParam(defaultValue = "0") int page,

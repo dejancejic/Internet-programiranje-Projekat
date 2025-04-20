@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+    <jsp:useBean id="clientBean" class="beans.ClientBean" scope="session"></jsp:useBean>
     
+    <% if (clientBean==null || !(clientBean.isLoggedIn())) response.sendRedirect("?action=login"); %>
     <%
     	Double price=(Double)request.getSession().getAttribute("price");
     Boolean carsSelected=(Boolean)request.getSession().getAttribute("carsSelected");

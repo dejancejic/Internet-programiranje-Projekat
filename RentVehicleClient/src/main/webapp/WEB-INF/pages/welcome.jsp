@@ -1,7 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <jsp:useBean id="clientBean" class="beans.ClientBean" scope="session"></jsp:useBean>
 
-<% if (clientBean==null || !(clientBean.isLoggedIn())) response.sendRedirect("login.jsp"); %>
+<% if (clientBean==null || !(clientBean.isLoggedIn())){ response.sendRedirect("?action=login");return; }%>
 
 <!DOCTYPE html>
 <html lang="sr">

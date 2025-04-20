@@ -45,8 +45,10 @@ export class RentPriceComponent implements OnInit,AfterViewInit {
 
     @HostListener('window:resize')
     onResize() {
-      this.calculateItemsPerRow();
-      this.formatCarsIntoRows();
+
+  this.calculateItemsPerRow();
+  this.formatCarsIntoRows();
+
     }
   
     private calculateItemsPerRow() {
@@ -54,7 +56,7 @@ export class RentPriceComponent implements OnInit,AfterViewInit {
       const itemWidth = 200; 
       this.itemsPerRow = Math.floor(containerWidth / itemWidth) || 1;
   
-      this.rowHeight=350;
+      this.rowHeight=300;
     }
   
     private formatCarsIntoRows() {
@@ -93,7 +95,7 @@ export class RentPriceComponent implements OnInit,AfterViewInit {
       this.loading = true;
       
       this.bikeService.getBikes(page - 1, this.itemsPerRow, query).subscribe((data: any) => {
-        this.assignData(page,data);
+        this.assignData(page-1,data);
       }, (error) => {
         let msg=error.message;
         if(msg.includes("Progress")){
@@ -107,7 +109,8 @@ export class RentPriceComponent implements OnInit,AfterViewInit {
       this.loading = true;
       
       this.carsService.getCars(page - 1, this.itemsPerRow, query).subscribe((data: any) => {
-        this.assignData(page,data);
+        this.assignData(page-1,data);  
+
       }, (error) => {
         let msg=error.message;
         if(msg.includes("Progress")){
@@ -121,7 +124,7 @@ export class RentPriceComponent implements OnInit,AfterViewInit {
       this.loading = true;
       
       this.scooterService.getScooters(page - 1, this.itemsPerRow, query).subscribe((data: any) => {
-        this.assignData(page,data);
+        this.assignData(page-1,data);
       }, (error) => {
         let msg=error.message;
         if(msg.includes("Progress")){
@@ -136,13 +139,15 @@ export class RentPriceComponent implements OnInit,AfterViewInit {
     {
       this.adjustImageData(data.content);
       const newVehicles = data.content;
+
         this.totalPagesVehicles = data.totalPages;
+
+      
     
         if (newVehicles.length === 0 || page >= this.totalPagesVehicles) {
           this.endReached = true;
         }
         
-  
         this.allVehicles = [...this.allVehicles, ...newVehicles];
         this.vehicles=JSON.parse(JSON.stringify(this.allVehicles));
         this.visibleRows = this.chunkArray(this.allVehicles, this.itemsPerRow);
@@ -223,7 +228,6 @@ export class RentPriceComponent implements OnInit,AfterViewInit {
   
     if (!this.loading && !this.endReached && index + buffer >= totalItems) {
 
-      
       if(this.selectedType==='E-Car'){
       this.loadDataCars(this.currentPageVehicles);
       }

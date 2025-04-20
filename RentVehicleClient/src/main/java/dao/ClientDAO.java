@@ -197,7 +197,7 @@ public class ClientDAO {
 			}
 			
 		} catch (SQLException e) {
-			e.printStackTrace();
+			
 			client=null;
 		} finally {
 			connectionPool.checkIn(connection);
@@ -218,7 +218,7 @@ public class ClientDAO {
 			
 			pstmt.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			
 			client=null;
 		} finally {
 			connectionPool.checkIn(connection);

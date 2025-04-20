@@ -31,11 +31,6 @@ public class RentController {
 									  @RequestParam(defaultValue = "") String query){
 		return service.getVehicleRents(id,PageRequest.of(page, size),query);
 	}
-	
-//	@GetMapping("/all")
-//	public ResponseEntity<HashMap<String,List<Rent>>> getAllRents(){
-//		return new ResponseEntity<HashMap<String,List<Rent>>>(service.getAllRents(),HttpStatus.OK);
-//	}
 
 	@GetMapping("/all")
 	public Map<String,Page<Rent>> getAllRents(@RequestParam(defaultValue = "0") int page,

@@ -99,7 +99,7 @@ public class Controller extends HttpServlet {
 			String email = request.getParameter("email");
 			String phone = request.getParameter("phone");
 			
-			String imageBase64 = request.getParameter("profileImageBase64"); // Get the Base64 string
+			String imageBase64 = request.getParameter("profileImageBase64"); 
 		    
 			String number=request.getParameter("documentnumber");
 			String passportNumber=request.getParameter("passportnumber");
@@ -125,7 +125,7 @@ public class Controller extends HttpServlet {
 			{
 				session.setAttribute("clientBean", clientBean);
 				
-				address = "/WEB-INF/pages/welcome.jsp";
+				address = "/WEB-INF/pages/login.jsp";
 			}
 			else {
 				address = "/WEB-INF/pages/register.jsp";
@@ -309,6 +309,11 @@ public class Controller extends HttpServlet {
 		            
 		            session.setAttribute("startLatitude", latitude);
 		            session.setAttribute("startLongitude", longitude);
+		            
+		            VehicleBean vb=new VehicleBean();
+					String vehicleId=(String)session.getAttribute("vehicleId");
+		            vb.updateVehicleStatus(Integer.parseInt(vehicleId), true);
+		            
 		        } 
 		}
 		else if(action.equals("endRide"))
@@ -325,7 +330,9 @@ public class Controller extends HttpServlet {
 	            session.setAttribute("endPrice", price);
 	            address= "/WEB-INF/pages/welcome.jsp";
 	            
-	            
+	            VehicleBean vb=new VehicleBean();
+				String vehicleId=(String)session.getAttribute("vehicleId");
+	            vb.updateVehicleStatus(Integer.parseInt(vehicleId), false);
 	        }
 		
 		}
@@ -385,7 +392,7 @@ public class Controller extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+		
 		doGet(request, response);
 	}
 	

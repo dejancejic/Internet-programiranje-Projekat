@@ -8,6 +8,13 @@
 >
 </operator-header>
 
+<div *ngIf="loading" class="d-flex justify-content-center spinner">
+  <div class="spinner-border sp" role="status">
+      <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+
+
 <cdk-virtual-scroll-viewport 
   itemSize="120" 
   class="virtual-scroll-container"

@@ -70,11 +70,11 @@ export class RentalsComponent implements OnInit,AfterViewInit {
       this.map = null;    
     }
     
-    // Initialize map
+   
     this.map = L.map('map1', {
     }).setView([this.constantsService.MAP_INITIAL_POSITION.x, this.constantsService.MAP_INITIAL_POSITION.y], this.constantsService.MAP_ZOOM);
 
-    // Add OpenStreetMap tiles
+   
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(this.map);
@@ -117,6 +117,7 @@ export class RentalsComponent implements OnInit,AfterViewInit {
   loadData(page: number = 1,query:string='')
   {
     this.currentPageRentals = page;
+    this.loading=true;
     this.rentalsService.getAllRentals(page - 1, this.rentalsPerPage,query).subscribe((data:any)=>{
       this.loading=false;
 

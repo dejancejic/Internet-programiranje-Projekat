@@ -5,7 +5,7 @@
     pageEncoding="UTF-8"%>
     <jsp:useBean id="clientBean" class="beans.ClientBean" scope="session"></jsp:useBean>
 
-<% if (clientBean==null || !(clientBean.isLoggedIn())) response.sendRedirect("login.jsp"); %>
+<% if (clientBean==null || !(clientBean.isLoggedIn())){ response.sendRedirect("?action=login");return; }%>
 
 <% String carPosition=(String)request.getSession().getAttribute("carPosition");
 	ArrayList<Vehicle> cars=(ArrayList<Vehicle>)request.getSession().getAttribute("cars");

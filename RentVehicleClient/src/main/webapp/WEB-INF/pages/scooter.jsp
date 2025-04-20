@@ -5,7 +5,7 @@
     pageEncoding="UTF-8"%>
     <jsp:useBean id="clientBean" class="beans.ClientBean" scope="session"></jsp:useBean>
 
-<% if (clientBean==null || !(clientBean.isLoggedIn())) response.sendRedirect("login.jsp"); %>
+<% if (clientBean==null || !(clientBean.isLoggedIn())){ response.sendRedirect("?action=login");return; }%>
 
 
 <% String scooterPosition=(String)request.getSession().getAttribute("scooterPosition");

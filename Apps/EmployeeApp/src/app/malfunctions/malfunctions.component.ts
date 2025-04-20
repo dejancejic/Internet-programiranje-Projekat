@@ -61,44 +61,50 @@ export class MalfunctionsComponent implements OnInit {
 
   loadDataBikes(page:number=1,query:string='')
   {
+    this.loading=true;
     this.bikeService.getBikes(page - 1, this.vehiclesPerPage,query).subscribe((data:any)=>{
       this.adjustImageData(data);
 
       this.totalPagesVehicles = data.totalPages;
     this.pagesVehicles= Array.from({ length: this.totalPagesVehicles }, (_, i) => i + 1);
-
+  this.loading=false;
     },(error)=>
     {
       let msg=error.message;
       if(msg.includes("Progress")){
         msg="Server failed to respond!";
       }
+      this.loading=false;
       this.errorModal.showModal('Failed to load bikes',msg);
     });
   }
 
   loadDataScooters(page:number=1,query:string='')
   {
+    this.loading=true;
     this.scooterService.getScooters(page - 1, this.vehiclesPerPage,query).subscribe((data:any)=>{
       this.adjustImageData(data);
       this.totalPagesVehicles = data.totalPages;
     this.pagesVehicles= Array.from({ length: this.totalPagesVehicles }, (_, i) => i + 1);
-
+    this.loading=false;
     },(error)=>
     {
       let msg=error.message;
       if(msg.includes("Progress")){
         msg="Server failed to respond!";
       }
+      this.loading=false;
       this.errorModal.showModal('Failed to load scooters',msg);
     });
   }
 
   loadDataCars(page: number = 1,query:string='')
   {
+    this.loading=true;
+    this.currentPageVehicles = page;
     this.carsService.getCars(page - 1, this.vehiclesPerPage,query).subscribe((data:any)=>{
       this.adjustImageData(data);
-
+      this.loading=false;
       this.totalPagesVehicles = data.totalPages;
     this.pagesVehicles= Array.from({ length: this.totalPagesVehicles }, (_, i) => i + 1);
 
@@ -108,6 +114,7 @@ export class MalfunctionsComponent implements OnInit {
       if(msg.includes("Progress")){
         msg="Server failed to respond!";
       }
+      this.loading=false;
       this.errorModal.showModal('Failed to load cars',msg);
     });
   }

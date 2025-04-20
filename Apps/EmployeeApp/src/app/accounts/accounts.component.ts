@@ -223,6 +223,8 @@ loadDataClients(page: number = 1,query:string='')
     {
       this.users = this.allEmployees.filter(emp => emp.role === 'manager');
     }
+    this.totalPages = this.users.length/6+1;
+      this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
 
   }
 
@@ -237,6 +239,9 @@ loadDataClients(page: number = 1,query:string='')
     this.users.push(employee);
     
     this.update=false;
+    this.employeeFailed=false;
+    this.sameEmployeeError=false;
+    this.deleteError=false;
     this.modalInstanceSuccessEmployee.show();
   },(error:any)=>{
     this.employeeFailed=true;
@@ -276,8 +281,9 @@ loadDataClients(page: number = 1,query:string='')
           break;
         }
       }
-
-    
+      this.employeeFailed=false;
+    this.sameEmployeeError=false;
+    this.deleteError=false;
   this.modalInstanceSuccessEmployee.show();
      } ,(error)=>{
       this.employeeFailed=true;

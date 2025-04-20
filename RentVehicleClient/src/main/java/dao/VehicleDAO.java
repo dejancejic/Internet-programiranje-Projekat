@@ -27,6 +27,7 @@ public class VehicleDAO {
 	private static final String SQL_SELECT_MANUFACTURER = "SELECT * FROM manufacturer WHERE id=?";
 	private static final String SQL_SELECT_BIKE = "SELECT * FROM bike WHERE id=?";
 	private static final String SQL_SELECT_SCOOTER = "SELECT * FROM scooter WHERE id=?";
+	private static final String SQL_UPDATE_VEHICLE_STATUS = "UPDATE vehicle set status=? WHERE id=?";
 	
 	
 	private static void helperMethod(ArrayList<Vehicle> list,String query)
@@ -42,7 +43,9 @@ public class VehicleDAO {
 
 			
 			while(rs.next()){
-				list.add(selectVehicleById(rs.getInt("id")));
+				Vehicle veh=selectVehicleById(rs.getInt("id"));
+				if(veh!=null)
+				list.add(veh);
 			}
 			pstmt.close();
 		} catch (SQLException exp) {
@@ -129,9 +132,51 @@ public class VehicleDAO {
 			connectionPool.checkIn(connection);
 		}
 		
+
 		
 		return veh;
 	}
+	
+	
+	
+	
+	public static Vehicle updateVehicleStatusById(Integer id,boolean rented)
+	{
+		Vehicle veh=null;
+		Connection connection = null;
+		ResultSet rs = null;
+		String stat="rented";
+		if(!rented)
+		{
+			stat="free";
+		}
+		Object values[] = {stat,id};
+		
+		try {
+			connection = connectionPool.checkOut();
+			PreparedStatement pstmt = DAOUtil.prepareStatement(connection,
+					SQL_UPDATE_VEHICLE_STATUS, false, values);
+			
+			pstmt.executeUpdate();
+
+			
+			pstmt.close();
+			
+			return selectVehicleById(id);
+		} catch (SQLException exp) {
+			exp.printStackTrace();
+		} finally {
+			connectionPool.checkIn(connection);
+		}
+		
+		
+		return veh;
+	}
+	
+	
+	
+	
+	
 	
 	
 	public static Car selectCarById(Integer id)

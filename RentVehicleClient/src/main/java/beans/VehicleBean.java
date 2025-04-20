@@ -46,6 +46,11 @@ public class VehicleBean implements Serializable{
 		return VehicleDAO.selectVehicleById(id);
 	}
 	
+	public Vehicle updateVehicleStatus(Integer id,boolean rented)
+	{
+		return VehicleDAO.updateVehicleStatusById(id, rented);
+	}
+	
 	public boolean getBikes()
 	{
 		vehicles=VehicleDAO.getVehicleByType("bike");
