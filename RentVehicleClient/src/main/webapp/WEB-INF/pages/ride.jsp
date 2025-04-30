@@ -71,12 +71,15 @@
         let days=1;
 
         let rideDuration = 1; 
+        
+        const paymentAmountBase = <%= price %>;
         let timeInterval;
 
         function startRideTimer() {
             timeInterval = setInterval(function() {
                 rideDuration++;
                 document.getElementById("timeElapsed").innerText = rideDuration;
+                document.getElementById("paymentAmount").innerText=""+ paymentAmount*rideDuration;
                 getCurrentPosition();
             }, <%if(carsSelected==true){ %>15000 <%}else{ %>3600 <%} %>); 
         }

@@ -45,6 +45,7 @@ export class ClientsComponent implements OnInit,AfterViewInit{
   loadData(page: number = 1,query:string='')
   {
     this.currentPage = page;
+    this.loading=true;
     this.accountsService.getClients(page - 1, this.usersPerPage,query).subscribe((data: any) => {
       this.clients = data.content;
       for(let cl of this.clients)

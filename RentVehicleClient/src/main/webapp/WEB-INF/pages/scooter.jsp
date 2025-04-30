@@ -105,7 +105,7 @@
         document.querySelectorAll(".wrapper").forEach(function (wrapper) {
             wrapper.addEventListener("click", function () {
                 let vehicleId = this.getAttribute("data-id");
-                fetch("Controller?action=bike1", {
+                fetch("Controller?action=scooter1", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/x-www-form-urlencoded"
@@ -113,7 +113,7 @@
                     body: "vehicleId=" + encodeURIComponent(vehicleId)
                 })
                 .then(response => response.text())
-                .then(data =>window.location.href='?action=bike1')
+                .then(data =>window.location.href='?action=scooter1')
                 .catch(error => console.error("Error:", error));
             });
         });
